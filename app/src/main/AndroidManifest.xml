@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="pmd.di.ubi.pt.projectofinal">
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".ActivityRegistro2" />
+
+        <meta-data
+            android:name="com.google.android.gms.wallet.api.enabled"
+            android:value="true" />
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/options_icon" />
+        <!--
+ Set color used with incoming notification messages. This is used when no color is set for the incoming
+             notification message. See README(https://goo.gl/6BKBk7) for more.
+        -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/colorAccent" />
+
+        <service android:name=".MyFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <activity android:name=".ActivityInical">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".ActivityMarcacoes" />
+        <activity android:name=".ActivityDetalhesMarcacao" />
+        <activity android:name=".ActivityDetalhesPagamanto" />
+        <activity android:name=".ActivityFazerMarcacao" />
+        <activity android:name=".ActivityMudarPassword" />
+        <activity android:name=".ActivityDefinicoesConta" />
+        <activity android:name=".ActivityPersonalTrainerPerfil" />
+        <activity android:name=".ActivityPersonalList" />
+        <activity android:name=".ActivityModalidades" />
+        <activity android:name=".ActivityRegistro" />
+        <activity android:name=".ActivityLogin" />
+    </application>
+
+</manifest>

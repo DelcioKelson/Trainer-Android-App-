@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:layout_marginRight="8dp"
+    android:layout_marginLeft="8dp"
+    android:layout_marginBottom="8dp"
+    android:layout_marginTop="8dp"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:clickable="true"
+        android:id="@+id/card_personal"
+        android:background="#FF0000"
+        android:focusable="true">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:id="@+id/personal_image" />
+
+        <TextView
+            android:id="@+id/nomePersonal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="19dp"
+            android:textColor="#FFFFFF"
+            android:textSize="24sp" />
+
+        <RatingBar
+            android:id="@+id/rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="?android:attr/ratingBarStyleSmall"
+            android:numStars="5"
+            android:progressTint="@color/duskYellow"
+            android:isIndicator="true"
+            android:visibility="invisible"
+            />
+
+        <TextView
+            android:id="@+id/infoclassificacao"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="ainda nao tem classificaçoes"
+            android:textSize="15dp"
+            android:visibility="invisible" />
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

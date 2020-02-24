@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">ProjectoFinal</string>
+    <string name="dia_mes_ano">dia/mes/ano</string>
+    <string name="registrar">Registrar</string>
+    <string name="altura">Altura</string>
+    <string name="peso">Peso</string>
+    <string name="telefone">Telefone</string>
+    <string name="ainda_nao_tem_classifica_oes">ainda nao tem classificaçoes</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="conta">Conta</string>
+    <string name="sair">Sair</string>
+    <string name="palavra_passe">Palavra-passe:</string>
+    <string name="selecione_com_muita_responsabilidade">Selecione com muita responsabilidade</string>
+    <string name="proximo_passo">proximo passo</string>
+
+    <string-array name="horas_array">
+        <item>00:30</item>
+        <item>01:00</item>
+        <item>01:30</item>
+        <item>02:00</item>
+        <item>02:30</item>
+        <item>03:00</item>
+
+    </string-array>
+
+</resources>

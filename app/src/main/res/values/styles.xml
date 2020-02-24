@@ -1,0 +1,25 @@
+<resources>
+
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.Bridge">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">#f44334</item>
+        <item name="colorPrimaryDark">#b9000a</item>
+        <item name="colorAccent">#ff795f</item>
+        <item name="android:actionOverflowButtonStyle">@style/MyActionButtonOverflow</item>
+        <item name="android:windowActivityTransitions">true</item>
+
+    </style>
+
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="MyActionButtonOverflow" parent="android:style/Widget.Holo.Light.ActionButton.Overflow">
+    <item name="android:src">@drawable/options_icon</item>
+    <item name="android:background">?android:attr/actionBarItemBackground</item>
+    <item name="android:contentDescription">"Lala"</item>
+    </style>
+
+</resources>
