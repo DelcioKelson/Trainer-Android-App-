@@ -7,14 +7,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.LinearLayout;
-import android.widget.RatingBar;
+
 import android.widget.TextView;
-
 import androidx.cardview.widget.CardView;
-
 import java.util.ArrayList;
-import java.util.Map;
 
 public class AdapterMarcacao extends BaseAdapter {
 
@@ -22,7 +18,7 @@ public class AdapterMarcacao extends BaseAdapter {
     private ArrayList<Marcacao> marcacaoArrayList;
     private String tipoConta;
 
-    public AdapterMarcacao(Context context, ArrayList<Marcacao> marcacaoArrayList, String tipoConta) {
+    AdapterMarcacao(Context context, ArrayList<Marcacao> marcacaoArrayList, String tipoConta) {
         this.context = context;
         this.marcacaoArrayList = marcacaoArrayList;
         this.tipoConta = tipoConta;

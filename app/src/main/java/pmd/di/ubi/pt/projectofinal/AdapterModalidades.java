@@ -59,13 +59,10 @@ public class AdapterModalidades extends BaseAdapter {
                 .load(modalidade.getImg())
                 .into(imgModalidade);
 
-        main.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, ActivityPersonalList.class);
-                intent.putExtra("modalidade",modalidade.getNome());
-                context.startActivity(intent, ActivityOptions.makeSceneTransitionAnimation((Activity) context).toBundle());
-            }
+        main.setOnClickListener(v -> {
+            Intent intent = new Intent(context, ActivityPersonalList.class);
+            intent.putExtra("modalidade",modalidade.getNome());
+            context.startActivity(intent, ActivityOptions.makeSceneTransitionAnimation((Activity) context).toBundle());
         });
         return convertView;
     }

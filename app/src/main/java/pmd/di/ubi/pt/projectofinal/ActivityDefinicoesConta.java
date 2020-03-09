@@ -49,9 +49,6 @@ public class ActivityDefinicoesConta extends AppCompatActivity {
     private ProgressBar progressBar;
     private StorageReference ref ;
 
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

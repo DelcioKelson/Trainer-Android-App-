@@ -72,6 +72,7 @@ public class ActivityPersonalTrainerPerfil extends AppCompatActivity {
     private PersonalTrainer personalTrainer;
     private TextView tvNavHeader;
     private ImageView imgVfoto;
+    private CollectionReference pessoaRef =  FirebaseFirestore.getInstance().collection("/pessoas");
 
 
     @Override
@@ -207,18 +208,14 @@ public class ActivityPersonalTrainerPerfil extends AppCompatActivity {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult() ;
-
                     if (document.exists()) {
                          personalTrainer = document.toObject(PersonalTrainer.class);
-
                          if(userPersonalFlag==1){
                              Glide.with(imgVfoto.getContext())
                                      .load(personalTrainer.getProfileUrl())
                                      .into(imgVfoto);
                              tvNavHeader.setText("Nome: " + personalTrainer.getNome());
                          }
-
-
 
                         nome.setText(personalTrainer.getNome());
                         Glide.with(ivPerfil.getContext())
@@ -299,25 +296,30 @@ public class ActivityPersonalTrainerPerfil extends AppCompatActivity {
         numeroMarcacaosPedentes = 0;
         numeroMarcacaosAceites = 0;
         numeroMarcacaosPagas = 0;
-        FirebaseFirestore.getInstance().collection("/marcacoes").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+
+        pessoaRef.document(user.getUid()).collection("marcacoes").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
+                    QuerySnapshot queryDocumentSnapshots = task.getResult();
+                    assert queryDocumentSnapshots != null;
+                    for (DocumentSnapshot document : queryDocumentSnapshots){
                         Marcacao marcacao = document.toObject(Marcacao.class);
-                        if (marcacao.getPersonalUuid().equals(user.getUid()) && marcacao.getEstado().equals("pedente") ){
-                            numeroMarcacaosPedentes = numeroMarcacaosPedentes +1;
+                        if (marcacao!=null){
+                            if (marcacao.getEstado().equals("pedente")){
+                                numeroMarcacaosPedentes = numeroMarcacaosPedentes +1;
+                            }
+                            if (marcacao.getEstado().equals("aceite")){
+                                numeroMarcacaosAceites=1+ numeroMarcacaosAceites;
+                            }
+                            if (marcacao.getEstado().equals("pagas")){
+                                numeroMarcacaosPagas = 1+ numeroMarcacaosPagas;
+                            }
                         }
-                        if ( marcacao.getPersonalUuid().equals(user.getUid()) &&marcacao.getEstado().equals("aceite") ){
-                            numeroMarcacaosAceites=1+ numeroMarcacaosAceites;
-                        }
-                        if (marcacao.getPersonalUuid().equals(user.getUid()) && marcacao.getEstado().equals("pagas") ){
-                            numeroMarcacaosPagas = 1+ numeroMarcacaosPagas;
-                        }
+                        itemPendentes.setTitle("Marcacoes pendentes " + "(" +numeroMarcacaosPedentes +")");
+                        itemAceites.setTitle("Marcacoes aceites " + "(" +numeroMarcacaosAceites +")");
+                        itemPagas.setTitle("Marcacoes pagas " + "(" +numeroMarcacaosPagas +")");
                     }
-                    itemPendentes.setTitle("Marcacoes pendentes " + "(" +numeroMarcacaosPedentes +")");
-                    itemAceites.setTitle("Marcacoes aceites " + "(" +numeroMarcacaosAceites +")");
-                    itemPagas.setTitle("Marcacoes pagas " + "(" +numeroMarcacaosPagas +")");
                 }
             }
         });
@@ -374,11 +376,4 @@ public class ActivityPersonalTrainerPerfil extends AppCompatActivity {
         });
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if(userPersonalFlag==1){
-            numeroMarcacoes();
-        }
-    }
 }

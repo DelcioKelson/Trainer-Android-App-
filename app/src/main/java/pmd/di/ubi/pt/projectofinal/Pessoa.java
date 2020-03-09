@@ -9,7 +9,6 @@ public class Pessoa {
       String data;
       String numeroTelefone;
       String tipoDeConta;
-      ArrayList<String> marcacoes;
 
     public String getTipoDeConta() {
         return tipoDeConta;
@@ -19,17 +18,6 @@ public class Pessoa {
         this.tipoDeConta = tipoDeConta;
     }
 
-    public ArrayList<String> getMarcacoes() {
-        return marcacoes;
-    }
-
-    public void setMarcacoes(ArrayList<String> marcacoes) {
-        this.marcacoes = marcacoes;
-    }
-
-    public void addMarcacao(String idMarcacao){
-        this.marcacoes.add(idMarcacao);
-    }
     public String getNumeroTelefone() {
         return numeroTelefone;
     }

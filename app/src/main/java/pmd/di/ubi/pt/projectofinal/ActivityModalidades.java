@@ -25,6 +25,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -34,24 +35,18 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import java.util.ArrayList;
 
 public class ActivityModalidades extends AppCompatActivity {
-    private GridView gridView;
     private ArrayList<Modalidade> modalidadeList;
     private AdapterModalidades adapterModalidades;
-    private ArrayList <Marcacao> marcacaoPedenteArrayList;
-    private ArrayList <Marcacao> marcacaoAceitesArrayList;
-    private ArrayList <Marcacao> marcacaoPagasArrayList;
-    private DrawerLayout dl;
+    private int numeroMarcacaosPedentes ,numeroMarcacaosAceites,numeroMarcacaosPagas;
     private ActionBarDrawerToggle t;
-    private NavigationView nv;
     private FirebaseUser user;
     private MenuItem itemPendentes;
     private MenuItem itemAceites;
     private MenuItem itemPagas;
-    private  ArrayList<String> idMarcacoes;
     private TextView tvNavHeader;
     private Usuario usuario;
     private ImageView imgVfoto;
-
+    private DocumentReference userDocumentReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +54,7 @@ public class ActivityModalidades extends AppCompatActivity {
         modalidadeList = new ArrayList<>();
         getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         user = FirebaseAuth.getInstance().getCurrentUser();
+        userDocumentReference = FirebaseFirestore.getInstance().collection("pessoas").document(user.getUid());
 
         // set an exit transition
         getWindow().setExitTransition(new Explode());
@@ -67,26 +63,21 @@ public class ActivityModalidades extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Modalidades");
 
-        dl = (DrawerLayout)findViewById(R.id.activity_main);
+        DrawerLayout dl = (DrawerLayout) findViewById(R.id.activity_main);
         t = new ActionBarDrawerToggle(this, dl,R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         dl.addDrawerListener(t);
         t.syncState();
-        nv = (NavigationView)findViewById(R.id.nv_user);
+        NavigationView nv = (NavigationView) findViewById(R.id.nv_user);
         View headerView = nv.getHeaderView(0);
 
         tvNavHeader = headerView.findViewById(R.id.tv_navheader);
         imgVfoto = headerView.findViewById(R.id.img_foto_nav);
 
-        idMarcacoes = new ArrayList<>();
-
-        FirebaseFirestore.getInstance().collection("pessoas").document(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-        @Override
-        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+        userDocumentReference.get().addOnCompleteListener(task -> {
                if(task.isSuccessful()){
                    DocumentSnapshot documentSnapshot = task.getResult();
                         if(documentSnapshot!=null){
                              usuario = documentSnapshot.toObject(Usuario.class);
-                            idMarcacoes = usuario.getMarcacoes();
                            numeroMarcacoes();
                            tvNavHeader.setText("Nome: " + usuario.getNome());
                             Glide.with(imgVfoto.getContext())
@@ -95,10 +86,7 @@ public class ActivityModalidades extends AppCompatActivity {
                         }
                }
             }
-
-        }
         );
-
 
         Menu menuNav  = nv.getMenu();
         itemPendentes = menuNav.findItem(R.id.nav_opcao_marcacao_pendente);
@@ -176,7 +164,7 @@ public class ActivityModalidades extends AppCompatActivity {
     }
 
     private void initView() {
-        gridView = (GridView) findViewById(R.id.gridview);
+        GridView gridView = (GridView) findViewById(R.id.gridview);
         adapterModalidades = new AdapterModalidades(this, modalidadeList);
         gridView.setAdapter(adapterModalidades);
     }
@@ -189,39 +177,36 @@ public class ActivityModalidades extends AppCompatActivity {
     }
 
     public void numeroMarcacoes(){
-        marcacaoPedenteArrayList = new ArrayList<>();
-        marcacaoAceitesArrayList = new ArrayList<>();
-        marcacaoPagasArrayList = new ArrayList<>();
+        numeroMarcacaosPedentes = 0;
+        numeroMarcacaosAceites = 0;
+        numeroMarcacaosPagas = 0;
 
-        if (idMarcacoes!=null){
-            for (final String marcacaoid: idMarcacoes){
-
-                FirebaseFirestore.getInstance().collection("/marcacoes").document(marcacaoid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                userDocumentReference.collection("marcacoes").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            DocumentSnapshot document = task.getResult();
+                            QuerySnapshot queryDocumentSnapshots = task.getResult();
+                            assert queryDocumentSnapshots != null;
+                            for (DocumentSnapshot document : queryDocumentSnapshots){
                             Marcacao marcacao = document.toObject(Marcacao.class);
-                            if (marcacao.getEstado().equals("pendente") && marcacao.getUsuarioUuid().equals(user.getUid())){
-                                marcacaoPedenteArrayList.add(marcacao);
+                            if (marcacao!=null){
+                                if (marcacao.getEstado().equals("pedente")){
+                                    numeroMarcacaosPedentes = numeroMarcacaosPedentes +1;
+                                }
+                                if (marcacao.getEstado().equals("aceite")){
+                                    numeroMarcacaosAceites=1+ numeroMarcacaosAceites;
+                                }
+                                if (marcacao.getEstado().equals("pagas")){
+                                    numeroMarcacaosPagas = 1+ numeroMarcacaosPagas;
+                                }
                             }
-                            if (marcacao.getEstado().equals("aceite") && marcacao.getUsuarioUuid().equals(user.getUid())){
-                                marcacaoAceitesArrayList.add(marcacao);
-                            }
-                            if (marcacao.getEstado().equals("pagas") && marcacao.getUsuarioUuid().equals(user.getUid())){
-                                marcacaoPagasArrayList.add(marcacao);
-                            }
+                                itemPendentes.setTitle("Marcacoes pendentes " + "(" +numeroMarcacaosPedentes +")");
+                                itemAceites.setTitle("Marcacoes aceites " + "(" +numeroMarcacaosAceites +")");
+                                itemPagas.setTitle("Marcacoes pagas " + "(" +numeroMarcacaosPagas +")");
                         }
-                        itemPendentes.setTitle("Marcacoes pendentes " + "(" +marcacaoPedenteArrayList.size() +")");
-                        itemAceites.setTitle("Marcacoes aceites " + "(" +marcacaoAceitesArrayList.size() +")");
-                        itemPagas.setTitle("Marcacoes pagas " + "(" +marcacaoPagasArrayList.size() +")");
-
-                        Log.i("numeroMarcacaoes",""+marcacaoPedenteArrayList.size());
                     }
-
+                    }
                 });
-            }
-        }
     }
 
     @Override
@@ -242,6 +227,5 @@ public class ActivityModalidades extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        numeroMarcacoes();
     }
 }

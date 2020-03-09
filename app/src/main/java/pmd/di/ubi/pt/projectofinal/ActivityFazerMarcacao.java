@@ -64,9 +64,7 @@ public class ActivityFazerMarcacao extends AppCompatActivity  implements Adapter
         tvHoraInicio = findViewById(R.id.tv_hora_inicio);
         btnDiaTreino  =findViewById(R.id.btn_dia_treino);
         tvDiaTreino = findViewById(R.id.tv_dia_treino);
-
         btnTempoInicio = findViewById(R.id.btn_tempo_inicio);
-
         uuidPersonal = getIntent().getStringExtra("uuid");
         preco = null;
 
@@ -93,8 +91,7 @@ public class ActivityFazerMarcacao extends AppCompatActivity  implements Adapter
                                 }
                             });
                         }
-
-                    } else {
+                    }else{
                         Log.d("FirestoreFirebase", "No such document");
                     }
                 }
@@ -126,7 +123,6 @@ public class ActivityFazerMarcacao extends AppCompatActivity  implements Adapter
 
     }
 
-
     public void gerarDetalhesMarcacao(){
         String diaTreino = tvDiaTreino.getText().toString();
         String horaTreino = tvHoraInicio.getText().toString();
@@ -150,6 +146,7 @@ public class ActivityFazerMarcacao extends AppCompatActivity  implements Adapter
         intent.putExtra("estado","temporario");
         intent.putExtra("tipoConta","usuario");
         intent.putExtra("uuidPersonal",uuidPersonal);
+        finish();
         startActivity(intent);
     }
 
@@ -235,7 +232,6 @@ public class ActivityFazerMarcacao extends AppCompatActivity  implements Adapter
         @Override
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
             tvHoraInicio.setText(""+hourOfDay+":"+minute);
-
         }
     }
 
@@ -257,7 +253,5 @@ public class ActivityFazerMarcacao extends AppCompatActivity  implements Adapter
             tvDiaTreino.setText(""+day+"/"+(month+1)+"/"+year);
         }
     }
-
-
 }
 

@@ -24,8 +24,6 @@ import com.google.android.gms.wallet.IsReadyToPayRequest;
 import com.google.android.gms.wallet.PaymentData;
 import com.google.android.gms.wallet.PaymentDataRequest;
 import com.google.android.gms.wallet.PaymentsClient;
-import com.google.android.gms.wallet.Wallet;
-import com.google.android.gms.wallet.WalletConstants;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -33,19 +31,10 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.gson.JsonArray;
-import com.paypal.android.sdk.payments.PayPalConfiguration;
-import com.paypal.android.sdk.payments.PayPalPayment;
-import com.paypal.android.sdk.payments.PayPalService;
-import com.paypal.android.sdk.payments.PaymentActivity;
-import com.paypal.android.sdk.payments.PaymentConfirmation;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Optional;
 
@@ -58,12 +47,10 @@ public class ActivityDetalhesMarcacao extends AppCompatActivity {
     private FirebaseUser user;
 
     private TextView tvDiaTreino,tvHoraTreino, tvPreco,tvEstado,tvTempoDemora,tvObs;
-    private DocumentReference marcacaoRef;
     private Marcacao marcacao;
     private final CollectionReference pessoasRef = FirebaseFirestore.getInstance().collection("pessoas");
 
-    private PersonalTrainer personalTrainer;
-    private Usuario usuario;
+    private Pessoa pessoa1,pessoa2;
     private PaymentsClient paymentsClient;
     private static final int LOAD_PAYMENT_DATA_REQUEST_CODE = 991;
     private View mGooglePayButton;
@@ -91,8 +78,6 @@ public class ActivityDetalhesMarcacao extends AppCompatActivity {
         tvObs = findViewById(R.id.tv_obs);
         mGooglePayButton = findViewById(R.id.googlepay_button);
         btnCancelarMarcacao = findViewById(R.id.btn_cancelar_marcacao);
-
-
         preco = vindoGerarActivity.getFloatExtra("preco",0.0f);
         estadoMarcacao = vindoGerarActivity.getStringExtra("estado");
         idMarcacao = vindoGerarActivity.getStringExtra("idMarcacao");
@@ -103,50 +88,43 @@ public class ActivityDetalhesMarcacao extends AppCompatActivity {
         uuidPersonal = vindoGerarActivity.getStringExtra("uuidPersonal");
 
         if (idMarcacao!=null){
-            FirebaseFirestore.getInstance().collection("marcacoes").document(idMarcacao).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if (task.isSuccessful()){
-                        DocumentSnapshot documentSnapshot = task.getResult();
-                        if (documentSnapshot!=null){
-                            getPersonalEUsuario();
-                            marcacao = documentSnapshot.toObject(Marcacao.class);
-                            tvPreco.setText("preço a pagar: " + marcacao.getPreco());
-                            tvHoraTreino.setText("hora de inicio: " + marcacao.getHoraTreino());
-                            tvDiaTreino.setText("dia do treino: " + marcacao.getDiaTreino());
-                            tvTempoDemora.setText("tempo do treino:" + marcacao.getTempoDemora());
-                            tvEstado.setText("estado da marcaçao :" + marcacao.getEstado());
+            pessoasRef.document(user.getUid()).collection("marcacoes").document(idMarcacao)
+                    .get().addOnCompleteListener(task -> {
+                        if (task.isSuccessful()){
+                            DocumentSnapshot documentSnapshot = task.getResult();
+                            if (documentSnapshot!=null){
+                                marcacao = documentSnapshot.toObject(Marcacao.class);
+                                tvPreco.setText("preço a pagar: " + marcacao.getPreco());
+                                tvHoraTreino.setText("hora de inicio: " + marcacao.getHoraTreino());
+                                tvDiaTreino.setText("dia do treino: " + marcacao.getDiaTreino());
+                                tvTempoDemora.setText("tempo do treino:" + marcacao.getTempoDemora());
+                                tvEstado.setText("estado da marcaçao :" + marcacao.getEstado());
 
-                            if (tipoConta.equals("usuario")) {
+                                if (tipoConta.equals("usuario")) {
 
-                                Log.i("btnEsquero","passei");
-                                if (marcacao.getEstado().equals("pedente")) {
-                                    btnEsquero.setText("voltar");
-                                    btnEsquero.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            startActivity(new Intent(ActivityDetalhesMarcacao.this, ActivityModalidades.class));
-                                        }
-                                    });
-                                }
-                                if(marcacao.getEstado().equals("aceite")) {
+                                    Log.i("btnEsquero","passei");
+                                    if (marcacao.getEstado().equals("pedente")) {
+                                        btnEsquero.setText("voltar");
+                                        btnEsquero.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                startActivity(new Intent(ActivityDetalhesMarcacao.this, ActivityModalidades.class));
+                                            }
+                                        });
+                                    }
+                                    if(marcacao.getEstado().equals("aceite")) {
 
-                                    btnEsquero.setVisibility(View.GONE);
-                                    btnDireito.setVisibility(View.GONE);
-                                    paymentsClient = PaymentsUtil.createPaymentsClient(ActivityDetalhesMarcacao.this);
-                                    possiblyShowGooglePayButton();
+                                        btnEsquero.setVisibility(View.GONE);
+                                        btnDireito.setVisibility(View.GONE);
+                                        paymentsClient = PaymentsUtil.createPaymentsClient(ActivityDetalhesMarcacao.this);
+                                        possiblyShowGooglePayButton();
 
-                                    mGooglePayButton.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
+                                        mGooglePayButton.setOnClickListener(v -> {
                                             //processarPagamento();
                                             requestPayment(v);
-                                        }
-                                    });
+                                        });
 
-                                    btnCancelarMarcacao.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
+                                        btnCancelarMarcacao.setOnClickListener(v -> {
 
                                             AlertDialog alertDialog =
                                                     new AlertDialog.Builder(ActivityDetalhesMarcacao.this)
@@ -167,57 +145,40 @@ public class ActivityDetalhesMarcacao extends AppCompatActivity {
                                                             .create();
                                             alertDialog.show();
 
-                                        }
-                                    });
+                                        });
+                                    }
                                 }
-                            }
 
-                            if(tipoConta.equals("personal")) {
-                                if (marcacao!=null) {
-                                    if (usuario!=null && usuario.getDoencas() != null) {
-                                        tvObs.setText(usuario.getDoencas());
-                                    } else {
-                                        tvObs.setText("nenhum problema de saude");
+                                if(tipoConta.equals("personal")) {
+                                    if (marcacao!=null) {
+                                       /* if (pessoa1!=null && pessoa1.getDoencas() != null) {
+                                            tvObs.setText(pessoa1.getDoencas());
+                                        } else {
+                                            tvObs.setText("nenhum problema de saude");
+                                        }*/
+                                        if (marcacao.getEstado().equals("pedente")) {
+                                            btnEsquero.setText("aceitar");
+                                            btnEsquero.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    mudarEstadoMarcacao("aceite");
+                                                }
+                                            });
+
+                                            btnDireito.setText("Recusar");
+                                            btnDireito.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    criarDialogRecusar();
+                                                }
+                                            });
+                                        }
+
                                     }
-                                    if (marcacao.getEstado().equals("pedente")) {
-                                        btnEsquero.setText("aceitar");
-                                        btnEsquero.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                mudarEstadoMarcacao("aceite");
-                                            }
-                                        });
-
-                                        btnDireito.setText("Recusar");
-                                        btnDireito.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                AlertDialog alertDialog =
-                                                        new AlertDialog.Builder(ActivityDetalhesMarcacao.this)
-                                                                .setTitle("Recusar marcacao?")
-                                                                .setMessage(
-                                                                        "Deseja realmente Recusar a marcaçao?")
-                                                                .setPositiveButton("Continuar", new DialogInterface.OnClickListener() {
-                                                                    @Override
-                                                                    public void onClick(DialogInterface dialog, int which) {
-                                                                        mudarEstadoMarcacao("recusada");
-                                                                        startActivity(new Intent(ActivityDetalhesMarcacao.this,ActivityModalidades.class));
-                                                                        Toast.makeText(ActivityDetalhesMarcacao.this,"Marcacao Recusada com sucesso",Toast.LENGTH_LONG).show();
-                                                                        finish();
-                                                                    }
-                                                                })
-                                                                .setNegativeButton("cancelar",null)
-                                                                .create();
-                                                alertDialog.show();
-                                            }
-                                        });
-                                    }
-
                                 }
                             }
                         }
-                    }
-                }});
+                    });
         }
         else {
             tvPreco.setText("preço a pagar: " + preco);
@@ -232,21 +193,7 @@ public class ActivityDetalhesMarcacao extends AppCompatActivity {
                     btnEsquero.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            final Calendar c = Calendar.getInstance();
-                            int year = c.get(Calendar.YEAR);
-                            int month = c.get(Calendar.MONTH);
-                            int day = c.get(Calendar.DAY_OF_MONTH);
-                            int hora = c.get(Calendar.HOUR_OF_DAY);
-                            int minutos = c.get(Calendar.MINUTE);
-                            marcacaoRef = FirebaseFirestore.getInstance().collection("marcacoes").document();
-                            Marcacao marcacao = new Marcacao("" + day + "/" + month + "/" + year, diaTreino, "pedente", horaTreino, uuidPersonal, preco, tempoDuracao, user.getUid(), "" + hora + ":" + minutos, marcacaoRef.getId());
-                            marcacaoRef.set(marcacao);
-                            addIdMarcacao();
-                            Toast.makeText(ActivityDetalhesMarcacao.this,"Marcaçao realizada com sucesso",Toast.LENGTH_LONG).show();
-                            Intent intent = new Intent(ActivityDetalhesMarcacao.this, ActivityPersonalTrainerPerfil.class);
-                            intent.putExtra("uuid",uuidPersonal);
-                            startActivity(intent);
-                            finish();
+                            salvarMarcaccao();
                         }
                     });
                 }
@@ -288,11 +235,9 @@ public class ActivityDetalhesMarcacao extends AppCompatActivity {
 
     private void setGooglePayAvailable(Boolean result) {
         if(result){
-
             mGooglePayButton.setVisibility(View.VISIBLE);
             btnCancelarMarcacao.setVisibility(View.VISIBLE);
         }else {
-
         }
     }
 
@@ -320,8 +265,6 @@ public class ActivityDetalhesMarcacao extends AppCompatActivity {
                     paymentsClient.loadPaymentData(request), this, LOAD_PAYMENT_DATA_REQUEST_CODE);
         }
     }
-
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -369,8 +312,6 @@ public class ActivityDetalhesMarcacao extends AppCompatActivity {
             String billingName =
                     paymentMethodData.getJSONObject("info").getJSONObject("billingAddress").getString("name");
             Log.d("BillingName", billingName);
-
-
             // Logging token string.
             Log.d("GooglePaymentToken", paymentMethodData.getJSONObject("tokenizationData").getString("token"));
         } catch (JSONException e) {
@@ -400,67 +341,54 @@ public class ActivityDetalhesMarcacao extends AppCompatActivity {
         }
     }
 
-
-    public void addIdMarcacao(){
-        final DocumentReference usuarioRef = pessoasRef.document(user.getUid());
-        final DocumentReference personalRef = pessoasRef.document(uuidPersonal);
-        if (usuario.getMarcacoes()!=null){
-            usuario.addMarcacao(marcacaoRef.getId());
-        }
-        else {
-            ArrayList<String> idMarcacoes = new ArrayList<String>();
-            idMarcacoes.add(marcacaoRef.getId());
-            usuario.setMarcacoes(idMarcacoes);
-        }
-
-        if (personalTrainer.getMarcacoes()!=null){
-            personalTrainer.addMarcacao(marcacaoRef.getId());
-        }
-        else {
-            ArrayList<String> idMarcacoes = new ArrayList<String>();
-            idMarcacoes.add(marcacaoRef.getId());
-            personalTrainer.setMarcacoes(idMarcacoes);
-        }
-        personalRef.set(personalTrainer);
-        usuarioRef.set(usuario);
-    }
-
     public void mudarEstadoMarcacao(String estado){
         marcacao.setEstado(estado);
-        final CollectionReference marcacoesCollection = FirebaseFirestore.getInstance().collection("marcacoes");
-        marcacoesCollection.document(idMarcacao).set(marcacao);
+        pessoasRef.document(marcacao.getPersonalUuid()).collection("marcacoes").document(marcacao.getMarcacaoID()).set(marcacao);
+        pessoasRef.document(marcacao.getUsuarioUuid()).collection("marcacoes").document(marcacao.getMarcacaoID()).set(marcacao);
     }
 
-    public void getPersonalEUsuario(){
-    if (marcacao!=null){
+    public void salvarMarcaccao(){
+        final Calendar c = Calendar.getInstance();
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH);
+        int day = c.get(Calendar.DAY_OF_MONTH);
+        int hora = c.get(Calendar.HOUR_OF_DAY);
+        int minutos = c.get(Calendar.MINUTE);
+        DocumentReference marcacaoRefUser,marcacaoRefPersonal;
+        marcacaoRefUser = pessoasRef.document(user.getUid()).collection("marcacoes").document();
+        Marcacao marcacao = new Marcacao("" + day + "/" + month + "/" + year, diaTreino, "pedente", horaTreino, uuidPersonal, preco, tempoDuracao, user.getUid(), "" + hora + ":" + minutos, marcacaoRefUser.getId());
 
-    final DocumentReference usuarioRef = pessoasRef.document(marcacao.getUsuarioUuid());
-    final DocumentReference personalRef = pessoasRef.document(marcacao.getPersonalUuid());
-    usuarioRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-        @Override
-        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-            if(task.isSuccessful()){
-                DocumentSnapshot documentSnapshot = task.getResult();
-                if(documentSnapshot!=null){
-                    usuario = documentSnapshot.toObject(Usuario.class);
-                }
-            }
-        }
-    });
+        marcacaoRefUser.set(marcacao);
+        marcacaoRefPersonal = pessoasRef.document(uuidPersonal).collection("marcacoes").document(marcacao.getMarcacaoID());
+        marcacaoRefPersonal.set(marcacao);
 
-    personalRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-        @Override
-        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-            if(task.isSuccessful()){
-                DocumentSnapshot documentSnapshot = task.getResult();
-                if(documentSnapshot!=null){
-                    personalTrainer = documentSnapshot.toObject(PersonalTrainer.class);
-                }
-            }
-        }
-    });
 
-}
+        Toast.makeText(ActivityDetalhesMarcacao.this,"Marcaçao realizada com sucesso",Toast.LENGTH_LONG).show();
+        Intent intent = new Intent(ActivityDetalhesMarcacao.this, ActivityPersonalTrainerPerfil.class);
+        intent.putExtra("uuid",uuidPersonal);
+        finish();
+        startActivity(intent);
     }
+    public void criarDialogRecusar(){
 
+        AlertDialog alertDialog =
+                new AlertDialog.Builder(ActivityDetalhesMarcacao.this)
+                        .setTitle("Recusar marcacao?")
+                        .setMessage(
+                                "Deseja realmente Recusar a marcaçao?")
+                        .setPositiveButton("Continuar", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                mudarEstadoMarcacao("recusada");
+                                startActivity(new Intent(ActivityDetalhesMarcacao.this,ActivityModalidades.class));
+                                Toast.makeText(ActivityDetalhesMarcacao.this,"Marcacao Recusada com sucesso",Toast.LENGTH_LONG).show();
+                                finish();
+                            }
+                        })
+                        .setNegativeButton("cancelar",null)
+                        .create();
+        alertDialog.show();
+    }
 }
+
+
