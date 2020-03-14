@@ -14,8 +14,12 @@ import androidx.annotation.NonNull;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -29,10 +33,6 @@ public class AdapterComentario extends BaseAdapter {
 
     public AdapterComentario(Context context, ArrayList<Comentario> comentariosList) {
         this.context = context;
-        this.comentariosList = comentariosList;
-    }
-
-    public void setClassificacoes(ArrayList<Comentario> comentariosList) {
         this.comentariosList = comentariosList;
     }
 
@@ -64,31 +64,29 @@ public class AdapterComentario extends BaseAdapter {
         final TextView txtComentario = convertView.findViewById(R.id.comentario);
         final RatingBar ratingBar = convertView.findViewById(R.id.comentario_rating);
         final ImageView imgPerfil = convertView.findViewById(R.id.img_comentador);
-        FirebaseFirestore.getInstance().collection("/pessoas").document(Objects.requireNonNull(comentario.getComentador())).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-            if (task.isSuccessful()) {
-                DocumentSnapshot document = task.getResult();
 
-                if (document.exists()) {
-                    Usuario comentador = document.toObject(Usuario.class);
-                    txtComentador.setText(comentador.getNome());
-                    txtComentario.setText(comentario.getComentario());
-                    Glide.with(imgPerfil.getContext())
-                            .load(comentador.getProfileUrl())
-                            .into(imgPerfil);
+        txtComentador.setText(comentario.getComentadorNome());
+        txtComentario.setText(comentario.getComentario());
 
-                    ratingBar.setRating(comentario.getClassificacao());
-                    Log.d("FirebaseFirestore", "comentarioAp");
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference("image/"+comentario.getComentadorId());
 
-                } else {
-                    Log.d("FirebaseFirestore", "No such document");
-                }
-            } else {
-                Log.d("FirebaseFirestore", "Error getting documents: ", task.getException());
+        final long ONE_MEGABYTE = 1024 * 1024;
+        storageReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(bytes -> {
+            if(bytes.length!=0){
+
+               try {
+                   Glide.with(context.getApplicationContext())
+                           .load(bytes)
+                           .into(imgPerfil);
+               }catch (Exception ignored){
+
+               }
             }
-        }
-    });
+        });
+
+        ratingBar.setRating(comentario.getClassificacao());
+
+
         return convertView;
     }
 }

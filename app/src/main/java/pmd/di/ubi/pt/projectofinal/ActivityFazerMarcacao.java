@@ -40,16 +40,13 @@ import java.util.Calendar;
 
 public class ActivityFazerMarcacao extends AppCompatActivity  implements AdapterView.OnItemSelectedListener {
 
-    private Spinner spHoras;
     private TextView tvPreco;
     private static TextView tvHoraInicio, tvDiaTreino;
     private PersonalTrainer personalTrainer;
     private String uuidPersonal;
-    private Button btnTempoInicio, btnDiaTreino;
     private ExtendedFloatingActionButton btnMarcar;
     private String tempoDemora;
     private Float preco;
-    private FirebaseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,14 +54,13 @@ public class ActivityFazerMarcacao extends AppCompatActivity  implements Adapter
         setContentView(R.layout.activity_gerar_preco);
         getSupportActionBar().setTitle("Marcaçao");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        spHoras = findViewById(R.id.sp_horas);
+        Spinner spHoras = findViewById(R.id.sp_horas);
         tvPreco = findViewById(R.id.tv_preco);
         btnMarcar = findViewById(R.id.btn_marcar);
         tvHoraInicio = findViewById(R.id.tv_hora_inicio);
-        btnDiaTreino  =findViewById(R.id.btn_dia_treino);
+        Button btnDiaTreino = findViewById(R.id.btn_dia_treino);
         tvDiaTreino = findViewById(R.id.tv_dia_treino);
-        btnTempoInicio = findViewById(R.id.btn_tempo_inicio);
+        Button btnTempoInicio = findViewById(R.id.btn_tempo_inicio);
         uuidPersonal = getIntent().getStringExtra("uuid");
         preco = null;
 
@@ -74,51 +70,32 @@ public class ActivityFazerMarcacao extends AppCompatActivity  implements Adapter
         spHoras.setAdapter(horaAdapter);
         spHoras.setOnItemSelectedListener(this);
 
-        FirebaseFirestore.getInstance().collection("pessoas").document(uuidPersonal).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        personalTrainer = document.toObject(PersonalTrainer.class);
-                        if(personalTrainer!=null){
-                            preco =personalTrainer.getPreco();
-                            tvPreco.setText(""+(preco*0.5));
-                            btnMarcar.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    gerarDetalhesMarcacao();
-                                }
-                            });
-                        }
-                    }else{
-                        Log.d("FirestoreFirebase", "No such document");
+        FirebaseFirestore.getInstance().collection("pessoas").document(uuidPersonal).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (document!=null) {
+                    personalTrainer = document.toObject(PersonalTrainer.class);
+                    if(personalTrainer!=null){
+                        preco =personalTrainer.getPreco();
+                        tvPreco.setText(""+(preco*0.5));
+                        btnMarcar.setOnClickListener(v -> gerarDetalhesMarcacao());
                     }
+                }else{
+                    Log.d("FirestoreFirebase", "No such document");
                 }
             }
         });
 
-        btnMarcar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                    gerarDetalhesMarcacao();
-            }
+        btnMarcar.setOnClickListener(v -> gerarDetalhesMarcacao());
+
+        btnTempoInicio.setOnClickListener(v -> {
+            DialogFragment newFragment = new TimePickerFragment();
+            newFragment.show(getSupportFragmentManager(), "timePicker");
         });
 
-        btnTempoInicio.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DialogFragment newFragment = new TimePickerFragment();
-                newFragment.show(getSupportFragmentManager(), "timePicker");
-            }
-        });
-
-        btnDiaTreino.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DialogFragment newFragment = new DatePickerFragment();
-                newFragment.show(getSupportFragmentManager(), "datePicker");
-            }
+        btnDiaTreino.setOnClickListener(v -> {
+            DialogFragment newFragment = new DatePickerFragment();
+            newFragment.show(getSupportFragmentManager(), "datePicker");
         });
 
     }
@@ -143,8 +120,6 @@ public class ActivityFazerMarcacao extends AppCompatActivity  implements Adapter
         intent.putExtra("tempoInicio",horaTreino);
         intent.putExtra("diaTreino",diaTreino);
         intent.putExtra("TempoDemora",tempoDemora);
-        intent.putExtra("estado","temporario");
-        intent.putExtra("tipoConta","usuario");
         intent.putExtra("uuidPersonal",uuidPersonal);
         finish();
         startActivity(intent);

@@ -67,15 +67,11 @@ public class SpinnerAdapterDesporto extends ArrayAdapter<Desporto> {
             holder.mCheckBox.setVisibility(View.VISIBLE);
         }
         holder.mCheckBox.setTag(position);
-        holder.mCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        holder.mCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            int getPosition = (Integer) buttonView.getTag();
 
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                int getPosition = (Integer) buttonView.getTag();
-
-                if (!isFromView) {
-                    listState.get(position).setSelected(isChecked);
-                }
+            if (!isFromView) {
+                listState.get(position).setSelected(isChecked);
             }
         });
         return convertView;

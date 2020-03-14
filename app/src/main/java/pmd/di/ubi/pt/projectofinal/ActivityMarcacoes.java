@@ -26,6 +26,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import org.w3c.dom.Document;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class ActivityMarcacoes extends AppCompatActivity {
     private ArrayList<Marcacao> marcacaoArrayList;
@@ -44,59 +45,56 @@ public class ActivityMarcacoes extends AppCompatActivity {
         tipoDeConta = vimDasOpcoes.getStringExtra("conta");
         initView();
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("marcaçoes");
 
         NavigationView nv = (NavigationView) findViewById(R.id.nv_user);
 
         initMarcacoes();
-        nv.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                int id = item.getItemId();
-                Intent intent;
-                switch (id) {
-                    case R.id.nav_opcao_conta:
-                        intent = new Intent(ActivityMarcacoes.this, ActivityDefinicoesConta.class);
-                        startActivity(intent);
-                        break;
-                    case R.id.nav_opcao_sair:
-                        FirebaseAuth.getInstance().signOut();
-                        intent = new Intent(ActivityMarcacoes.this, ActivityLogin.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        FirebaseMessaging.getInstance().unsubscribeFromTopic(user.getUid());
-                        startActivity(intent);
-                        break;
-                    case R.id.nav_opcao_marcacao_pendente:
-                        intent = new Intent(ActivityMarcacoes.this, ActivityMarcacoes.class);
-                        intent.putExtra("estado", "pedente");
-                        intent.putExtra("conta", "usuario");
-                        startActivity(intent);
-                        break;
-                    case R.id.nav_opcao_marcacao_aceite:
-                        intent = new Intent(ActivityMarcacoes.this, ActivityMarcacoes.class);
-                        intent.putExtra("estado", "aceite");
-                        intent.putExtra("conta", "usuario");
-                        startActivity(intent);
-                        break;
-                    case R.id.nav_opcao_marcacao_paga:
-                        intent = new Intent(ActivityMarcacoes.this, ActivityMarcacoes.class);
-                        intent.putExtra("estado", "paga");
-                        intent.putExtra("conta", "usuario");
-                        startActivity(intent);
-                        break;
+        nv.setNavigationItemSelectedListener(item -> {
+            int id = item.getItemId();
+            Intent intent;
+            switch (id) {
+                case R.id.nav_opcao_conta:
+                    intent = new Intent(ActivityMarcacoes.this, ActivityDefinicoesConta.class);
+                    startActivity(intent);
+                    break;
+                case R.id.nav_opcao_sair:
+                    FirebaseAuth.getInstance().signOut();
+                    intent = new Intent(ActivityMarcacoes.this, ActivityLogin.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    FirebaseMessaging.getInstance().unsubscribeFromTopic(user.getUid());
+                    startActivity(intent);
+                    break;
+                case R.id.nav_opcao_marcacao_pendente:
+                    intent = new Intent(ActivityMarcacoes.this, ActivityMarcacoes.class);
+                    intent.putExtra("estado", "pedente");
+                    intent.putExtra("conta", "usuario");
+                    startActivity(intent);
+                    break;
+                case R.id.nav_opcao_marcacao_aceite:
+                    intent = new Intent(ActivityMarcacoes.this, ActivityMarcacoes.class);
+                    intent.putExtra("estado", "aceite");
+                    intent.putExtra("conta", "usuario");
+                    startActivity(intent);
+                    break;
+                case R.id.nav_opcao_marcacao_paga:
+                    intent = new Intent(ActivityMarcacoes.this, ActivityMarcacoes.class);
+                    intent.putExtra("estado", "paga");
+                    intent.putExtra("conta", "usuario");
+                    startActivity(intent);
+                    break;
 
-                    case R.id.nav_opcao_historico:
-                        intent = new Intent(ActivityMarcacoes.this, ActivityMarcacoes.class);
-                        intent.putExtra("estado", "default");
-                        intent.putExtra("conta", "usuario");
-                        startActivity(intent);
-                        break;
-                    default:
-                        return true;
-                }
-                return true;
+                case R.id.nav_opcao_historico:
+                    intent = new Intent(ActivityMarcacoes.this, ActivityMarcacoes.class);
+                    intent.putExtra("estado", "default");
+                    intent.putExtra("conta", "usuario");
+                    startActivity(intent);
+                    break;
+                default:
+                    return true;
             }
+            return true;
         });
     }
 
@@ -122,38 +120,34 @@ public class ActivityMarcacoes extends AppCompatActivity {
                 Intent intent = new Intent(this, ActivityDefinicoesConta.class);
                 startActivity(intent);
                 return true;
-
             case android.R.id.home:
                 finish();
                 return true;
-
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
     public void initMarcacoes() {
-        FirebaseFirestore.getInstance().collection("pessoas").document(user.getUid()).collection("marcacoes").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                QuerySnapshot documentSnapshots = task.getResult();
-                if (documentSnapshots != null) {
-                    Marcacao marcacao;
-                    for (DocumentSnapshot document : documentSnapshots) {
-                        marcacao = document.toObject(Marcacao.class);
-                        if (marcacao!=null){
-                            if (estadoMarcacao.equals("default") && (marcacao.getEstado().equals("cancelada") || marcacao.getEstado().equals("terminada"))) {
-                                marcacaoArrayList.add(marcacao);
-                            }
-                            if (marcacao.getEstado().equals(estadoMarcacao)) {
-                                marcacaoArrayList.add(marcacao);
+        FirebaseFirestore.getInstance().collection("pessoas").document(user.getUid())
+                .collection("marcacoes").get().addOnCompleteListener(task -> {
+                    QuerySnapshot documentSnapshots = task.getResult();
+                    if (documentSnapshots != null) {
+                        Marcacao marcacao;
+                        for (DocumentSnapshot document : documentSnapshots) {
+                            marcacao = document.toObject(Marcacao.class);
+                            if (marcacao!=null){
+                                if (estadoMarcacao.equals("default") && (marcacao.getEstado().equals("cancelada") || marcacao.getEstado().equals("terminada"))) {
+                                    marcacaoArrayList.add(marcacao);
+                                }
+                                if (marcacao.getEstado().equals(estadoMarcacao)) {
+                                    marcacaoArrayList.add(marcacao);
+                                }
                             }
                         }
+                        Log.d("FirebaseFirestore", marcacaoArrayList.toString());
+                        adapterMarcacao.notifyDataSetChanged();
                     }
-                    Log.d("FirebaseFirestore", marcacaoArrayList.toString());
-                    adapterMarcacao.notifyDataSetChanged();
-                }
-            }
-        });
+                });
     }
 }

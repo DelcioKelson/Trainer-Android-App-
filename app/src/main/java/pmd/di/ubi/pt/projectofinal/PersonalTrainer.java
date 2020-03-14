@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class PersonalTrainer extends Pessoa     implements Comparable <PersonalTrainer> {
+public class PersonalTrainer extends Pessoa implements Comparable <PersonalTrainer> {
 
     private String especialidade;
     private Float classificacao;

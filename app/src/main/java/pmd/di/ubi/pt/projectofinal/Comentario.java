@@ -3,15 +3,43 @@ package pmd.di.ubi.pt.projectofinal;
 public class Comentario {
     private String comentario;
     private Float classificacao;
-    private String comentador;
+    private String comentadorId;
+    private String comentadorNome;
+    private String comentarioData;
 
     public Comentario() {
     }
 
-    public Comentario(String comentario, Float classificacao, String comentador) {
+    public Comentario(String comentario, Float classificacao, String comentadorId, String comentadorNome, String comentarioData) {
         this.comentario = comentario;
         this.classificacao = classificacao;
-        this.comentador = comentador;
+        this.comentadorId = comentadorId;
+        this.comentadorNome = comentadorNome;
+        this.comentarioData = comentarioData;
+    }
+
+    public String getComentarioData() {
+        return comentarioData;
+    }
+
+    public void setComentarioData(String comentarioData) {
+        this.comentarioData = comentarioData;
+    }
+
+    public String getComentadorId() {
+        return comentadorId;
+    }
+
+    public void setComentadorId(String comentadorId) {
+        this.comentadorId = comentadorId;
+    }
+
+    public String getComentadorNome() {
+        return comentadorNome;
+    }
+
+    public void setComentadorNome(String comentadorNome) {
+        this.comentadorNome = comentadorNome;
     }
 
     public Float getClassificacao() {
@@ -30,13 +58,4 @@ public class Comentario {
         this.comentario = comentario;
     }
 
-
-
-    public String getComentador() {
-        return comentador;
-    }
-
-    public void setComentador(String comentador) {
-        this.comentador = comentador;
-    }
 }

@@ -11,10 +11,9 @@ public class Usuario extends Pessoa {
 
     }
 
-    public Usuario(String uuid, String nome, String profileUrl, String data, String peso, String altura, String doencas, String numeroTelefone) {
+    public Usuario(String uuid, String nome, String data, String peso, String altura, String doencas, String numeroTelefone) {
         this.uuid = uuid;
         this.nome = nome;
-        this.profileUrl = profileUrl;
         this.data = data;
         this.peso = peso;
         this.altura = altura;

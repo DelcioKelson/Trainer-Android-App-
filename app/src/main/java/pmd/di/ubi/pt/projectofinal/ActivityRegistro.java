@@ -15,7 +15,6 @@ import java.util.ArrayList;
 
 public class ActivityRegistro extends AppCompatActivity {
     private ArrayList<Desporto> desportoList;
-    private Button btnProximoPasso;
     private CheckBox c1,c2,c3,c4,c5,c6;
     private Spinner spinner ;
     private Boolean c6IsCheck;
@@ -31,40 +30,34 @@ public class ActivityRegistro extends AppCompatActivity {
         c5 = findViewById(R.id.cb5);
         c6 = findViewById(R.id.cb6);
         spinner= (Spinner) findViewById(R.id.spinner);
-        btnProximoPasso = (Button)findViewById(R.id.btn_proximo_passo);
+        Button btnProximoPasso = (Button) findViewById(R.id.btn_proximo_passo);
         c6IsCheck= false;
-        c6.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
-                    spinner.setVisibility(View.VISIBLE);
-                    inicializarSpinnerDesporto();
-                }else {
-                    spinner.setVisibility(View.GONE);
-                }
-                c6IsCheck= isChecked;
+        c6.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if(isChecked){
+                spinner.setVisibility(View.VISIBLE);
+                inicializarSpinnerDesporto();
+            }else {
+                spinner.setVisibility(View.GONE);
             }
+            c6IsCheck= isChecked;
         });
 
-        btnProximoPasso.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intentProximoPasso = new Intent(ActivityRegistro.this,ActivityRegistro2.class);
-                StringBuilder desportoString = new StringBuilder();
-                if(c6IsCheck){
-                        for (Desporto desporto :desportoList){
-                            if(desporto.isSelected()){
-                                desportoString.append("/").append(desporto.getTitle());
-                            }
+        btnProximoPasso.setOnClickListener(v -> {
+            Intent intentProximoPasso = new Intent(ActivityRegistro.this,ActivityRegistro2.class);
+            StringBuilder desportoString = new StringBuilder();
+            if(c6IsCheck){
+                    for (Desporto desporto :desportoList){
+                        if(desporto.isSelected()){
+                            desportoString.append("/").append(desporto.getTitle());
                         }
-                        intentProximoPasso.putExtra("Doencas",getDoencas()+ "(" + desportoString.toString() + ")");
-                    //Log.i("DOENCASuser",getDoencas()+ "(" + desportoString.toString() + ")");
-                }else {
-                    intentProximoPasso.putExtra("Doencas",getDoencas());
-                    //Log.i("DOENCASuser",getDoencas());
-                }
-                startActivity(intentProximoPasso);
+                    }
+                    intentProximoPasso.putExtra("Doencas",getDoencas()+ "(" + desportoString.toString() + ")");
+                //Log.i("DOENCASuser",getDoencas()+ "(" + desportoString.toString() + ")");
+            }else {
+                intentProximoPasso.putExtra("Doencas",getDoencas());
+                //Log.i("DOENCASuser",getDoencas());
             }
+            startActivity(intentProximoPasso);
         });
     }
 

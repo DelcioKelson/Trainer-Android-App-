@@ -5,7 +5,6 @@ import java.util.ArrayList;
 public class Pessoa {
       String uuid;
       String nome;
-      String profileUrl;
       String data;
       String numeroTelefone;
       String tipoDeConta;
@@ -40,14 +39,6 @@ public class Pessoa {
 
     public void setUuid(String uuid) {
         this.uuid = uuid;
-    }
-
-    public String getProfileUrl() {
-        return profileUrl;
-    }
-
-    public void setProfileUrl(String profileUrl) {
-        this.profileUrl = profileUrl;
     }
 
     public String getData() {

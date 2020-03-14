@@ -31,18 +31,14 @@ public class ActivityInical extends AppCompatActivity {
     public void iniciarSessao(){
         if(user!=null){
             FirebaseFirestore.getInstance().collection("pessoas").document(user.getUid()).get().addOnCompleteListener(task -> {
-
                 if (task.isSuccessful()) {
                     Log.i("activityInicial","activityInicial");
                     DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
+                    if (document!=null) {
                         Pessoa pessoa = document.toObject(Pessoa.class);
                         FirebaseMessaging.getInstance().subscribeToTopic(user.getUid());
                         Intent intent = new Intent(ActivityInical.this, pessoa.tipoDeConta.equals("usuario")? ActivityModalidades.class:ActivityPersonalTrainerPerfil.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                       if(pessoa.tipoDeConta.equals("personal")){
-                           intent.putExtra("uuid",user.getUid());
-                       }
                         startActivity(intent);
                     }
                 }

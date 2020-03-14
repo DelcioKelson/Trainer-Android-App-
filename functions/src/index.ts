@@ -2,7 +2,7 @@ import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 admin.initializeApp()
 
-  export const notificacaoAtualizada =  functions.firestore.document("marcacoes/{uuid}").onUpdate((snapshot, context) =>{
+  export const notificacaoAtualizada =  functions.firestore.document("pessoas/{uuid}/marcacoes/{marcacoes_uuid}").onUpdate((snapshot, context) =>{
     const after = snapshot.after.data()
             if(after){
                 if(after.estado == 'aceite'){

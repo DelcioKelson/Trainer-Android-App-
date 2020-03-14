@@ -36,12 +36,9 @@ public class ActivityPersonalList extends AppCompatActivity {
     private ArrayList<PersonalTrainer> personalList;
     private String modalidade;
     private AdapterPersonalTrainers adapterPersonalTrainers;
-    private String uuid;
-    private LinearLayout llOrdenarOpcoes;
     private Button btnOrdenarPreco,btnOrdenarRating;
     private int jaClicadoRating,jaClicadoPreco;
     private ArrayList<PersonalTrainer> personalListOriginal;
-    private NavigationView nv;
     private FirebaseUser user;
 
 
@@ -51,16 +48,15 @@ public class ActivityPersonalList extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
 // set an exit transition
-        uuid = getIntent().getStringExtra("uuid");
         getWindow().setExitTransition(new Explode());
         setContentView(R.layout.activity_gridview);
         Intent comeFromModalidade = getIntent();
-        llOrdenarOpcoes = findViewById(R.id.ll_ordenar_opcoes);
+        LinearLayout llOrdenarOpcoes = findViewById(R.id.ll_ordenar_opcoes);
         btnOrdenarPreco = findViewById(R.id.btn_ordenar_preco);
         btnOrdenarRating = findViewById(R.id.btn_ordenar_rating);
         llOrdenarOpcoes.setVisibility(View.VISIBLE);
         modalidade = comeFromModalidade.getStringExtra("modalidade");
-        getSupportActionBar().setTitle("Personais trainers");
+        Objects.requireNonNull(getSupportActionBar()).setTitle("Personais trainers");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         jaClicadoRating = 0;
         jaClicadoPreco = 0;
@@ -69,63 +65,58 @@ public class ActivityPersonalList extends AppCompatActivity {
         initView();
         initPersonalList();
 
-        nv = (NavigationView)findViewById(R.id.nv_user);
+        NavigationView nv = (NavigationView) findViewById(R.id.nv_user);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("Modalidades");
 
         Menu menuNav  = nv.getMenu();
 
+        nv.setNavigationItemSelectedListener(item -> {
+            int id = item.getItemId();
+            Intent intent;
+            switch(id)
+            {
+                case R.id.nav_opcao_conta:
+                    intent = new Intent(ActivityPersonalList.this, ActivityDefinicoesConta.class);
+                    startActivity(intent);
+                    break;
+                case R.id.nav_opcao_sair:
+                    FirebaseAuth.getInstance().signOut();
+                    intent = new Intent(ActivityPersonalList.this, ActivityLogin.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    FirebaseMessaging.getInstance().unsubscribeFromTopic(user.getUid());
 
-        nv.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                int id = item.getItemId();
-                Intent intent;
-                switch(id)
-                {
-                    case R.id.nav_opcao_conta:
-                        intent = new Intent(ActivityPersonalList.this, ActivityDefinicoesConta.class);
-                        startActivity(intent);
-                        break;
-                    case R.id.nav_opcao_sair:
-                        FirebaseAuth.getInstance().signOut();
-                        intent = new Intent(ActivityPersonalList.this, ActivityLogin.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        FirebaseMessaging.getInstance().unsubscribeFromTopic(user.getUid());
+                    startActivity(intent);
+                    break;
+                case  R.id.nav_opcao_marcacao_pendente:
+                    intent = new Intent(ActivityPersonalList.this, ActivityMarcacoes.class);
+                    intent.putExtra("estado","pedente");
+                    intent.putExtra("conta","usuario");
+                    startActivity(intent);
+                    break;
+                case  R.id.nav_opcao_marcacao_aceite:
+                    intent = new Intent(ActivityPersonalList.this, ActivityMarcacoes.class);
+                    intent.putExtra("estado","aceite");
+                    intent.putExtra("conta","usuario");
+                    startActivity(intent);
+                    break;
+                case  R.id.nav_opcao_marcacao_paga:
+                    intent = new Intent(ActivityPersonalList.this, ActivityMarcacoes.class);
+                    intent.putExtra("estado","paga");
+                    intent.putExtra("conta","usuario");
+                    startActivity(intent);
+                    break;
 
-                        startActivity(intent);
-                        break;
-                    case  R.id.nav_opcao_marcacao_pendente:
-                        intent = new Intent(ActivityPersonalList.this, ActivityMarcacoes.class);
-                        intent.putExtra("estado","pedente");
-                        intent.putExtra("conta","usuario");
-                        startActivity(intent);
-                        break;
-                    case  R.id.nav_opcao_marcacao_aceite:
-                        intent = new Intent(ActivityPersonalList.this, ActivityMarcacoes.class);
-                        intent.putExtra("estado","aceite");
-                        intent.putExtra("conta","usuario");
-                        startActivity(intent);
-                        break;
-                    case  R.id.nav_opcao_marcacao_paga:
-                        intent = new Intent(ActivityPersonalList.this, ActivityMarcacoes.class);
-                        intent.putExtra("estado","paga");
-                        intent.putExtra("conta","usuario");
-                        startActivity(intent);
-                        break;
+                case  R.id.nav_opcao_historico:
+                    intent = new Intent(ActivityPersonalList.this, ActivityMarcacoes.class);
+                    intent.putExtra("estado","default");
+                    intent.putExtra("conta","usuario");
 
-                    case  R.id.nav_opcao_historico:
-                        intent = new Intent(ActivityPersonalList.this, ActivityMarcacoes.class);
-                        intent.putExtra("estado","default");
-                        intent.putExtra("conta","usuario");
-
-                        startActivity(intent);
-                        break;
-                    default:
-                        return true;
-                }
-                return true;
+                    startActivity(intent);
+                    break;
+                default:
+                    return true;
             }
+            return true;
         });
 
         btnOrdenarRating.setOnClickListener(v -> {
@@ -137,19 +128,14 @@ public class ActivityPersonalList extends AppCompatActivity {
                 jaClicadoPreco =0;
                 btnOrdenarPreco.setCompoundDrawablesWithIntrinsicBounds( 0, 0, 0, 0);
             }
-            else
-            if (jaClicadoRating==1){
+            else if (jaClicadoRating==1){
                 Collections.reverse(personalList);
                 btnOrdenarRating.setCompoundDrawablesWithIntrinsicBounds(0 , 0, R.drawable.baseline_expand_less_black_18dp, 0);
-
                 jaClicadoRating =2;
-
-            }else
-            if (jaClicadoRating==2){
-                personalList = ( ArrayList<PersonalTrainer>) personalListOriginal.clone();
+            }else if (jaClicadoRating==2){
+                personalList = new ArrayList<> (personalListOriginal);
                 jaClicadoRating =0;
                 btnOrdenarRating.setCompoundDrawablesWithIntrinsicBounds( 0, 0, 0, 0);
-
             }
             Log.i("jaClicadoRating",jaClicadoRating+"");
 
@@ -173,7 +159,7 @@ public class ActivityPersonalList extends AppCompatActivity {
                 jaClicadoPreco =2;
             }else
             if (jaClicadoPreco==2){
-                personalList = ( ArrayList<PersonalTrainer>) personalListOriginal.clone();
+                personalList = new ArrayList<> (personalListOriginal);
                 jaClicadoPreco =0;
                 btnOrdenarPreco.setCompoundDrawablesWithIntrinsicBounds( 0, 0, 0, 0);
             }
@@ -202,7 +188,6 @@ public class ActivityPersonalList extends AppCompatActivity {
 
             case R.id.bar_opcao_conta:
                 intent = new Intent(ActivityPersonalList.this, ActivityDefinicoesConta.class);
-                intent.putExtra("uuid",uuid);
                 startActivity(intent);
                 return true;
 
@@ -215,25 +200,22 @@ public class ActivityPersonalList extends AppCompatActivity {
     }
     public void initPersonalList(){
             personalList = new ArrayList<>();
-            FirebaseFirestore.getInstance().collection("/pessoas").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if (task.isSuccessful()) {
-                        PersonalTrainer aux;
-                        for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                            aux = document.toObject(PersonalTrainer.class);
-                            if(aux.tipoDeConta.equals("personal")&& modalidade.equals(aux.getEspecialidade())){
-                                personalList.add(aux);
-                                Log.d("personalAux", aux.toString());
-                            }
+            FirebaseFirestore.getInstance().collection("/pessoas").get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    PersonalTrainer aux;
+                    for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                        aux = document.toObject(PersonalTrainer.class);
+                        if(aux.tipoDeConta.equals("personal")&& modalidade.equals(aux.getEspecialidade())){
+                            personalList.add(aux);
+                            Log.d("personalAux", aux.toString());
                         }
-                        personalListOriginal =(ArrayList<PersonalTrainer>) personalList.clone();
-                        adapterPersonalTrainers = new AdapterPersonalTrainers(ActivityPersonalList.this, personalList);
-                        gridView.setAdapter(adapterPersonalTrainers);
                     }
-                    else {
-                        Log.d("FirebaseFirestore", "Error getting documents: ", task.getException());
-                    }
+                    personalListOriginal = new ArrayList<> (personalList);
+                    adapterPersonalTrainers = new AdapterPersonalTrainers(ActivityPersonalList.this, personalList);
+                    gridView.setAdapter(adapterPersonalTrainers);
+                }
+                else {
+                    Log.d("FirebaseFirestore", "Error getting documents: ", task.getException());
                 }
             });
 

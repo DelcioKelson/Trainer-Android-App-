@@ -50,7 +50,6 @@ public class ActivityDetalhesMarcacao extends AppCompatActivity {
     private Marcacao marcacao;
     private final CollectionReference pessoasRef = FirebaseFirestore.getInstance().collection("pessoas");
 
-    private Pessoa pessoa1,pessoa2;
     private PaymentsClient paymentsClient;
     private static final int LOAD_PAYMENT_DATA_REQUEST_CODE = 991;
     private View mGooglePayButton;
@@ -101,19 +100,14 @@ public class ActivityDetalhesMarcacao extends AppCompatActivity {
                                 tvEstado.setText("estado da marcaçao :" + marcacao.getEstado());
 
                                 if (tipoConta.equals("usuario")) {
-
-                                    Log.i("btnEsquero","passei");
                                     if (marcacao.getEstado().equals("pedente")) {
                                         btnEsquero.setText("voltar");
-                                        btnEsquero.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                startActivity(new Intent(ActivityDetalhesMarcacao.this, ActivityModalidades.class));
-                                            }
+                                        btnEsquero.setOnClickListener(v -> {
+                                            //startActivity(new Intent(ActivityDetalhesMarcacao.this, ActivityModalidades.class));
+                                            finish();
                                         });
                                     }
                                     if(marcacao.getEstado().equals("aceite")) {
-
                                         btnEsquero.setVisibility(View.GONE);
                                         btnDireito.setVisibility(View.GONE);
                                         paymentsClient = PaymentsUtil.createPaymentsClient(ActivityDetalhesMarcacao.this);
@@ -125,7 +119,6 @@ public class ActivityDetalhesMarcacao extends AppCompatActivity {
                                         });
 
                                         btnCancelarMarcacao.setOnClickListener(v -> {
-
                                             AlertDialog alertDialog =
                                                     new AlertDialog.Builder(ActivityDetalhesMarcacao.this)
                                                             .setTitle("Cancelar marcacao?")
@@ -138,13 +131,11 @@ public class ActivityDetalhesMarcacao extends AppCompatActivity {
                                                                     startActivity(new Intent(ActivityDetalhesMarcacao.this,ActivityModalidades.class));
                                                                     Toast.makeText(ActivityDetalhesMarcacao.this,"Marcacao cancelada com sucesso",Toast.LENGTH_LONG).show();
                                                                     finish();
-
                                                                 }
                                                             })
                                                             .setNegativeButton("cancelar",null)
                                                             .create();
                                             alertDialog.show();
-
                                         });
                                     }
                                 }
@@ -158,20 +149,10 @@ public class ActivityDetalhesMarcacao extends AppCompatActivity {
                                         }*/
                                         if (marcacao.getEstado().equals("pedente")) {
                                             btnEsquero.setText("aceitar");
-                                            btnEsquero.setOnClickListener(new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View v) {
-                                                    mudarEstadoMarcacao("aceite");
-                                                }
-                                            });
+                                            btnEsquero.setOnClickListener(v -> mudarEstadoMarcacao("aceite"));
 
                                             btnDireito.setText("Recusar");
-                                            btnDireito.setOnClickListener(new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View v) {
-                                                    criarDialogRecusar();
-                                                }
-                                            });
+                                            btnDireito.setOnClickListener(v -> criarDialogRecusar());
                                         }
 
                                     }
@@ -179,33 +160,19 @@ public class ActivityDetalhesMarcacao extends AppCompatActivity {
                             }
                         }
                     });
-        }
+                }
         else {
             tvPreco.setText("preço a pagar: " + preco);
             tvHoraTreino.setText("hora de inicio: " + horaTreino);
             tvDiaTreino.setText("dia do treino: " + diaTreino);
             tvTempoDemora.setText("tempo do treino:" + tempoDuracao);
             tvEstado.setText("estado da marcaçao :" + estadoMarcacao);
+            btnEsquero.setText("confirmar");
+            btnEsquero.setOnClickListener(v -> salvarMarcaccao());
+            btnDireito.setText("cancelar");
+            btnDireito.setOnClickListener(v -> finish());
         }
-            if(estadoMarcacao!=null){
-                if (estadoMarcacao.equals("temporario")) {
-                    btnEsquero.setText("confirmar");
-                    btnEsquero.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            salvarMarcaccao();
-                        }
-                    });
-                }
-                btnDireito.setText("cancelar");
-                btnDireito.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        finish();
-                    }
-                });
-            }
-        }
+    }
 
     private void possiblyShowGooglePayButton() {
         final Optional<JSONObject> isReadyToPayJson = PaymentsUtil.getIsReadyToPayRequest();
@@ -224,7 +191,7 @@ public class ActivityDetalhesMarcacao extends AppCompatActivity {
                 new OnCompleteListener<Boolean>() {
                     @Override
                     public void onComplete(@NonNull Task<Boolean> task) {
-                        if (task.isSuccessful()) {
+                        if (task.isSuccessful() && task.getResult()!=null) {
                             setGooglePayAvailable(task.getResult());
                         } else {
                             Log.w("isReadyToPay failed", task.getException());
@@ -362,7 +329,6 @@ public class ActivityDetalhesMarcacao extends AppCompatActivity {
         marcacaoRefPersonal = pessoasRef.document(uuidPersonal).collection("marcacoes").document(marcacao.getMarcacaoID());
         marcacaoRefPersonal.set(marcacao);
 
-
         Toast.makeText(ActivityDetalhesMarcacao.this,"Marcaçao realizada com sucesso",Toast.LENGTH_LONG).show();
         Intent intent = new Intent(ActivityDetalhesMarcacao.this, ActivityPersonalTrainerPerfil.class);
         intent.putExtra("uuid",uuidPersonal);
@@ -370,7 +336,6 @@ public class ActivityDetalhesMarcacao extends AppCompatActivity {
         startActivity(intent);
     }
     public void criarDialogRecusar(){
-
         AlertDialog alertDialog =
                 new AlertDialog.Builder(ActivityDetalhesMarcacao.this)
                         .setTitle("Recusar marcacao?")

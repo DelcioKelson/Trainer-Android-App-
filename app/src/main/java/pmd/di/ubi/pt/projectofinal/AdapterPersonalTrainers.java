@@ -4,6 +4,7 @@ package pmd.di.ubi.pt.projectofinal;
         import android.app.ActivityOptions;
         import android.content.Context;
         import android.content.Intent;
+        import android.net.Uri;
         import android.view.LayoutInflater;
         import android.view.View;
         import android.view.ViewGroup;
@@ -17,11 +18,14 @@ package pmd.di.ubi.pt.projectofinal;
 
         import com.bumptech.glide.Glide;
         import com.google.android.gms.tasks.OnCompleteListener;
+        import com.google.android.gms.tasks.OnSuccessListener;
         import com.google.android.gms.tasks.Task;
         import com.google.firebase.firestore.CollectionReference;
         import com.google.firebase.firestore.FirebaseFirestore;
         import com.google.firebase.firestore.QueryDocumentSnapshot;
         import com.google.firebase.firestore.QuerySnapshot;
+        import com.google.firebase.storage.FirebaseStorage;
+        import com.google.firebase.storage.StorageReference;
 
         import java.util.ArrayList;
         import java.util.Iterator;
@@ -32,7 +36,7 @@ public class AdapterPersonalTrainers extends BaseAdapter {
     private Context context;
     private ArrayList<PersonalTrainer> personalTrainerList;
 
-    public AdapterPersonalTrainers(Context context, ArrayList<PersonalTrainer> personalTrainerList){
+     AdapterPersonalTrainers(Context context, ArrayList<PersonalTrainer> personalTrainerList){
         this.context = context;
         this.personalTrainerList = personalTrainerList;
     }
@@ -69,9 +73,22 @@ public class AdapterPersonalTrainers extends BaseAdapter {
         final TextView txtInfo = convertView.findViewById(R.id.infoclassificacao);
 
         txtTitulo.setText(personalTrainer.getNome());
-        Glide.with(imgPersonalTrainer.getContext())
-                .load(personalTrainer.getProfileUrl())
-                .into(imgPersonalTrainer);
+
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("image/"+ personalTrainer.getUuid() + ".jpeg");
+
+        final long ONE_MEGABYTE = 1024 * 1024;
+        storageReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(bytes -> {
+            if(bytes.length!=0){
+
+               try {
+                   Glide.with(context.getApplicationContext() )
+                           .load(bytes)
+                           .into(imgPersonalTrainer);
+               }catch (Exception ignored){
+
+               }
+            }
+        });
 
         if (personalTrainer.getClassificacao()>0.0f){
             ratingBar.setVisibility(View.VISIBLE);
@@ -81,13 +98,10 @@ public class AdapterPersonalTrainers extends BaseAdapter {
             txtInfo.setVisibility(View.VISIBLE);
         }
 
-        main.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, ActivityPersonalTrainerPerfil.class);
-                intent.putExtra("uuid",personalTrainer.getUuid());
-                context.startActivity(intent, ActivityOptions.makeSceneTransitionAnimation((Activity) context).toBundle());
-            }
+        main.setOnClickListener(v -> {
+            Intent intent = new Intent(context, ActivityPersonalTrainerPerfil.class);
+            intent.putExtra("uuid",personalTrainer.getUuid());
+            context.startActivity(intent, ActivityOptions.makeSceneTransitionAnimation((Activity) context).toBundle());
         });
         return convertView;
     }

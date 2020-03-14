@@ -41,7 +41,6 @@
         </activity>
         <activity android:name=".ActivityMarcacoes" />
         <activity android:name=".ActivityDetalhesMarcacao" />
-        <activity android:name=".ActivityDetalhesPagamanto" />
         <activity android:name=".ActivityFazerMarcacao" />
         <activity android:name=".ActivityMudarPassword" />
         <activity android:name=".ActivityDefinicoesConta" />

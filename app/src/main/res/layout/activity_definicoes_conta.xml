@@ -45,14 +45,13 @@
             app:layout_constraintTop_toBottomOf="@id/btn_selected_foto_definiceos"/>
 
         <Button
-            android:id="@+id/tv_salvar_foto"
+            android:id="@+id/btn_salvar_foto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Salvar fotografia"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:visibility="gone"
             android:textColor="#483D8B"
             android:textSize="20sp"
-            android:visibility="gone"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_alterar_foto"/>
@@ -68,12 +67,11 @@
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"
             android:text="alterar nome"
-            app:layout_constraintTop_toBottomOf="@id/tv_salvar_foto"
+            app:layout_constraintTop_toBottomOf="@id/btn_salvar_foto"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             android:drawableEnd="@drawable/arrow_right_black"/>
 
-        >
         <Button
             android:id="@+id/btn_alterar_password"
             app:layout_constraintTop_toBottomOf="@+id/btn_alterar_nome"
@@ -106,10 +104,11 @@
             android:id="@+id/progressbar_conta"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
             android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintVertical_bias="0.72" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
