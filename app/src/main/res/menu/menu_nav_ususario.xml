@@ -1,0 +1,18 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+
+
+    <item android:id="@+id/definicoesContaFragment"
+        android:title="@string/conta"
+        android:icon="@drawable/icons_account"
+        />
+
+
+    <item android:id="@+id/fragmentTodasMarcacoes"
+        android:title="Marcacoes"
+        />
+
+</menu>

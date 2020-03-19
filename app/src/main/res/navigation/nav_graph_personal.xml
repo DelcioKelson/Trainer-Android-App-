@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_personal"
+    app:startDestination="@id/fragmentPersoanlPerfil">
+
+
+    <fragment
+        android:id="@+id/fragmentTodasMarcacoes"
+        android:name="pmd.di.ubi.pt.projectofinal.FragmentTodasMarcacoes"
+        android:label="fragment_todas_marcacoes"
+        tools:layout="@layout/fragment_todas_marcacoes">
+        <action
+            android:id="@+id/action_fragmentTodasMarcacoes_to_fragmentMarcacoes"
+            app:destination="@id/fragmentMarcacoes" />
+    </fragment>
+    <fragment
+        android:id="@+id/mudarPasswordFragment"
+        android:name="pmd.di.ubi.pt.projectofinal.FragmentMudarPassword"
+        android:label="MudarPasswordFragment" />
+    <fragment
+        android:id="@+id/fragmentPersoanlPerfil"
+        android:name="pmd.di.ubi.pt.projectofinal.FragmentPersoanlPerfil"
+        android:label="FragmentPersoanlPerfil" />
+    <fragment
+        android:id="@+id/fragmentDefinicoesConta"
+        android:name="pmd.di.ubi.pt.projectofinal.FragmentDefinicoesConta"
+        android:label="FragmentDefinicoesConta" >
+        <action
+            android:id="@+id/action_fragmentDefinicoesConta_to_mudarPasswordFragment"
+            app:destination="@id/mudarPasswordFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/detalhesMarcacaoFragment"
+        android:name="pmd.di.ubi.pt.projectofinal.FragmentDetalhesMarcacao"
+        android:label="DetalhesMarcacaoFragment" />
+    <fragment
+        android:id="@+id/fragmentMarcacoes"
+        android:name="pmd.di.ubi.pt.projectofinal.FragmentMarcacoes"
+        android:label="FragmentMarcacoes" >
+        <action
+            android:id="@+id/action_fragmentMarcacoes_to_detalhesMarcacaoFragment2"
+            app:destination="@id/detalhesMarcacaoFragment" />
+    </fragment>
+</navigation>

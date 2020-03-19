@@ -5,6 +5,8 @@
         <item name="colorPrimary">#FAFAFA</item>
         <item name="colorPrimaryDark">#b9000a</item>
         <item name="colorAccent">#ff795f</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
         <item name="android:actionOverflowButtonStyle">@style/MyActionButtonOverflow</item>
         <item name="android:windowActivityTransitions">true</item>
     </style>
@@ -15,9 +17,13 @@
     </style>
 
     <style name="MyActionButtonOverflow" parent="android:style/Widget.Holo.Light.ActionButton.Overflow">
-    <item name="android:src">@drawable/options_icon</item>
-    <item name="android:background">?android:attr/actionBarItemBackground</item>
-    <item name="android:contentDescription">"Lala"</item>
+        <item name="android:src">@drawable/options_icon</item>
+        <item name="android:background">?android:attr/actionBarItemBackground</item>
+        <item name="android:contentDescription">"Lala"</item>
     </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 </resources>

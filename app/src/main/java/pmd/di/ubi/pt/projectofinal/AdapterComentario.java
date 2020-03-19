@@ -29,9 +29,9 @@ import java.util.Objects;
 public class AdapterComentario extends BaseAdapter {
 
     private Context context;
-    private ArrayList<Comentario> comentariosList;
+    private ArrayList<Map<String, String>> comentariosList;
 
-    public AdapterComentario(Context context, ArrayList<Comentario> comentariosList) {
+    public AdapterComentario(Context context, ArrayList<Map<String, String>> comentariosList) {
         this.context = context;
         this.comentariosList = comentariosList;
     }
@@ -53,7 +53,7 @@ public class AdapterComentario extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        final Comentario comentario = comentariosList.get(position);
+        final Map<String, String> comentario = comentariosList.get(position);
         if (convertView == null) {
             final LayoutInflater layoutInflater = LayoutInflater.from(context);
             convertView = layoutInflater.inflate(R.layout.card_comentario, null);
@@ -65,15 +65,14 @@ public class AdapterComentario extends BaseAdapter {
         final RatingBar ratingBar = convertView.findViewById(R.id.comentario_rating);
         final ImageView imgPerfil = convertView.findViewById(R.id.img_comentador);
 
-        txtComentador.setText(comentario.getComentadorNome());
-        txtComentario.setText(comentario.getComentario());
+        txtComentador.setText(comentario.get("nomeComentador"));
+        txtComentario.setText(comentario.get("comentario"));
 
-        StorageReference storageReference = FirebaseStorage.getInstance().getReference("image/"+comentario.getComentadorId());
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference("image/"+comentario.get("uidUsuario"));
 
         final long ONE_MEGABYTE = 1024 * 1024;
         storageReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(bytes -> {
             if(bytes.length!=0){
-
                try {
                    Glide.with(context.getApplicationContext())
                            .load(bytes)
@@ -83,10 +82,7 @@ public class AdapterComentario extends BaseAdapter {
                }
             }
         });
-
-        ratingBar.setRating(comentario.getClassificacao());
-
-
+        ratingBar.setRating(Float.parseFloat(comentario.get("ratingComentario")));
         return convertView;
     }
 }

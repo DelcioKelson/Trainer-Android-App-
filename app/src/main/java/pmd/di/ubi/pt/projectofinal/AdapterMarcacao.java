@@ -1,7 +1,7 @@
 package pmd.di.ubi.pt.projectofinal;
 
 import android.content.Context;
-import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,15 +10,19 @@ import android.widget.BaseAdapter;
 
 import android.widget.TextView;
 import androidx.cardview.widget.CardView;
+import androidx.fragment.app.FragmentActivity;
+import androidx.navigation.Navigation;
+
 import java.util.ArrayList;
+import java.util.Map;
 
 public class AdapterMarcacao extends BaseAdapter {
 
     private Context context;
-    private ArrayList<Marcacao> marcacaoArrayList;
+    private ArrayList<Map<String, Object>> marcacaoArrayList;
     private String tipoConta;
 
-    AdapterMarcacao(Context context, ArrayList<Marcacao> marcacaoArrayList, String tipoConta) {
+    AdapterMarcacao(Context context, ArrayList<Map<String, Object>> marcacaoArrayList, String tipoConta) {
         this.context = context;
         this.marcacaoArrayList = marcacaoArrayList;
         this.tipoConta = tipoConta;
@@ -41,7 +45,7 @@ public class AdapterMarcacao extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        final Marcacao marcacao = marcacaoArrayList.get(position);
+        final Map<String, Object> marcacao = marcacaoArrayList.get(position);
         if (convertView == null) {
             final LayoutInflater layoutInflater = LayoutInflater.from(context);
             convertView = layoutInflater.inflate(R.layout.card_marcacao, null);
@@ -53,18 +57,18 @@ public class AdapterMarcacao extends BaseAdapter {
         final TextView tvHoraTreino = convertView.findViewById(R.id.tv_hora_marcada);
         final TextView tvEstado = convertView.findViewById(R.id.tv_estado_marcacao);
 
-        tvDiaTreino.setText("treino para o dia: " + marcacao.getDiaTreino());
-        tvEstado.setText("estado:" + marcacao.getEstado());
-        tvHoraTreino.setText("hora do treino: " + marcacao.getHoraTreino());
 
-        marcacaoCard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context,ActivityDetalhesMarcacao.class);
-                intent.putExtra("idMarcacao",marcacao.getMarcacaoID());
-                intent.putExtra("tipoConta",tipoConta);
-                context.startActivity(intent);
-            }
+        tvDiaTreino.setText("treino para o dia: " + marcacao.get("diaTreino"));
+        tvEstado.setText("estado:" + marcacao.get("estado"));
+        tvHoraTreino.setText("hora do treino: " + marcacao.get("horaTreino"));
+
+        marcacaoCard.setOnClickListener(v -> {
+
+            Bundle bundle = new Bundle();
+            bundle.putString("idMarcacao",(String) marcacao.get("marcacaoId"));
+            Navigation.findNavController(v).navigate(R.id.action_marcacoesFragment_to_detalhesMarcacaoFragment,bundle);
+
+
         });
         return convertView;
     }

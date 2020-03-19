@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/nav_graph_login.xml"
+    app:startDestination="@id/fragmentLogin">
+
+    <fragment
+        android:id="@+id/fragmentLogin"
+        android:name="pmd.di.ubi.pt.projectofinal.FragmentLogin"
+        android:label="FragmentLogin" >
+        <action
+            android:id="@+id/action_fragmentLogin_to_fragmentRegistro1"
+            app:destination="@id/fragmentRegistro1" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentRegistro1"
+        android:name="pmd.di.ubi.pt.projectofinal.FragmentRegistro1"
+        android:label="FragmentRegistro1" >
+        <action
+            android:id="@+id/action_fragmentRegistro1_to_fragmentRegistro2"
+            app:destination="@id/fragmentRegistro2" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentRegistro2"
+        android:name="pmd.di.ubi.pt.projectofinal.FragmentRegistro2"
+        android:label="FragmentRegistro2" />
+</navigation>

@@ -1,10 +1,7 @@
 package pmd.di.ubi.pt.projectofinal;
 
-        import android.app.Activity;
-        import android.app.ActivityOptions;
         import android.content.Context;
-        import android.content.Intent;
-        import android.net.Uri;
+        import android.os.Bundle;
         import android.view.LayoutInflater;
         import android.view.View;
         import android.view.ViewGroup;
@@ -14,29 +11,23 @@ package pmd.di.ubi.pt.projectofinal;
         import android.widget.RatingBar;
         import android.widget.TextView;
 
-        import androidx.annotation.NonNull;
+        import androidx.fragment.app.Fragment;
+        import androidx.fragment.app.FragmentActivity;
+        import androidx.navigation.NavDirections;
+        import androidx.navigation.Navigation;
 
         import com.bumptech.glide.Glide;
-        import com.google.android.gms.tasks.OnCompleteListener;
-        import com.google.android.gms.tasks.OnSuccessListener;
-        import com.google.android.gms.tasks.Task;
-        import com.google.firebase.firestore.CollectionReference;
-        import com.google.firebase.firestore.FirebaseFirestore;
-        import com.google.firebase.firestore.QueryDocumentSnapshot;
-        import com.google.firebase.firestore.QuerySnapshot;
         import com.google.firebase.storage.FirebaseStorage;
         import com.google.firebase.storage.StorageReference;
 
         import java.util.ArrayList;
-        import java.util.Iterator;
         import java.util.Map;
-        import java.util.Objects;
 
 public class AdapterPersonalTrainers extends BaseAdapter {
     private Context context;
-    private ArrayList<PersonalTrainer> personalTrainerList;
+    private ArrayList<Map<String, String>> personalTrainerList;
 
-     AdapterPersonalTrainers(Context context, ArrayList<PersonalTrainer> personalTrainerList){
+     AdapterPersonalTrainers(Context context, ArrayList<Map<String, String>> personalTrainerList){
         this.context = context;
         this.personalTrainerList = personalTrainerList;
     }
@@ -59,22 +50,24 @@ public class AdapterPersonalTrainers extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        final PersonalTrainer personalTrainer = personalTrainerList.get(position);
+        final Map<String, String> personalTrainer = personalTrainerList.get(position);
 
         if (convertView == null) {
             final LayoutInflater layoutInflater = LayoutInflater.from(context);
             convertView = layoutInflater.inflate(R.layout.card_personaltrainer, null);
         }
 
-        final TextView txtTitulo = convertView.findViewById(R.id.nomePersonal);
+        final TextView tvNome = convertView.findViewById(R.id.nomePersonal);
         final ImageView imgPersonalTrainer = convertView.findViewById(R.id.personal_image);
         final LinearLayout main = convertView.findViewById(R.id.card_personal);
         final RatingBar ratingBar =  convertView.findViewById(R.id.rating);
         final TextView txtInfo = convertView.findViewById(R.id.infoclassificacao);
 
-        txtTitulo.setText(personalTrainer.getNome());
+        String uid = (String) personalTrainer.get("uid");
+        String nomePersonal = (String) personalTrainer.get("nome");
+        tvNome.setText(nomePersonal);
 
-        StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("image/"+ personalTrainer.getUuid() + ".jpeg");
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("image/"+ uid + ".jpeg");
 
         final long ONE_MEGABYTE = 1024 * 1024;
         storageReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(bytes -> {
@@ -90,18 +83,29 @@ public class AdapterPersonalTrainers extends BaseAdapter {
             }
         });
 
-        if (personalTrainer.getClassificacao()>0.0f){
-            ratingBar.setVisibility(View.VISIBLE);
-            ratingBar.setRating(personalTrainer.getClassificacao());
-        //tvNumeroComentario.setVisibility(View.VISIBLE);
-        }else {
-            txtInfo.setVisibility(View.VISIBLE);
+        try {
+            float classificao = Float.parseFloat(( String)personalTrainer.get("classificacao"));
+            if(classificao!=0){
+                if ( classificao>0){
+                    ratingBar.setVisibility(View.VISIBLE);
+                    ratingBar.setRating(Float.parseFloat(""+classificao));
+                    //tvNumeroComentario.setVisibility(View.VISIBLE);
+                }else {
+                    txtInfo.setVisibility(View.VISIBLE);
+                }
+            }
+
+        }
+        catch (Exception ignored){
+
         }
 
         main.setOnClickListener(v -> {
-            Intent intent = new Intent(context, ActivityPersonalTrainerPerfil.class);
-            intent.putExtra("uuid",personalTrainer.getUuid());
-            context.startActivity(intent, ActivityOptions.makeSceneTransitionAnimation((Activity) context).toBundle());
+            Bundle bundle = new Bundle();
+            bundle.putString("uidPersonal", uid);
+            Navigation.findNavController(v).navigate(R.id.action_personalsFragment_to_persoanlPerfilFragment,bundle);
+
+
         });
         return convertView;
     }

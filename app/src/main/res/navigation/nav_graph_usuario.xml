@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_usuario"
+    app:startDestination="@id/fragmentTodasMarcacoes">
+
+    <fragment
+        android:id="@+id/definicoesContaFragment"
+        android:name="pmd.di.ubi.pt.projectofinal.FragmentDefinicoesConta"
+        android:label="DefinicoesContaFragment" >
+        <action
+            android:id="@+id/action_definicoesContaFragment_to_mudarPasswordFragment"
+            app:destination="@id/mudarPasswordFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/detalhesMarcacaoFragment"
+        android:name="pmd.di.ubi.pt.projectofinal.FragmentDetalhesMarcacao"
+        android:label="DetalhesMarcacaoFragment" />
+    <fragment
+        android:id="@+id/gerarMarcacaoFragment"
+        android:name="pmd.di.ubi.pt.projectofinal.FragmentGerarMarcacao"
+        android:label="GerarMarcacaoFragment" />
+    <fragment
+        android:id="@+id/marcacoesFragment"
+        android:name="pmd.di.ubi.pt.projectofinal.FragmentMarcacoes"
+        android:label="MarcacoesFragment" >
+        <action
+            android:id="@+id/action_marcacoesFragment_to_detalhesMarcacaoFragment"
+            app:destination="@id/detalhesMarcacaoFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/modalidadesFragment"
+        android:name="pmd.di.ubi.pt.projectofinal.FragmentModalidades"
+        android:label="ModalidadesFragment" >
+        <action
+            android:id="@+id/action_modalidadesFragment_to_personalsFragment"
+            app:destination="@id/personalsFragment"
+            app:launchSingleTop="false"
+            app:popUpToInclusive="false" />
+    </fragment>
+    <fragment
+        android:id="@+id/mudarPasswordFragment"
+        android:name="pmd.di.ubi.pt.projectofinal.FragmentMudarPassword"
+        android:label="MudarPasswordFragment" />
+    <fragment
+        android:id="@+id/personalsFragment"
+        android:name="pmd.di.ubi.pt.projectofinal.FragmentPersonals"
+        android:label="PersonalsFragment" >
+        <action
+            android:id="@+id/action_personalsFragment_to_persoanlPerfilFragment"
+            app:destination="@id/persoanlPerfilFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/persoanlPerfilFragment"
+        android:name="pmd.di.ubi.pt.projectofinal.FragmentPersoanlPerfil"
+        android:label="PersoanlPerfilFragment" >
+        <action
+            android:id="@+id/action_persoanlPerfilFragment_to_gerarMarcacaoFragment"
+            app:destination="@id/gerarMarcacaoFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentTodasMarcacoes"
+        android:name="pmd.di.ubi.pt.projectofinal.FragmentTodasMarcacoes"
+        android:label="fragment_todas_marcacoes"
+        tools:layout="@layout/fragment_todas_marcacoes" >
+        <action
+            android:id="@+id/action_fragmentTodasMarcacoes_to_marcacoesFragment"
+            app:destination="@id/marcacoesFragment" />
+        <action
+            android:id="@+id/action_fragmentTodasMarcacoes_to_modalidadesFragment"
+            app:destination="@id/modalidadesFragment" />
+    </fragment>
+
+</navigation>
