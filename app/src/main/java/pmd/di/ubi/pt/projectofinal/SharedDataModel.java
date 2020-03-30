@@ -8,9 +8,14 @@ import androidx.lifecycle.ViewModel;
 public class SharedDataModel extends ViewModel {
 
     MutableLiveData<Boolean> user;
+    MutableLiveData<Boolean> atualizarFragmentMarcaoes;
+
+
 
     public void init(){
         user = new MutableLiveData<>();
+        atualizarFragmentMarcaoes = new MutableLiveData<>();
+        atualizarFragmentMarcaoes.setValue(false);
     }
 
     public MutableLiveData<Boolean> isUser() {
@@ -23,5 +28,13 @@ public class SharedDataModel extends ViewModel {
 
     public void personal(){
         user.setValue(false);
+    }
+
+    public MutableLiveData<Boolean> getAtualizarFragmentMarcaoes() {
+        return atualizarFragmentMarcaoes;
+    }
+
+    public void setAtualizarFragmentMarcaoes(Boolean valor) {
+        this.atualizarFragmentMarcaoes.setValue(valor);
     }
 }

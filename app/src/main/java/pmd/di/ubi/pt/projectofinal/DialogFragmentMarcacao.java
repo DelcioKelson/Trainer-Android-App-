@@ -1,7 +1,5 @@
 package pmd.di.ubi.pt.projectofinal;
 
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,9 +10,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
-import androidx.navigation.Navigation;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -26,7 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class DialogFragmentConfirmarMarcacao extends DialogFragment {
+public class DialogFragmentMarcacao extends DialogFragment {
     private Bundle argumentos;
 
     private static final String ARG_PARAM1 = "preco";
@@ -40,7 +36,7 @@ public class DialogFragmentConfirmarMarcacao extends DialogFragment {
     private static final String ARG_PARAM7 = "idMarcacao";
     private static final String ARG_PARAM8 = "uidPersonal";
 
-    private String estadoMarcacao,idMarcacao,diaTreino,horaTreino,tempoDuracao, uidPersonal,preco;
+    private String diaTreino,horaTreino,tempoDuracao, uidPersonal,preco;
 
     private TextView tvDiaTreino,tvHoraTreino, tvPreco,tvEstado,tvTempoDemora,tvObs;
     private CollectionReference marcacoesRef;
@@ -50,11 +46,11 @@ public class DialogFragmentConfirmarMarcacao extends DialogFragment {
 
 
 
-    public static DialogFragmentConfirmarMarcacao newInstance(Bundle bundle) {
+    public static DialogFragmentMarcacao newInstance(Bundle bundle) {
 
-        DialogFragmentConfirmarMarcacao dialogFragmentConfirmarMarcacao = new DialogFragmentConfirmarMarcacao();
-        dialogFragmentConfirmarMarcacao.setArguments(bundle);
-        return dialogFragmentConfirmarMarcacao;
+        DialogFragmentMarcacao dialogFragmentMarcacao = new DialogFragmentMarcacao();
+        dialogFragmentMarcacao.setArguments(bundle);
+        return dialogFragmentMarcacao;
     }
 
     @Nullable
@@ -69,32 +65,20 @@ public class DialogFragmentConfirmarMarcacao extends DialogFragment {
 
         tvDiaTreino = view.findViewById(R.id.tv_dia_detalhe);
         tvHoraTreino = view.findViewById(R.id.tv_hora_detalhe);
-        tvEstado = view.findViewById(R.id.tv_estado_detalhe);
         tvPreco = view.findViewById(R.id.tv_preco_detalhe);
         tvTempoDemora = view.findViewById(R.id.tv_tempo_detalhe);
-
         btnCancelar = view.findViewById(R.id.btn_cancelar);
         btnConfirmar =  view.findViewById(R.id.btn_confirmar);
-
         btnCancelar.setOnClickListener(v -> dismiss());
-
         btnConfirmar.setOnClickListener(v -> salvarMarcaccao());
-
 
         tvPreco.setText("preço a pagar: " + preco);
         tvHoraTreino.setText("hora de inicio: " + horaTreino);
         tvDiaTreino.setText("dia do treino: " + diaTreino);
         tvTempoDemora.setText("tempo do treino:" + tempoDuracao);
-        tvEstado.setText("estado da marcaçao :" + estadoMarcacao);
 
         return view;
     }
-
-    /**
-     * Create a new instance of MyDialogFragment, providing "num"
-     * as an argument.
-     */
-
 
     public interface FlagMarcacaoConfirmadaDialogListener {
         void onFinishEditDialog(int flag);
@@ -108,41 +92,10 @@ public class DialogFragmentConfirmarMarcacao extends DialogFragment {
             preco = getArguments().getString(ARG_PARAM1);
             horaTreino = getArguments().getString(ARG_PARAM2);
             diaTreino = getArguments().getString(ARG_PARAM3);
-            tempoDuracao = getArguments().getString(ARG_PARAM4);
-            estadoMarcacao = getArguments().getString(ARG_PARAM6);
-            idMarcacao = getArguments().getString(ARG_PARAM7);
+            tempoDuracao = getArguments().getString(ARG_PARAM4);;
             uidPersonal = getArguments().getString(ARG_PARAM8);
         }
-        // Pick a style based on the num.
-        int style = DialogFragment.STYLE_NORMAL, theme = 0;
-        switch (4) {
-            case 1:
-                style = DialogFragment.STYLE_NO_TITLE;
-                break;
-            case 2:
-                style = DialogFragment.STYLE_NO_FRAME;
-                break;
-            case 3:
-                style = DialogFragment.STYLE_NO_INPUT;
-                break;
-            case 4:
-                style = DialogFragment.STYLE_NORMAL;
-                break;
-            case 5:
-                style = DialogFragment.STYLE_NORMAL;
-                break;
-            case 6:
-                style = DialogFragment.STYLE_NO_TITLE;
-                break;
-            case 7:
-                style = DialogFragment.STYLE_NO_FRAME;
-                break;
-            case 8:
-                style = DialogFragment.STYLE_NORMAL;
-                break;
-        }
 
-        setStyle(style, theme);
     }
 
     public void salvarMarcaccao(){
@@ -154,6 +107,8 @@ public class DialogFragmentConfirmarMarcacao extends DialogFragment {
         int minutos = c.get(Calendar.MINUTE);
         String marcacaoId;
         marcacaoId = marcacoesRef.document().getId();
+
+        preco = preco.replace("€","");
 
         Map<String, Object> marcacaoData;
         marcacaoData = new HashMap<>();
@@ -168,6 +123,20 @@ public class DialogFragmentConfirmarMarcacao extends DialogFragment {
         marcacaoData.put("horaMarcacao","" + hora + ":" + minutos);
         marcacaoData.put("marcacaoId",marcacaoId);
         marcacoesRef.document(marcacaoId).set(marcacaoData);
+
+
+        Calendar calendar = Calendar.getInstance();
+        //Returns current time in millis
+        long time = calendar.getTimeInMillis();
+
+        Map<String, Object> notificacaoData;
+        notificacaoData = new HashMap<>();
+        notificacaoData.put("titulo","Nova marcacao" );;
+        notificacaoData.put("mensagem", user.getDisplayName()+ " criou uma marcacao consigo");
+        notificacaoData.put("data", time);
+
+        FirebaseFirestore.getInstance().collection("pessoas")
+                .document(uidPersonal).collection("notificacoes").document().set(notificacaoData);
 
         Toast.makeText(getActivity(),"Marcaçao realizada com sucesso",Toast.LENGTH_LONG).show();
 

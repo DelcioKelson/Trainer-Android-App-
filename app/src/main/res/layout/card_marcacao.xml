@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-     android:layout_width="match_parent"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/marcacao_card">
 
@@ -9,21 +9,74 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
     <TextView
-        android:id="@+id/tv_dia_marcado"
+        style="@style/TextAppearance.AppCompat.Body1"
+        android:id="@+id/tv_preco_detalhe"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"/>
+        android:layout_height="wrap_content" />
 
     <TextView
+        style="@style/TextAppearance.AppCompat.Body1"
+        android:id="@+id/tv_hora_detalhe"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:id="@+id/tv_hora_marcada"/>
+        android:layout_height="wrap_content" />
 
     <TextView
+        style="@style/TextAppearance.AppCompat.Body1"
+        android:id="@+id/tv_dia_detalhe"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        style="@style/TextAppearance.AppCompat.Body1"
+        android:id="@+id/tv_estado_detalhe"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        style="@style/TextAppearance.AppCompat.Body1"
+        android:id="@+id/tv_tempo_detalhe"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/tv_obs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/tv_estado_marcacao"/>
+        android:layout_margin="8dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_esquerdo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:visibility="gone"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_marginEnd="8dp" />
+
+        <include
+            android:id="@+id/googlepay_button"
+            android:layout_width="@dimen/buy_button_width"
+            android:layout_height="@dimen/buy_button_height"
+            layout="@layout/googlepay_button"
+            android:visibility="gone" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_direito"
+            android:visibility="gone"
+            android:textSize="13dp"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:textColor="@color/black" />
+
+</LinearLayout>
 </LinearLayout>
 
 
 
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

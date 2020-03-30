@@ -4,15 +4,13 @@
     tools:showIn="navigation_view">
 
 
-
-    <item android:id="@+id/definicoesContaFragment"
-        android:title="@string/conta"
-        android:icon="@drawable/icons_account"
-        />
-
-
     <item android:id="@+id/fragmentTodasMarcacoes"
         android:title="Marcacoes"
+        android:icon="@drawable/ic_marcacoes"
         />
 
+    <item android:id="@+id/fragmentNotificacoes"
+        android:title="Notificacoes"
+        android:icon="@drawable/ic_notifications_black_24dp"
+        />
 </menu>

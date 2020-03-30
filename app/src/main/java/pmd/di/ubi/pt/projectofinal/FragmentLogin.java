@@ -17,15 +17,8 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link FragmentLogin#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class FragmentLogin extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+
     private FirebaseAuth mAuth;
     private String email,password;
     private EditText etEmail, etPassword;
@@ -61,7 +54,7 @@ public class FragmentLogin extends Fragment {
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.d("loginEmail", "signInWithEmail:failure", task.getException());
-                            Toast.makeText(getContext(), "E-mail ou palavra-passe incorretos. Por favor, tente novamente.", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), "Email ou palavra-passe incorretos, tente novamente.", Toast.LENGTH_LONG).show();
                         }
                     });
         });

@@ -8,10 +8,12 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -36,11 +38,6 @@ import com.google.firebase.storage.StorageReference;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link FragmentDefinicoesConta#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class FragmentDefinicoesConta extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -48,10 +45,9 @@ public class FragmentDefinicoesConta extends Fragment {
     private ImageView imgVfoto;
     private Uri fSelecteduri;
     private String novoNome;
-
     private ProgressBar progressBar;
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-    private StorageReference ref = FirebaseStorage.getInstance().getReference("image/"+user.getUid());
+    private StorageReference ref ;
 
     public FragmentDefinicoesConta() {
         // Required empty public constructor
@@ -62,21 +58,26 @@ public class FragmentDefinicoesConta extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-
-        }
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.definicoes_conta_fragment, container, false);
+        View view = inflater.inflate(R.layout.fragment_definicoes_conta, container, false);
+
+        SharedDataModel modelData = new ViewModelProvider(requireActivity()).get(SharedDataModel.class);
+        boolean isUser = modelData.isUser().getValue();
+
+        if (isUser){
+            ref = FirebaseStorage.getInstance().getReference("image/"+user.getUid());
+
+        }else {
+           ref = FirebaseStorage.getInstance().getReference("image/"+user.getUid()+".jpeg");
+            Log.i("refdefinicoes", "hgvjh");
+
+        }
 
         progressBar = (ProgressBar) view.findViewById(R.id.progressbar_conta);
         Button btnAlterarNome = view.findViewById(R.id.btn_alterar_nome);
         Button btnAlterarPassword = view.findViewById(R.id.btn_alterar_password);
+        Button btnDiasIndisponiveis = view.findViewById(R.id.btn_dias_indispinives);
         imgVfoto = view.findViewById(R.id.img_foto_definicoes);
         btnFotoPerfil = view.findViewById(R.id.btn_selected_foto_definiceos);
         TextView tvAlterarFoto = view.findViewById(R.id.tv_alterar_foto);
@@ -87,13 +88,18 @@ public class FragmentDefinicoesConta extends Fragment {
 
         btnFotoPerfil.setAlpha(0);
         final long ONE_MEGABYTE = 1024 * 1024;
-        ref.getBytes(ONE_MEGABYTE).addOnSuccessListener(bytes -> {
-            if(bytes.length!=0){
-                Glide.with(imgVfoto.getContext())
-                        .load(bytes)
-                        .into(imgVfoto);
-            }
-        });
+      try {
+          ref.getBytes(ONE_MEGABYTE).addOnSuccessListener(bytes -> {
+              if(bytes.length!=0){
+                  Glide.with(imgVfoto.getContext())
+                          .load(bytes)
+                          .into(imgVfoto);
+              }
+          });
+      }catch (Exception ignored){
+
+      }
+
 
         tvAlterarFoto.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_PICK);
@@ -105,6 +111,7 @@ public class FragmentDefinicoesConta extends Fragment {
 
         btnSairDaConta.setOnClickListener(v -> {
             FirebaseAuth.getInstance().signOut();
+            FirebaseMessaging.getInstance().unsubscribeFromTopic(user.getUid());
             Intent intent = new Intent(getActivity(), ActivityMain.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
@@ -120,11 +127,13 @@ public class FragmentDefinicoesConta extends Fragment {
 
         btnAlterarNome.setOnClickListener(v -> criarDialogMudarNome());
 
-        btnAlterarPassword.setOnClickListener(v -> {
-            getActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container, FragmentMudarPassword.newInstance())
-                    .commit();
-        });
+        btnAlterarPassword.setOnClickListener(v ->
+            Navigation.findNavController(getView()).navigate(R.id.action_definicoesContaFragment_to_mudarPasswordFragment));
+
+        if (!isUser){
+            btnDiasIndisponiveis.setVisibility(View.VISIBLE);
+            btnDiasIndisponiveis.setOnClickListener(v -> Navigation.findNavController(getView()).navigate(R.id.action_fragmentDefinicoesConta_to_fragmentDiasIndisponiveis));
+        }
         return view;
     }
 
@@ -209,14 +218,4 @@ public class FragmentDefinicoesConta extends Fragment {
         }
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                //finish();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
 }

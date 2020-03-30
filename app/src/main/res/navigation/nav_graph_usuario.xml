@@ -6,7 +6,7 @@
     app:startDestination="@id/fragmentTodasMarcacoes">
 
     <fragment
-        android:id="@+id/definicoesContaFragment"
+        android:id="@+id/fragmentDefinicoesConta"
         android:name="pmd.di.ubi.pt.projectofinal.FragmentDefinicoesConta"
         android:label="DefinicoesContaFragment" >
         <action
@@ -14,21 +14,9 @@
             app:destination="@id/mudarPasswordFragment" />
     </fragment>
     <fragment
-        android:id="@+id/detalhesMarcacaoFragment"
-        android:name="pmd.di.ubi.pt.projectofinal.FragmentDetalhesMarcacao"
-        android:label="DetalhesMarcacaoFragment" />
-    <fragment
-        android:id="@+id/gerarMarcacaoFragment"
-        android:name="pmd.di.ubi.pt.projectofinal.FragmentGerarMarcacao"
-        android:label="GerarMarcacaoFragment" />
-    <fragment
-        android:id="@+id/marcacoesFragment"
+        android:id="@+id/fragmentMarcacoes"
         android:name="pmd.di.ubi.pt.projectofinal.FragmentMarcacoes"
-        android:label="MarcacoesFragment" >
-        <action
-            android:id="@+id/action_marcacoesFragment_to_detalhesMarcacaoFragment"
-            app:destination="@id/detalhesMarcacaoFragment" />
-    </fragment>
+        android:label="MarcacoesFragment" />
     <fragment
         android:id="@+id/modalidadesFragment"
         android:name="pmd.di.ubi.pt.projectofinal.FragmentModalidades"
@@ -45,8 +33,8 @@
         android:label="MudarPasswordFragment" />
     <fragment
         android:id="@+id/personalsFragment"
-        android:name="pmd.di.ubi.pt.projectofinal.FragmentPersonals"
-        android:label="PersonalsFragment" >
+        android:name="pmd.di.ubi.pt.projectofinal.FragmentTreinadores"
+        android:label="Treinadores">
         <action
             android:id="@+id/action_personalsFragment_to_persoanlPerfilFragment"
             app:destination="@id/persoanlPerfilFragment" />
@@ -54,22 +42,24 @@
     <fragment
         android:id="@+id/persoanlPerfilFragment"
         android:name="pmd.di.ubi.pt.projectofinal.FragmentPersoanlPerfil"
-        android:label="PersoanlPerfilFragment" >
-        <action
-            android:id="@+id/action_persoanlPerfilFragment_to_gerarMarcacaoFragment"
-            app:destination="@id/gerarMarcacaoFragment" />
-    </fragment>
+        android:label="PersoanlPerfilFragment" />
     <fragment
         android:id="@+id/fragmentTodasMarcacoes"
         android:name="pmd.di.ubi.pt.projectofinal.FragmentTodasMarcacoes"
-        android:label="fragment_todas_marcacoes"
-        tools:layout="@layout/fragment_todas_marcacoes" >
+        android:label="Marcacoes"
+        tools:layout="@layout/fragment_todas_marcacoes">
         <action
             android:id="@+id/action_fragmentTodasMarcacoes_to_marcacoesFragment"
-            app:destination="@id/marcacoesFragment" />
+            app:destination="@id/fragmentMarcacoes" />
         <action
             android:id="@+id/action_fragmentTodasMarcacoes_to_modalidadesFragment"
-            app:destination="@id/modalidadesFragment" />
+            app:destination="@id/modalidadesFragment"
+            app:enterAnim="@anim/anima"
+            app:popEnterAnim="@anim/fragment_fade_enter" />
     </fragment>
+    <fragment
+        android:id="@+id/fragmentNotificacoes"
+        android:name="pmd.di.ubi.pt.projectofinal.FragmentNotificacoes"
+        android:label="FragmentNotificacoes" />
 
 </navigation>

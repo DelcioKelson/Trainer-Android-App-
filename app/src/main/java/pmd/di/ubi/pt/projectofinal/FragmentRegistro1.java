@@ -12,25 +12,12 @@ import android.widget.Button;
 import android.widget.CheckBox;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link FragmentRegistro1#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class FragmentRegistro1 extends Fragment {
     private CheckBox c1,c2,c3,c4,c5,c6;
-
-
-    public static FragmentRegistro1 newInstance() {
-        FragmentRegistro1 fragment = new FragmentRegistro1();
-        return fragment;
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-
         View view = inflater.inflate(R.layout.fragment_registro1, container, false);
 
         c1 = view.findViewById(R.id.cb1);
@@ -41,12 +28,10 @@ public class FragmentRegistro1 extends Fragment {
         c6 = view.findViewById(R.id.cb6);
         Button btnProximoPasso = (Button) view.findViewById(R.id.btn_proximo_passo);
 
-
         btnProximoPasso.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.action_fragmentRegistro1_to_fragmentRegistro2)
-);
+        );
         return view;
     }
-
 
     public String getDoencas(){
         String doencas = "";

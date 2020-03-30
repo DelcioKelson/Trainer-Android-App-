@@ -5,14 +5,13 @@
     android:id="@+id/nav_graph_personal"
     app:startDestination="@id/fragmentPersoanlPerfil">
 
-
     <fragment
         android:id="@+id/fragmentTodasMarcacoes"
         android:name="pmd.di.ubi.pt.projectofinal.FragmentTodasMarcacoes"
         android:label="fragment_todas_marcacoes"
         tools:layout="@layout/fragment_todas_marcacoes">
         <action
-            android:id="@+id/action_fragmentTodasMarcacoes_to_fragmentMarcacoes"
+            android:id="@+id/action_fragmentTodasMarcacoes_to_marcacoesFragment"
             app:destination="@id/fragmentMarcacoes" />
     </fragment>
     <fragment
@@ -22,25 +21,33 @@
     <fragment
         android:id="@+id/fragmentPersoanlPerfil"
         android:name="pmd.di.ubi.pt.projectofinal.FragmentPersoanlPerfil"
-        android:label="FragmentPersoanlPerfil" />
+        android:label="FragmentPersoanlPerfil" >
+        <action
+            android:id="@+id/action_fragmentPersoanlPerfil_to_fragmentDefinicoesConta"
+            app:destination="@id/fragmentDefinicoesConta" />
+    </fragment>
     <fragment
         android:id="@+id/fragmentDefinicoesConta"
         android:name="pmd.di.ubi.pt.projectofinal.FragmentDefinicoesConta"
         android:label="FragmentDefinicoesConta" >
         <action
-            android:id="@+id/action_fragmentDefinicoesConta_to_mudarPasswordFragment"
+            android:id="@+id/action_definicoesContaFragment_to_mudarPasswordFragment"
             app:destination="@id/mudarPasswordFragment" />
+        <action
+            android:id="@+id/action_fragmentDefinicoesConta_to_fragmentDiasIndisponiveis"
+            app:destination="@id/fragmentDiasIndisponiveis" />
     </fragment>
-    <fragment
-        android:id="@+id/detalhesMarcacaoFragment"
-        android:name="pmd.di.ubi.pt.projectofinal.FragmentDetalhesMarcacao"
-        android:label="DetalhesMarcacaoFragment" />
     <fragment
         android:id="@+id/fragmentMarcacoes"
         android:name="pmd.di.ubi.pt.projectofinal.FragmentMarcacoes"
-        android:label="FragmentMarcacoes" >
-        <action
-            android:id="@+id/action_fragmentMarcacoes_to_detalhesMarcacaoFragment2"
-            app:destination="@id/detalhesMarcacaoFragment" />
-    </fragment>
+        android:label="FragmentMarcacoes" />
+    <fragment
+        android:id="@+id/fragmentDiasIndisponiveis"
+        android:name="pmd.di.ubi.pt.projectofinal.FragmentDiasIndisponiveis"
+        android:label="fragment_dias_indisponiveis"
+        tools:layout="@layout/fragment_dias_indisponiveis" />
+    <fragment
+        android:id="@+id/fragmentNotificacoes"
+        android:name="pmd.di.ubi.pt.projectofinal.FragmentNotificacoes"
+        android:label="FragmentNotificacoes" />
 </navigation>

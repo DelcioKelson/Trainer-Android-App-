@@ -1,77 +1,106 @@
 package pmd.di.ubi.pt.projectofinal;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import android.os.Bundle;
-import android.util.Log;
-
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.wallet.AutoResolveHelper;
+import com.google.android.gms.wallet.PaymentData;
+import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class ActivityMain extends AppCompatActivity {
-
-    FirebaseUser user ;
-    private DrawerLayout drawer;
-
+    FirebaseUser user;
     private AppBarConfiguration mAppBarConfiguration;
-    private NavigationView navigationView;
     private NavController navController;
-    private Toolbar toolbar;
-
-
+    private MaterialToolbar toolbar;
+    private BottomNavigationView bottomNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        user =  FirebaseAuth.getInstance().getCurrentUser();
+        user = FirebaseAuth.getInstance().getCurrentUser();
 
-        if(user!=null){
-            FirebaseFirestore.getInstance().collection("pessoas").document(user.getUid()).get().addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    Log.i("activityInicial","activityInicial");
-                    DocumentSnapshot document = task.getResult();
-                    if (document!=null) {
 
-                        SharedDataModel modelData = new ViewModelProvider(this).get(SharedDataModel.class);
-                        modelData.init();
 
-                        FirebaseMessaging.getInstance().subscribeToTopic(user.getUid());
-                        if(document.getString("tipoConta").equals("usuario")){
-                            modelData.usuario();
-                            iniciarSessaoUsuario();
-                        }else {
-                            modelData.personal();
-                            iniciarSessaoPersonal();
+
+        Log.i("userValue",""+user);
+        if (user != null) {
+
+
+
+
+
+                FirebaseFirestore.getInstance().collection("pessoas").document(user.getUid()).get().addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.i("activityInicial", "activityInicial");
+                        DocumentSnapshot document = task.getResult();
+                        if (document != null) {
+
+                            SharedDataModel modelData = new ViewModelProvider(this).get(SharedDataModel.class);
+                            modelData.init();
+                            FirebaseMessaging.getInstance().subscribeToTopic(user.getUid());
+                            if(document.getString("tipoConta").equals("personal")){
+                                modelData.personal();
+                                iniciarSessaoPersonal(document.getString("nome"));
+                            }else {
+                                modelData.usuario();
+                                iniciarSessaoUsuario();
+                            }
+                            setSupportActionBar(toolbar);
+                            mAppBarConfiguration =
+                                    new AppBarConfiguration.Builder(navController.getGraph()).build();
+
+                            NavigationUI.setupWithNavController(toolbar,navController);
+                            NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
+                            NavigationUI.setupWithNavController(bottomNavigationView, navController);
                         }
-                        setSupportActionBar(toolbar);
-                        mAppBarConfiguration =
-                                new AppBarConfiguration.Builder(navController.getGraph()).setDrawerLayout(drawer).build();
+                    }else {
+                        setContentView(R.layout.activity_main_login);
 
-                        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
-                        NavigationUI.setupWithNavController(navigationView, navController);
                     }
-                }
-            });
-        }
-        else {
+                });
+
+        } else {
             {
                 setContentView(R.layout.activity_main_login);
             }
         }
     }
-
 
 
     @Override
@@ -80,22 +109,127 @@ public class ActivityMain extends AppCompatActivity {
                 || super.onSupportNavigateUp();
     }
 
-    public void iniciarSessaoUsuario(){
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        return NavigationUI.onNavDestinationSelected(item,navController)||super.onOptionsItemSelected(item);
+    }
+
+    public void iniciarSessaoUsuario() {
         setContentView(R.layout.activity_main_usuario);
         toolbar = findViewById(R.id.toolbar_usuario);
-        drawer = findViewById(R.id.drawer_layout_user);
-        navigationView = findViewById(R.id.nav_usuario);
         navController = Navigation.findNavController(this, R.id.container_usuario);
-
+        bottomNavigationView = findViewById(R.id.bottom_navigation_usuario);
     }
-
-    public void iniciarSessaoPersonal(){
+    public void iniciarSessaoPersonal(String nome) {
         setContentView(R.layout.activity_main_personal);
+
+        OnCompleteListener<AuthResult> completeListener = new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful() && task.getResult()!= null) {
+                    if(task.getResult().getAdditionalUserInfo().isNewUser()){
+                        UserProfileChangeRequest.Builder builder = new UserProfileChangeRequest.Builder();
+                        builder.setDisplayName(nome);
+                        final UserProfileChangeRequest changeRequest = builder.build();
+                        user.updateProfile(changeRequest);
+                    }
+
+                }
+            }
+        };
+        
         toolbar = findViewById(R.id.toolbar_personal);
-        drawer = findViewById(R.id.drawer_layout_personal);
-        navigationView = findViewById(R.id.nav_personal);
+        bottomNavigationView = findViewById(R.id.bottom_navigation_personal);
         navController = Navigation.findNavController(this, R.id.container_personal);
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_toolbar, menu);
+        return true;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        Log.w("loadPayment", "onActivityresult");
+
+        switch (requestCode) {
+
+            // value passed in AutoResolveHelper
+            case 991:
+                switch (resultCode) {
+                    case Activity.RESULT_OK:
+                        PaymentData paymentData = PaymentData.getFromIntent(data);
+                        handlePaymentSuccess(paymentData);
+                        Log.w("loadPayment", "sucess");
+
+                        break;
+                    case Activity.RESULT_CANCELED:
+                        // Nothing to here normally - the user simply cancelled without selecting a
+                        // payment method.
+                        Log.w("loadPayment", "cancela");
+
+                        break;
+                    case AutoResolveHelper.RESULT_ERROR:
+                        Status status = AutoResolveHelper.getStatusFromIntent(data);
+                        handleError(status.getStatusCode());
+                        break;
+                    default:
+                        // Do nothing.
+                }
+                break;
+        }
+    }
+    private void handlePaymentSuccess(PaymentData paymentData) {
+        String paymentInformation = paymentData.toJson();
+
+        // Token will be null if PaymentDataRequest was not constructed using fromJson(String).
+        if (paymentInformation == null) {
+            return;
+        }
+        JSONObject paymentMethodData;
+
+        try {
+            paymentMethodData = new JSONObject(paymentInformation).getJSONObject("paymentMethodData");
+            // If the gateway is set to "example", no payment information is returned - instead, the
+            // token will only consist of "examplePaymentMethodToken".
+            if (paymentMethodData
+                    .getJSONObject("tokenizationData")
+                    .getString("type")
+                    .equals("PAYMENT_GATEWAY")
+                    && paymentMethodData
+                    .getJSONObject("tokenizationData")
+                    .getString("token")
+                    .equals("examplePaymentMethodToken")) {
+                AlertDialog alertDialog =
+                        new AlertDialog.Builder(this)
+                                .setTitle("Warning")
+                                .setMessage(
+                                        "Gateway name set to \"example\" - please modify "
+                                                + "Constants.java and replace it with your own gateway.")
+                                .setPositiveButton("OK", null)
+                                .create();
+                alertDialog.show();
+            }
+
+            String billingName =
+                    paymentMethodData.getJSONObject("info").getJSONObject("billingAddress").getString("name");
+            Log.d("BillingName", billingName);
+            // Logging token string.
+            Log.d("GooglePaymentToken", paymentMethodData.getJSONObject("tokenizationData").getString("token"));
+        } catch (JSONException e) {
+            Log.e("handlePaymentSuccess", "Error: " + e.toString());
+            return;
+        }
+    }
+
+    private void handleError(int statusCode) {
+        Log.w("loadPaymentDatafailed", String.format("Error code: %d", statusCode));
+    }
+
 }
 
 

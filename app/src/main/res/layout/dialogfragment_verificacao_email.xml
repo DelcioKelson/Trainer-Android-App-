@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:orientation="vertical">
+
+
+    <com.google.android.material.textview.MaterialTextView
+        style="@style/Widget.MaterialComponents.Snackbar.TextView"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimaryDark"
+        android:layout_gravity="center"
+        android:text="Foi enviado um email de verificacao a sua conta"
+        />
+
+    <com.google.android.material.button.MaterialButton
+        style="@style/Widget.Design.FloatingActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:visibility="visible"
+        android:text="Clique aqui se ja verificou"
+        android:id="@+id/btn_confirmar_email"
+        />
+
+    <com.google.android.material.button.MaterialButton
+        style="@style/Widget.Design.FloatingActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:visibility="gone"
+        android:text="Clique aqui se nao recebeu o email"
+        android:id="@+id/btn_reenviar_email"
+        />
+
+    <com.google.android.material.textview.MaterialTextView
+        style="@style/Widget.MaterialComponents.Snackbar.TextView"
+        android:id="@+id/tv_confirmacao_info"
+        android:layout_width="wrap_content"
+        android:text="Conta nao verificada"
+        android:background="@color/colorAccent"
+        android:visibility="gone"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"/>
+
+</LinearLayout>

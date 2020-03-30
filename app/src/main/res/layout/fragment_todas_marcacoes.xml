@@ -1,21 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".FragmentTodasMarcacoes">
+
+
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_margin="10dp"
-
-        android:layout_height="30dp">
-
+        android:id="@+id/cv_1"
+        android:layout_height="wrap_content">
         <TextView
+            android:gravity="center"
             android:id="@+id/tv_marcacaoes_pendentes"
             android:layout_width="match_parent"
+            style="@style/TextAppearance.AppCompat.Title"
+
             android:layout_height="match_parent"
             android:text="Marcacaoes pendentes" />
     </androidx.cardview.widget.CardView>
@@ -23,36 +29,40 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_margin="10dp"
-        android:layout_height="30dp"
-        >
+        android:layout_height="wrap_content">
 
         <TextView
+            android:gravity="center"
             android:id="@+id/tv_marcacoes_aceites"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            style="@style/TextAppearance.AppCompat.Title"
             android:text="Marcacoes aceites" />
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_margin="10dp"
-        android:layout_height="30dp">
+        android:layout_height="wrap_content">
 
         <TextView
-
+            android:gravity="center"
             android:id="@+id/tv_marcacoes_pagas"
             android:layout_width="match_parent"
+            style="@style/TextAppearance.AppCompat.Title"
             android:layout_height="match_parent"
             android:text="Marcacoes pagas" />
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
-android:layout_margin="10dp"
+        android:layout_margin="10dp"
         android:layout_width="match_parent"
-        android:layout_height="30dp">
+        android:layout_height="wrap_content">
 
         <TextView
+            android:gravity="center"
             android:id="@+id/tv_historico"
+            style="@style/TextAppearance.AppCompat.Title"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="Historico" />
@@ -61,12 +71,13 @@ android:layout_margin="10dp"
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btn_nova_marcacao"
-        style="@style/Widget.Design.FloatingActionButton"
-        app:srcCompat="@drawable/ic_add"
-        app:maxImageSize="40dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
-        android:layout_margin="16dp" />
+        android:layout_marginTop="300dp"
+        android:layout_marginRight="10dp"
+        app:maxImageSize="40dp"
+        app:srcCompat="@drawable/ic_add" />
+
 
 </LinearLayout>

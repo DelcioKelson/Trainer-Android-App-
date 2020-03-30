@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <item android:id="@+id/fragmentPersoanlPerfil"
+        android:title="perfil"
+        android:icon="@drawable/ic_person"/>
+
+
+    <item android:id="@+id/fragmentTodasMarcacoes"
+        android:title="Marcacoes"
+        android:icon="@drawable/ic_marcacoes"
+        />
+
+    <item android:id="@+id/fragmentNotificacoes"
+        android:title="Notificacoes"
+        android:icon="@drawable/ic_notifications_black_24dp"
+        />
+</menu>

@@ -3,6 +3,7 @@ package pmd.di.ubi.pt.projectofinal;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,25 +19,16 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Objects;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link FragmentMudarPassword#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class FragmentMudarPassword extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private FirebaseUser user;
     private EditText etPasswordAtual,etNovaPassword, etConfirmarPassword;
 
     public FragmentMudarPassword() {
         // Required empty public constructor
     }
-
     public static FragmentMudarPassword newInstance() {
         return new FragmentMudarPassword();
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -60,11 +52,11 @@ public class FragmentMudarPassword extends Fragment {
                         user.updatePassword(etNovaPassword.getText().toString()).addOnCompleteListener(task1 -> {
                             if(task1.isSuccessful()){
                                 Toast.makeText(getActivity(),"palavra passe alterarada com sucesso",Toast.LENGTH_LONG).show();
-                                getActivity().getSupportFragmentManager().beginTransaction()
-                                        .replace(R.id.container, FragmentDefinicoesConta.newInstance())
-                                        .commit();
+                                Navigation.findNavController(getView()).popBackStack();
+
                             }
-                        });}else {
+                        });
+                    }else {
                         Toast.makeText(getActivity(),"palavra passes nao coincidem",Toast.LENGTH_LONG).show();
                     }
                 }
@@ -72,12 +64,8 @@ public class FragmentMudarPassword extends Fragment {
         });
 
         btnCancelar.setOnClickListener(v -> {
-            getActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container, FragmentDefinicoesConta.newInstance())
-                    .commit();
+            Navigation.findNavController(getView()).popBackStack();
         });
-
-
 
         return view;
     }

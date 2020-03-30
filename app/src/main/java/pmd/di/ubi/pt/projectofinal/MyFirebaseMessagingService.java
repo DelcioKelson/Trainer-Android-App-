@@ -65,7 +65,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private void sendNotification(String titulo , String messageBody,String tipoDeConta) {
 
-
         Intent intent;
 
         intent = new Intent(MyFirebaseMessagingService.this, ActivityMain.class);;
@@ -89,8 +88,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        Log.d(TAG, "chrsuss");
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(channelId,

@@ -3,6 +3,7 @@ package pmd.di.ubi.pt.projectofinal;
 
 import com.google.android.gms.wallet.WalletConstants;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -41,9 +42,6 @@ public class Constants {
      * @value #SUPPORTED_NETWORKS
      */
     public static final List<String> SUPPORTED_NETWORKS = Arrays.asList(
-            "AMEX",
-            "DISCOVER",
-            "JCB",
             "MASTERCARD",
             "VISA");
 
@@ -78,7 +76,7 @@ public class Constants {
      *
      * @value #SHIPPING_SUPPORTED_COUNTRIES
      */
-    public static final List<String> SHIPPING_SUPPORTED_COUNTRIES = Arrays.asList("PT", "GB");
+    public static final List<String> SHIPPING_SUPPORTED_COUNTRIES = Collections.singletonList("PT");
 
     /**
      * The name of your payment processor/gateway. Please refer to their documentation for more

@@ -22,11 +22,6 @@ import java.util.ArrayList;
 import java.util.Map;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link FragmentModalidades#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class FragmentModalidades extends Fragment {
 
     private ArrayList<Map<String,Object>> modalidadeList;
@@ -47,9 +42,6 @@ public class FragmentModalidades extends Fragment {
         //getSupportActionBar().setTitle("Modalidades");
         modalidadeList = new ArrayList<>();
 
-
-
-
         GridView gridView = (GridView) view.findViewById(R.id.gridview);
         adapterModalidades = new AdapterModalidades(getActivity(), modalidadeList);
         gridView.setAdapter(adapterModalidades);
@@ -67,22 +59,5 @@ public class FragmentModalidades extends Fragment {
             }
         });
         return view;
-    }
-
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.bar_opcao_conta:
-                getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.container, FragmentDefinicoesConta.newInstance())
-                        .commit();
-                return true;
-            default:
-
-                return super.onOptionsItemSelected(item);
-        }
     }
 }

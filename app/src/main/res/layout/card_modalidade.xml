@@ -1,34 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="wrap_content"
-    android:layout_marginRight="8dp"
-    android:layout_marginLeft="8dp"
-    android:layout_marginBottom="8dp"
-    android:layout_marginTop="8dp"
-    >
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:layout_gravity="center"
+        android:gravity="center"
         android:clickable="true"
         android:background="?android:attr/selectableItemBackground"
         android:id="@+id/linear"
         >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/titulo"
+            style="@style/Widget.MaterialComponents.Snackbar.TextView"
+            android:background="@color/black"
+            android:textColor="@color/colorPrimary"
+            android:layout_gravity="center"
+            android:textSize="18sp" />
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:scaleType="centerCrop"
             android:id="@+id/modalidade_imagem" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="19dp"
-            android:id="@+id/titulo"
-            android:textColor="#000"
-            android:textSize="18sp" />
-
     </LinearLayout>
 
-</androidx.cardview.widget.CardView>
