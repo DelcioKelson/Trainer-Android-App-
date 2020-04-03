@@ -5,15 +5,19 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.Toast;
 
 
 public class FragmentRegistro1 extends Fragment {
     private CheckBox c1,c2,c3,c4,c5,c6;
+    private EditText morada,codigoPostal;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -26,10 +30,30 @@ public class FragmentRegistro1 extends Fragment {
         c4 = view.findViewById(R.id.cb4);
         c5 = view.findViewById(R.id.cb5);
         c6 = view.findViewById(R.id.cb6);
+
+        morada = view.findViewById(R.id.edit_morada);
+        codigoPostal = view.findViewById(R.id.edit_codigo_postal);
+
         Button btnProximoPasso = (Button) view.findViewById(R.id.btn_proximo_passo);
 
-        btnProximoPasso.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.action_fragmentRegistro1_to_fragmentRegistro2)
-        );
+        btnProximoPasso.setOnClickListener(v -> {
+
+            String codigoText = codigoPostal.getText().toString();
+            String moradaText = morada.getText().toString();
+            if(moradaText.isEmpty()){
+                Toast.makeText(getContext(),"Insira a sua morada", Toast.LENGTH_LONG).show();
+                return;
+            }
+
+            else if(codigoText.isEmpty()){
+                Toast.makeText(getContext(),"Insira o seu codigo postal", Toast.LENGTH_LONG).show();
+                return;
+            }
+            Bundle bundle = new Bundle();
+            bundle.putString("situacoes", getDoencas());
+            bundle.putString("codigo_postal",codigoText);
+            bundle.putString("morada", moradaText);
+            Navigation.findNavController(v).navigate(R.id.action_fragmentRegistro1_to_fragmentRegistro2, bundle);});
         return view;
     }
 

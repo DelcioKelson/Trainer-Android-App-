@@ -1,5 +1,6 @@
 package pmd.di.ubi.pt.projectofinal;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,7 @@ import androidx.fragment.app.DialogFragment;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 public class DialogFragmentVerificarEmail extends DialogFragment {
 
@@ -37,6 +39,7 @@ public class DialogFragmentVerificarEmail extends DialogFragment {
         user = FirebaseAuth.getInstance().getCurrentUser();
         final Button btnConfirmar = view.findViewById(R.id.btn_confirmar_email);
         final Button btnReenviar = view.findViewById(R.id.btn_reenviar_email);
+        final Button btnSair = view.findViewById(R.id.btn_sair);
 
         final TextView tvInfo = view.findViewById(R.id.tv_confirmacao_info);
         user.sendEmailVerification()
@@ -73,6 +76,18 @@ public class DialogFragmentVerificarEmail extends DialogFragment {
                         }
                     }
                 }));
+
+
+        btnSair.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseAuth.getInstance().signOut();
+                FirebaseMessaging.getInstance().unsubscribeFromTopic(user.getUid());
+                Intent intent = new Intent(getActivity(), ActivityMain.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
+        });
         return view;
     }
 }

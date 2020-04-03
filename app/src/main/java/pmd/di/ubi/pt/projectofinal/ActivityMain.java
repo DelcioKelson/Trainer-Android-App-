@@ -137,7 +137,7 @@ public class ActivityMain extends AppCompatActivity {
                 }
             }
         };
-        
+
         toolbar = findViewById(R.id.toolbar_personal);
         bottomNavigationView = findViewById(R.id.bottom_navigation_personal);
         navController = Navigation.findNavController(this, R.id.container_personal);

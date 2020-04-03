@@ -54,7 +54,7 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_login"
-        android:text="Login"
+        android:text="Entrar"
         android:layout_width="140dp"
         android:layout_height="45dp"
         android:textColor="#483D8B"

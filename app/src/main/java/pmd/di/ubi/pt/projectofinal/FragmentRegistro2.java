@@ -15,6 +15,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
@@ -46,9 +47,7 @@ import java.util.Map;
 
 public class FragmentRegistro2 extends Fragment {
 
-    private static final String ARG_PARAM1 = "param1";
-
-    private String situacoes;
+    private String situacoes, morada, codigoPostal;
 
     private EditText emailText,passwordText,alturaText,pesoText,numeroTelefone ;
     private TextInputEditText nomeText;
@@ -56,19 +55,20 @@ public class FragmentRegistro2 extends Fragment {
     private Button btnFoto,btnRegistrar;
     private Uri fSelecteduri;
     private ImageView imgVfoto;
-    private Intent vimDoPrimeiroPasso;
     private ProgressBar progressBar;
+
 
     public FragmentRegistro2() {
         // Required empty public constructor
     }
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            situacoes = getArguments().getString(ARG_PARAM1);
+            situacoes = getArguments().getString("situacoes");
+            morada = getArguments().getString("morada");
+            codigoPostal = getArguments().getString("codigo_postal");
         }
     }
 
@@ -255,6 +255,8 @@ public class FragmentRegistro2 extends Fragment {
                 usuarioData.put("tipoConta","usuario");
                 usuarioData.put("Uid",uid);
                 usuarioData.put("situacoes",situacoes);
+                usuarioData.put("codigo_postal",codigoPostal);
+                usuarioData.put("morada",morada);
 
                 // adicionar dados do usario na base de dados
                 FirebaseFirestore.getInstance().collection("pessoas")
@@ -273,4 +275,6 @@ public class FragmentRegistro2 extends Fragment {
 
         }
     }
+
+
 }

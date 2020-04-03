@@ -1,0 +1,17 @@
+[
+  {
+    "name": "nav_graph_login",
+    "navigationXmlIds": [],
+    "deepLinks": []
+  },
+  {
+    "name": "nav_graph_personal",
+    "navigationXmlIds": [],
+    "deepLinks": []
+  },
+  {
+    "name": "nav_graph_usuario",
+    "navigationXmlIds": [],
+    "deepLinks": []
+  }
+]
