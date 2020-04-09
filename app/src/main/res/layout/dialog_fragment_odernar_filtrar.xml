@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-
     tools:context=".DialogFragmentOrdernarFiltrar">
 
     <com.google.android.material.card.MaterialCardView
@@ -105,17 +104,14 @@
                 android:text="dia/mês/ano" />
 
             <com.google.android.material.button.MaterialButton
-                style="@style/Widget.Design.FloatingActionButton"
                 android:id="@+id/btn_aplicar_filtro"
                 android:layout_width="wrap_content"
                 android:layout_gravity="center"
+                android:textAllCaps="false"
                 android:layout_height="wrap_content"
                 android:text="Aplicar filtro" />
         </LinearLayout>
 
-
     </com.google.android.material.card.MaterialCardView>
-
-
 
 </LinearLayout>

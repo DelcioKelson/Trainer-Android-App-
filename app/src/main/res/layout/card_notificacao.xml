@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+
+<com.google.android.material.card.MaterialCardView android:layout_width="match_parent"
+    style="@style/Widget.MaterialComponents.CardView"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    >
+
 <LinearLayout android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/borda"
+    android:background="#f05545"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <TextView
@@ -19,7 +26,7 @@
         style="@style/TextAppearance.AppCompat.Body1"
         android:layout_marginLeft="10dp"
         android:layout_height="wrap_content"/>
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tv_data_notificacao"
         android:layout_width="match_parent"
         style="@style/TextAppearance.AppCompat.Body1"
@@ -27,4 +34,6 @@
         android:layout_marginLeft="10dp"
         />
     </LinearLayout>
+</com.google.android.material.card.MaterialCardView>
+
 

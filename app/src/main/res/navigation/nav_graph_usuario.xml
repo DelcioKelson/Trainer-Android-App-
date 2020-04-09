@@ -56,6 +56,9 @@
             app:destination="@id/modalidadesFragment"
             app:enterAnim="@anim/anima"
             app:popEnterAnim="@anim/fragment_fade_enter" />
+        <action
+            android:id="@+id/action_fragmentTodasMarcacoes_to_persoanlPerfilFragment"
+            app:destination="@id/persoanlPerfilFragment" />
     </fragment>
     <fragment
         android:id="@+id/fragmentNotificacoes"

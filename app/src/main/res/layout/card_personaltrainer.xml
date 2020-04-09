@@ -1,41 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_marginRight="8dp"
     android:layout_marginLeft="8dp"
     android:layout_marginBottom="8dp"
-    android:layout_marginTop="8dp"
-    >
-
+    android:checkable="true"
+    android:layout_marginTop="8dp">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:clickable="true"
         android:id="@+id/card_personal"
         android:background="#FFFFFF"
         android:focusable="true">
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:scaleType="centerCrop"
-            android:id="@+id/personal_image" />
 
+        <ImageView
+            android:id="@+id/personal_image"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginStart="5dp" />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <ToggleButton
+                android:id="@+id/button_favorite"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:background="@drawable/button_favorite"
+                android:checked="false"
+                android:text=""
+                android:textOff=""
+                android:textOn=""
+                android:layout_gravity="right"/>
         <TextView
             android:id="@+id/nomePersonal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/black"
+            android:transitionName="nome"
             style="@style/TextAppearance.AppCompat.Title"
             />
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="hvbjhv"
             android:id="@+id/tv_preco_card"
             style="@style/TextAppearance.AppCompat.Body2"/>
-
 
         <RatingBar
             android:id="@+id/rating"
@@ -53,10 +70,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="ainda nao tem classificaçoes"
-            android:textColor="@color/colorPrimary"
             android:textSize="15dp"
             android:visibility="gone" />
 
+        </LinearLayout>
     </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>

@@ -10,17 +10,13 @@
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar_personal"
+            android:id="@+id/toolbar"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/black"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
-   <include layout="@layout/fragment_personal"/>
-
-
-
-
+   <include layout="@layout/fragment_host"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

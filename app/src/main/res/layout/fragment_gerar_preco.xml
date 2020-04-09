@@ -20,7 +20,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="left"
         android:drawableLeft="@drawable/ic_arrow_back_black_24dp"
-        android:textColor="@color/black"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         />
@@ -29,7 +28,6 @@
         android:id="@+id/btn_tempo_inicio"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/black"
         android:text="Escolher tempo de inicio"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -49,7 +47,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Escolher Dia"
-        android:textColor="@color/black"
         android:layout_gravity="center" />
 
     <TextView
@@ -89,8 +86,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Marcar agora"
-        android:layout_gravity="center|bottom"
-        android:textColor="@color/black" />
+        android:layout_gravity="center|bottom" />
 
 
 </LinearLayout>

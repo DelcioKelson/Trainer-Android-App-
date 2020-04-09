@@ -6,13 +6,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
+import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -29,29 +35,49 @@ public class FragmentTodasMarcacoes extends Fragment implements View.OnClickList
     private FloatingActionButton btnNovaMarcacao;
     private boolean isUser;
 
+    private PagerAdapter pagerAdapter;
+    ViewPager viewPager;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_todas_marcacoes, container, false);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
-
         SharedDataModel modelData = new ViewModelProvider(requireActivity()).get(SharedDataModel.class);
 
-        isUser = modelData.isUser().getValue();
+        try {
+            isUser = modelData.isUser().getValue();
+        }catch (Exception e){
+        }
 
-        if (isUser && !user.isEmailVerified()) {
-            FragmentTransaction ft = getFragmentManager().beginTransaction();
-            Fragment prev = getFragmentManager().findFragmentByTag("dialog");
-            if (prev != null) {
-                ft.remove(prev);
+        pagerAdapter = new PagerAdapter(getChildFragmentManager());
+        viewPager = view.findViewById(R.id.pager);
+        viewPager.setAdapter(pagerAdapter);
+        TabLayout tabLayout = view.findViewById(R.id.tab_layout);
+        tabLayout.setupWithViewPager(viewPager);
+        tabLayout.getTabAt(0).setIcon(R.drawable.ic_time_24dp);
+        tabLayout.getTabAt(1).setIcon(R.drawable.ic_favorite);
+
+
+
+        if (isUser ) {
+
+            viewPager.setVisibility(View.VISIBLE);
+            if( !user.isEmailVerified()){
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+                if (prev != null) {
+                    ft.remove(prev);
+                }
+                ft.addToBackStack(null);
+
+                DialogFragment newFragment = DialogFragmentVerificarEmail.newInstance();
+                newFragment.setTargetFragment(this, 300);
+                newFragment.setCancelable(false);
+                newFragment.show(ft, "dialog");
             }
-            ft.addToBackStack(null);
 
-            DialogFragment newFragment = DialogFragmentVerificarEmail.newInstance();
-            newFragment.setTargetFragment(this, 300);
-            newFragment.setCancelable(false);
-            newFragment.show(ft, "dialog");
         }
 
         tvAceites = view.findViewById(R.id.tv_marcacoes_aceites);
@@ -60,11 +86,9 @@ public class FragmentTodasMarcacoes extends Fragment implements View.OnClickList
         tvHistorico = view.findViewById(R.id.tv_historico);
 
         btnNovaMarcacao = view.findViewById(R.id.btn_nova_marcacao);
-
         if (!isUser) {
             btnNovaMarcacao.setVisibility(View.GONE);
         }
-
         btnNovaMarcacao.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.action_fragmentTodasMarcacoes_to_modalidadesFragment));
 
         tvAceites.setOnClickListener(this);
@@ -131,5 +155,42 @@ public class FragmentTodasMarcacoes extends Fragment implements View.OnClickList
     @Override
     public void onFinishEditDialog(int flag) {
 
+    }
+
+    public static class PagerAdapter extends FragmentStatePagerAdapter {
+
+        public PagerAdapter(FragmentManager fragmentManager){
+            super(fragmentManager);
+        }
+
+        @NonNull
+        @Override
+        public Fragment getItem(int position) {
+            Fragment fragment = new FragmentListTreinadores();
+            Bundle args = new Bundle();
+            if(position==0){
+                args.putString("tab","recente");
+            }else {
+                args.putString("tab","favorito");
+            }
+
+            fragment.setArguments(args);
+            return fragment;
+        }
+
+        @Override
+        public int getCount() {
+            return 2;
+        }
+
+        @Nullable
+        @Override
+        public CharSequence getPageTitle(int position) {
+            if (position==0){
+                return "Recentes";
+            }else {
+                return "Favoritos";
+            }
+        }
     }
 }

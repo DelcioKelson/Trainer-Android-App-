@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,6 +46,7 @@ public class FragmentPersoanlPerfil extends Fragment {
         if (getArguments() != null) {
             uidPersonal = getArguments().getString(ARG_PARAM1);
         }
+
     }
 
     @Override

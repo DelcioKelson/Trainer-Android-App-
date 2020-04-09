@@ -1,10 +1,17 @@
 package pmd.di.ubi.pt.projectofinal;
 
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.viewpager.widget.ViewPager;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
 
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -33,7 +41,7 @@ public class FragmentTreinadores extends Fragment implements DialogFragmentOrder
     // TODO: Rename and change types of parameters
     private String modalidade;
     private GridView gridView;
-    private ArrayList<Map<String, String>> personalList,personalListOriginal;
+    private ArrayList<Map<String, Object>> personalList,personalListOriginal;
     private int idOpOrdem =0;
 
     private boolean disponivel = false;
@@ -41,9 +49,6 @@ public class FragmentTreinadores extends Fragment implements DialogFragmentOrder
     private String diaDisponibilidade = "Dia/Mes/Ano";
     private AdapterTreinadores adapterTreinadores;
     private FirebaseUser user;
-    private final Comparator<Map<String, String>> precoMapComparador = (p1, p2) -> p1.get("preco").compareTo(p2.get("preco"));
-    private final Comparator<Map<String, String>> ratingMapComparador = (p1, p2) -> p1.get("rating").compareTo(p2.get("rating"));
-
 
     public FragmentTreinadores() {
         // Required empty public constructor
@@ -52,6 +57,7 @@ public class FragmentTreinadores extends Fragment implements DialogFragmentOrder
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         if (getArguments() != null) {
             modalidade = getArguments().getString(ARG_PARAM1);
         }
@@ -62,7 +68,6 @@ public class FragmentTreinadores extends Fragment implements DialogFragmentOrder
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.gridview_fragment, container, false);
-        setHasOptionsMenu(true);
         gridView =  view.findViewById(R.id.gridview);
         gridView.setNumColumns(1);
         personalList = new ArrayList<>();
@@ -70,23 +75,16 @@ public class FragmentTreinadores extends Fragment implements DialogFragmentOrder
         return view;
     }
 
-    public void initPersonalList(){
+    private void initPersonalList(){
 
-        personalList = new ArrayList<Map<String, String>>();
+        personalList = new ArrayList<Map<String, Object>>();
         FirebaseFirestore.getInstance().collection("pessoas").
                 whereEqualTo("tipoConta","personal").
                 whereEqualTo("especialidade",modalidade).get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult()!=null) {
                 for (DocumentSnapshot document : task.getResult()) {
                     if(document!=null){
-                        Map<String,String> newMap =new HashMap<String,String>();
-                        for (Map.Entry<String, Object> entry : Objects.requireNonNull(document.getData()).entrySet()) {
-                            if(entry.getValue() instanceof String){
-                                newMap.put(entry.getKey(), (String) entry.getValue());
-                            }
-                        }
-                        personalList.add(newMap);
-                        Log.d("personalAux", document.toString());
+                        personalList.add(document.getData());
                     }
                 }
                 personalListOriginal = new ArrayList<> (personalList);
@@ -101,7 +99,8 @@ public class FragmentTreinadores extends Fragment implements DialogFragmentOrder
 
    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_personais, menu);
+       menu.clear();
+       inflater.inflate(R.menu.menu_personais, menu);
        super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -124,22 +123,23 @@ public class FragmentTreinadores extends Fragment implements DialogFragmentOrder
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onFinishOrdernarMenuDialog(int selectedItem) {
 
         switch (selectedItem){
             case R.id.radioButton_p_mema:
-                Collections.sort(personalList,precoMapComparador);
+                personalList.sort(Comparator.comparing(m -> Float.parseFloat((String) m.get("preco"))));
                 break;
             case R.id.radioButton_p_mame:
-                Collections.sort(personalList,precoMapComparador);
+                personalList.sort(Comparator.comparing(m -> Float.parseFloat((String) m.get("preco"))));
                 Collections.reverse(personalList);
                 break;
             case R.id.radioButton_c_mema:
-                Collections.sort(personalList,ratingMapComparador);
+                personalList.sort(Comparator.comparing(m -> Integer.parseInt((String) m.get("rating"))));
                 break;
             case R.id.radioButton_c_mame:
-                Collections.sort(personalList,ratingMapComparador);
+                personalList.sort(Comparator.comparing(m -> Integer.parseInt((String) m.get("rating"))));
                 Collections.reverse(personalList);
                 break;
         }
@@ -149,9 +149,8 @@ public class FragmentTreinadores extends Fragment implements DialogFragmentOrder
 
     @Override
     public void onFinishFiltrarMenuDialog(boolean disponiveis, boolean disponiveisDia, String diaMesAno) {
-
         if(disponiveis!=disponivel || disponiveisDia!=diaDisponivel || !diaDisponibilidade.equals(diaMesAno)){
-            for(Map<String, String> personal: personalListOriginal ) {
+            for(Map<String, Object> personal: personalListOriginal ) {
                 if (!personalList.contains(personal)) {
                     personalList.add(personal);
                 }
@@ -164,21 +163,25 @@ public class FragmentTreinadores extends Fragment implements DialogFragmentOrder
         disponivel = disponiveis;
 
         if(disponiveis){
-            for(Map<String, String> personal: personalList ){
-                if(personal.get("disponivel").equals("nao")){
-                    personalList.remove(personal);
-                }
+            for(Map<String, Object> personal: personalList ){
+               try {
+                   if(personal.get("disponivel").equals("nao")){
+                       personalList.remove(personal);
+                   }
+               }catch (Exception e){ }
             }
         }
 
         if(disponiveisDia){
-            for(Map<String, String> personal: personalList ){
-                String dias = personal.get("diasIndisponiveis");
+            for(Map<String, Object> personal: personalList ){
+                String dias = (String) personal.get("diasIndisponiveis");
                 if(dias!=null && dias.contains(diaMesAno)){
                     personalList.remove(personal);
                 }
             }
         }
         adapterTreinadores.notifyDataSetChanged();
+
+
     }
 }

@@ -1,41 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+<LinearLayout android:layout_width="300dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginTop="5dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_gravity="center"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:ems="10"
+            style="@style/LoginTextInputLayoutStyle"
+            android:hint="@string/comentetario"
+            app:hintAnimationEnabled="true">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/comentario_dialog_txtv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <TextView
+        <RatingBar
+            android:id="@+id/comentario_rating"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/comentetario"
-            android:layout_marginTop="16dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
-            android:layout_marginBottom="4dp"/>
-
-        <EditText
-            android:id="@+id/comentario_dialog_txtv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
-            android:layout_marginBottom="4dp" />
-
+            android:layout_gravity="center"
+            android:numStars="5"
+            android:progressBackgroundTint="@color/lightGrey"
+            android:progressTint="@color/duskYellow"
+            android:rating="1" />
     </LinearLayout>
 
-
-    <RatingBar
-        android:id="@+id/comentario_rating"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:numStars="5"
-        android:progressBackgroundTint="@color/lightGrey"
-        android:progressTint="@color/duskYellow"
-        android:rating="1" />
-
-</LinearLayout>

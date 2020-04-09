@@ -8,15 +8,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Button;
-import android.widget.Toast;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -29,9 +24,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.wallet.AutoResolveHelper;
 import com.google.android.gms.wallet.PaymentData;
 import com.google.android.material.appbar.MaterialToolbar;
-import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -54,22 +47,21 @@ public class ActivityMain extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         user = FirebaseAuth.getInstance().getCurrentUser();
-
-
-
+        setContentView(R.layout.activity_main);
+        toolbar = findViewById(R.id.toolbar);
+        navController = Navigation.findNavController(this, R.id.container);
+        bottomNavigationView = findViewById(R.id.bottom_navigation);
 
         Log.i("userValue",""+user);
         if (user != null) {
-
-
-
-
-
-                FirebaseFirestore.getInstance().collection("pessoas").document(user.getUid()).get().addOnCompleteListener(task -> {
+             FirebaseFirestore.getInstance().collection("pessoas").document(user.getUid()).get().addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         Log.i("activityInicial", "activityInicial");
                         DocumentSnapshot document = task.getResult();
                         if (document != null) {
+
+                            toolbar.setVisibility(View.VISIBLE);
+                            bottomNavigationView.setVisibility(View.VISIBLE);
 
                             SharedDataModel modelData = new ViewModelProvider(this).get(SharedDataModel.class);
                             modelData.init();
@@ -90,14 +82,14 @@ public class ActivityMain extends AppCompatActivity {
                             NavigationUI.setupWithNavController(bottomNavigationView, navController);
                         }
                     }else {
-                        setContentView(R.layout.activity_main_login);
+                        navController.setGraph(R.navigation.nav_graph_login);
 
                     }
                 });
 
         } else {
             {
-                setContentView(R.layout.activity_main_login);
+                navController.setGraph(R.navigation.nav_graph_login);
             }
         }
     }
@@ -115,14 +107,10 @@ public class ActivityMain extends AppCompatActivity {
     }
 
     public void iniciarSessaoUsuario() {
-        setContentView(R.layout.activity_main_usuario);
-        toolbar = findViewById(R.id.toolbar_usuario);
-        navController = Navigation.findNavController(this, R.id.container_usuario);
-        bottomNavigationView = findViewById(R.id.bottom_navigation_usuario);
+        navController.setGraph(R.navigation.nav_graph_usuario);
+        bottomNavigationView.inflateMenu(R.menu.bottom_usuario_menu);
     }
     public void iniciarSessaoPersonal(String nome) {
-        setContentView(R.layout.activity_main_personal);
-
         OnCompleteListener<AuthResult> completeListener = new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -133,14 +121,12 @@ public class ActivityMain extends AppCompatActivity {
                         final UserProfileChangeRequest changeRequest = builder.build();
                         user.updateProfile(changeRequest);
                     }
-
                 }
             }
         };
 
-        toolbar = findViewById(R.id.toolbar_personal);
-        bottomNavigationView = findViewById(R.id.bottom_navigation_personal);
-        navController = Navigation.findNavController(this, R.id.container_personal);
+        navController.setGraph(R.navigation.nav_graph_personal);
+        bottomNavigationView.inflateMenu(R.menu.bottom_personal_menu);
     }
 
     @Override
@@ -229,7 +215,6 @@ public class ActivityMain extends AppCompatActivity {
     private void handleError(int statusCode) {
         Log.w("loadPaymentDatafailed", String.format("Error code: %d", statusCode));
     }
-
 }
 
 

@@ -13,7 +13,6 @@
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:id="@+id/img_foto"
-        app:civ_border_color="@color/colorPrimary"
         app:civ_border_width="2dp"
         android:layout_marginTop="5dp"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -70,8 +69,7 @@
             android:ems="10"
             android:hint="Email"
             app:hintAnimationEnabled="true"
-            style="@style/LoginTextInputLayoutStyle"
->
+            style="@style/LoginTextInputLayoutStyle">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edit_email"
                 android:inputType="textEmailAddress"
@@ -130,15 +128,12 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/edit_data"
-        android:layout_width="300dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:textSize="15sp"
         android:layout_marginTop="5dp"
-        android:textColor="@color/black"
-        android:ems="10"
-        android:textSize="20sp"
-        android:hint="@string/dia_mes_ano"
-        android:padding="8dp"
+        android:text="@string/dia_mes_ano"
         />
 
     <LinearLayout
@@ -176,8 +171,7 @@
             android:ems="10"
             android:hint="Peso. Ex:65"
             app:hintAnimationEnabled="true"
-            style="@style/LoginTextInputLayoutStyle"
-            >
+            style="@style/LoginTextInputLayoutStyle">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edit_peso"
                 android:layout_width="match_parent"
@@ -192,9 +186,7 @@
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:text="@string/registrar"
-        android:textColor="@color/black"
         android:layout_gravity="center"
-        android:textStyle="bold"
         android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="@+id/edit_peso"
         app:layout_constraintStart_toStartOf="@+id/edit_peso"

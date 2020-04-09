@@ -44,16 +44,14 @@
             android:layout_height="wrap_content"
             android:text="Alterar fotografia"
             android:textSize="15sp"
-            android:layout_gravity="center"
-            android:textColor="#483D8B" />
+            android:layout_gravity="center"/>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_salvar_foto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Salvar fotografia"
             android:visibility="gone"
-            android:textColor="#483D8B"
             android:textSize="20sp" />
 
         <com.google.android.material.button.MaterialButton
@@ -64,7 +62,6 @@
             android:layout_marginEnd="5dp"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"
-            android:textColor="#483D8B"
             android:text="alterar nome"
             android:drawableEnd="@drawable/arrow_right_black"/>
 
@@ -73,7 +70,6 @@
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
             android:layout_marginTop="5dp"
-            android:textColor="#483D8B"
             android:layout_marginBottom="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -87,7 +83,6 @@
             android:layout_marginEnd="5dp"
             android:layout_marginTop="5dp"
             android:visibility="gone"
-            android:textColor="#483D8B"
             android:layout_marginBottom="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -100,7 +95,6 @@
             android:layout_marginEnd="5dp"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"
-            android:textColor="#483D8B"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Sair da conta"
