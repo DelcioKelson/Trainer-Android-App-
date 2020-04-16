@@ -4,6 +4,8 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,6 +15,7 @@ import android.widget.GridView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.transition.Hold;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -36,10 +39,13 @@ public class FragmentListTreinadores extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
 
     private GridView gridView;
-    private ArrayList<Map<String, String>> personalList;
-    private AdapterTreinadoresSimples adapterTreinadores;
+    private ArrayList<Map<String, Object>> personalList;
     private String[] idsPersonais;
     FirebaseUser user;
+
+    private RecyclerView recyclerView;
+
+    private AdapterPersonalFavoritosRecentes adapterPersonalFavoritosRecentes;
 
 
     public FragmentListTreinadores() {
@@ -52,11 +58,13 @@ public class FragmentListTreinadores extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-        View view = inflater.inflate(R.layout.gridview_fragment, container, false);
-        gridView = view.findViewById(R.id.gridview);
-        gridView.setNumColumns(1);
+        View view = inflater.inflate(R.layout.recyclerview_layout, container, false);
+        recyclerView = (RecyclerView) view.findViewById(R.id.my_recyclerview);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         user = FirebaseAuth.getInstance().getCurrentUser();
         personalList = new ArrayList<>();
+        setExitTransition(new Hold());
+
         idsPersonais = new String[10];
 
         String tab = getArguments().getString("tab");
@@ -78,18 +86,12 @@ public class FragmentListTreinadores extends Fragment {
             if (task.isSuccessful() && task.getResult() != null) {
                 for (DocumentSnapshot document : task.getResult()) {
                     if (document != null) {
-                        Map<String, String> newMap = new HashMap<String, String>();
-                        for (Map.Entry<String, Object> entry : Objects.requireNonNull(document.getData()).entrySet()) {
-                            if (entry.getValue() instanceof String) {
-                                newMap.put(entry.getKey(), (String) entry.getValue());
-                            }
-                        }
-                        personalList.add(newMap);
+                        personalList.add(document.getData());
                         Log.d("personalAux", document.toString());
                     }
                 }
-                adapterTreinadores = new AdapterTreinadoresSimples(getActivity(), personalList);
-                gridView.setAdapter(adapterTreinadores);
+                adapterPersonalFavoritosRecentes = new AdapterPersonalFavoritosRecentes(getActivity(), personalList);
+                recyclerView.setAdapter(adapterPersonalFavoritosRecentes);
             } else {
                 Log.d("FirebaseFirestore", "Error getting documents: ", task.getException());
             }
@@ -120,18 +122,12 @@ public class FragmentListTreinadores extends Fragment {
                                 if (task.isSuccessful() && task1.getResult()!=null) {
                                     for (DocumentSnapshot document : task1.getResult()) {
                                         if(document!=null){
-                                            Map<String,String> newMap =new HashMap<String,String>();
-                                            for (Map.Entry<String, Object> entry : Objects.requireNonNull(document.getData()).entrySet()) {
-                                                if(entry.getValue() instanceof String){
-                                                    newMap.put(entry.getKey(), (String) entry.getValue());
-                                                }
-                                            }
-                                            personalList.add(newMap);
+                                            personalList.add(document.getData());
                                             Log.d("personalAux", document.toString());
                                         }
                                     }
-                                    adapterTreinadores = new AdapterTreinadoresSimples(getActivity(), personalList);
-                                    gridView.setAdapter(adapterTreinadores);
+                                    adapterPersonalFavoritosRecentes = new AdapterPersonalFavoritosRecentes(getActivity(), personalList);
+                                    recyclerView.setAdapter(adapterPersonalFavoritosRecentes);
                                 }
                                 else {
                                     Log.d("FirebaseFirestore", "Error getting documents: ", task.getException());

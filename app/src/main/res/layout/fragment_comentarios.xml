@@ -6,27 +6,30 @@
         android:id="@+id/btn_comentar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         android:text="comentar"
-        android:layout_gravity="right"
+        android:layout_gravity="center"
         android:textSize="15sp" />
 
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_gerar_preco"
+    <Button
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_marginLeft="5dp"
+        android:id="@+id/btn_voltar"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="gerar preço"
-        android:layout_gravity="center|bottom"
-        android:drawableEnd="@drawable/arrow_right_black"/>
+        android:textAllCaps="false"
 
-    <GridView
-        android:id="@+id/gridview_comentario"
+        android:text="voltar"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:drawableLeft="@drawable/ic_arrow_back_black_24dp"
+        />
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/comentario_recyclerview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:columnWidth="150dp"
-        android:numColumns="1"
-        android:verticalSpacing="24dp"
-        android:horizontalSpacing="10dp" />
+       />
 
 </LinearLayout>
