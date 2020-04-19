@@ -1,5 +1,6 @@
 package pmd.di.ubi.pt.projectofinal;
 
+import android.app.Dialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -31,18 +33,13 @@ public class DialogFragmentMarcacao extends DialogFragment {
     private static final String ARG_PARAM3 = "diaTreino";
     private static final String ARG_PARAM4 = "tempoDemora";
 
-    private static final String ARG_PARAM5 = "tipoConta";
-    private static final String ARG_PARAM6 = "estado";
-    private static final String ARG_PARAM7 = "idMarcacao";
     private static final String ARG_PARAM8 = "uidPersonal";
 
     private String diaTreino,horaTreino,tempoDuracao, uidPersonal,preco;
 
-    private TextView tvDiaTreino,tvHoraTreino, tvPreco,tvEstado,tvTempoDemora,tvObs;
     private CollectionReference marcacoesRef;
     private FirebaseUser user;
 
-    private Button btnCancelar,btnConfirmar;
 
 
 
@@ -53,38 +50,36 @@ public class DialogFragmentMarcacao extends DialogFragment {
         return dialogFragmentMarcacao;
     }
 
-    @Nullable
+    public interface FlagMarcacaoConfirmadaDialogListener {
+        void onFinishEditDialog(int flag);
+    }
+
+
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        super.onCreateView(inflater, container, savedInstanceState);
-        View view = inflater.inflate(R.layout.dialogfragment_confirmar_marcacao,container,true);
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         marcacoesRef = FirebaseFirestore.getInstance().collection("marcacoes");
 
         user = FirebaseAuth.getInstance().getCurrentUser();
 
-        tvDiaTreino = view.findViewById(R.id.tv_dia_detalhe);
-        tvHoraTreino = view.findViewById(R.id.tv_hora_detalhe);
-        tvPreco = view.findViewById(R.id.tv_preco_detalhe);
-        tvTempoDemora = view.findViewById(R.id.tv_tempo_detalhe);
-        btnCancelar = view.findViewById(R.id.btn_cancelar);
-        btnConfirmar =  view.findViewById(R.id.btn_confirmar);
-        btnCancelar.setOnClickListener(v -> dismiss());
-        btnConfirmar.setOnClickListener(v -> salvarMarcaccao());
+        String message = "preço a pagar: " + preco
+                + "\nhora de inicio: " + horaTreino
+                + "\ndia do treino: " + diaTreino
+                + "\ntempo do treino:" + tempoDuracao;
 
-        tvPreco.setText("preço a pagar: " + preco);
-        tvHoraTreino.setText("hora de inicio: " + horaTreino);
-        tvDiaTreino.setText("dia do treino: " + diaTreino);
-        tvTempoDemora.setText("tempo do treino:" + tempoDuracao);
 
-        return view;
+
+        return new android.app.AlertDialog.Builder(getActivity())
+                .setMessage(message)
+                .setPositiveButton("Sim", (dialog, which) -> {
+                    salvarMarcaccao();
+                    dismiss();
+
+                }).setNegativeButton("Nao",null)
+                .create();
     }
 
-    public interface FlagMarcacaoConfirmadaDialogListener {
-        void onFinishEditDialog(int flag);
-    }
-
-    @Override
+        @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -134,6 +129,7 @@ public class DialogFragmentMarcacao extends DialogFragment {
         notificacaoData.put("titulo","Nova marcacao" );;
         notificacaoData.put("mensagem", user.getDisplayName()+ " criou uma marcacao consigo");
         notificacaoData.put("data", time);
+        notificacaoData.put("vista",false);
 
         FirebaseFirestore.getInstance().collection("pessoas")
                 .document(uidPersonal).collection("notificacoes").document().set(notificacaoData);
