@@ -38,11 +38,10 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 public class FragmentDiasIndisponiveis extends Fragment {
 
-    private  Map<String,Boolean> diasFerias;
+    private static String diasFerias;
     private String disponivel;
     private static ChipGroup chipGroup;
     private static FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -71,7 +70,10 @@ public class FragmentDiasIndisponiveis extends Fragment {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful() && task.getResult()!=null) {
-                    diasFerias = (Map<String, Boolean>) task.getResult().get("diasIndisponiveis");
+                    diasFerias = task.getResult().getString("diasIndisponiveis");
+                    if (diasFerias==null){
+                        diasFerias="";
+                    }
                     disponivel = task.getResult().getString("disponivel");
                     if (disponivel.equals("sim")){
                         swdisponivel.setChecked(true);
@@ -94,7 +96,7 @@ public class FragmentDiasIndisponiveis extends Fragment {
 
         btnAddDia.setOnClickListener(v -> {
             try {
-                DialogFragment newFragment = new DatePickerFragment(diasFerias);
+                DialogFragment newFragment = new DatePickerFragment();
                 newFragment.show(getActivity().getSupportFragmentManager(), "datePicker");
             } catch (Exception ignored) {
 
@@ -126,10 +128,6 @@ public class FragmentDiasIndisponiveis extends Fragment {
 
     public static class DatePickerFragment extends DialogFragment
             implements DatePickerDialog.OnDateSetListener {
-        Map<String, Boolean> diasFerias = dia
-        DatePickerFragment(Map<String, Boolean> diasFerias){
-
-        }
         @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
