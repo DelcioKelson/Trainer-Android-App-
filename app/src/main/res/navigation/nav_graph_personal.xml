@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/fragmentTodasMarcacoes"
         android:name="pmd.di.ubi.pt.projectofinal.FragmentTodasMarcacoes"
-        android:label="fragment_todas_marcacoes"
+        android:label="Marcações"
         tools:layout="@layout/fragment_todas_marcacoes">
         <action
             android:id="@+id/action_fragmentTodasMarcacoes_to_marcacoesFragment"
@@ -17,11 +17,11 @@
     <fragment
         android:id="@+id/mudarPasswordFragment"
         android:name="pmd.di.ubi.pt.projectofinal.FragmentMudarPassword"
-        android:label="MudarPasswordFragment" />
+        android:label="Mudar palavra passe" />
     <fragment
         android:id="@+id/fragmentPersoanlPerfil"
         android:name="pmd.di.ubi.pt.projectofinal.FragmentPersoanlPerfil"
-        android:label="FragmentPersoanlPerfil" >
+        android:label="Perfil">
         <action
             android:id="@+id/action_fragmentPersoanlPerfil_to_fragmentDefinicoesConta"
             app:destination="@id/fragmentDefinicoesConta" />
@@ -29,7 +29,7 @@
     <fragment
         android:id="@+id/fragmentDefinicoesConta"
         android:name="pmd.di.ubi.pt.projectofinal.FragmentDefinicoesConta"
-        android:label="FragmentDefinicoesConta" >
+        android:label="Definições">
         <action
             android:id="@+id/action_definicoesContaFragment_to_mudarPasswordFragment"
             app:destination="@id/mudarPasswordFragment" />
@@ -40,14 +40,15 @@
     <fragment
         android:id="@+id/fragmentMarcacoes"
         android:name="pmd.di.ubi.pt.projectofinal.FragmentMarcacoes"
-        android:label="FragmentMarcacoes" />
+        android:label="Marcações" />
     <fragment
         android:id="@+id/fragmentDiasIndisponiveis"
         android:name="pmd.di.ubi.pt.projectofinal.FragmentDiasIndisponiveis"
-        android:label="fragment_dias_indisponiveis"
+        android:label="Disponibilidade"
         tools:layout="@layout/fragment_dias_indisponiveis" />
     <fragment
         android:id="@+id/fragmentNotificacoes"
         android:name="pmd.di.ubi.pt.projectofinal.FragmentNotificacoes"
-        android:label="FragmentNotificacoes" />
+        android:label="Notificações"
+        tools:layout="@layout/card_notificacao" />
 </navigation>

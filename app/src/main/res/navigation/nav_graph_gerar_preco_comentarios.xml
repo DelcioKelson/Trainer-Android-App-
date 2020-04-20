@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/nav_graph_gerar_preco_comentarios">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_gerar_preco_comentarios"
+    app:startDestination="@id/fragmentGerarMarcacao">
 
+    <fragment
+        android:id="@+id/fragmentGerarMarcacao"
+        android:name="pmd.di.ubi.pt.projectofinal.FragmentGerarMarcacao"
+        tools:layout="@layout/fragment_gerar_preco"
+        android:label="FragmentGerarMarcacao" >
+        <action
+            android:id="@+id/action_fragmentGerarMarcacao_to_fragmentComentariosGerarPreco"
+            app:destination="@id/fragmentComentariosGerarPreco" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentComentariosGerarPreco"
+        android:name="pmd.di.ubi.pt.projectofinal.FragmentComentariosGerarPreco"
+        android:label="FragmentComentariosGerarPreco" />
 </navigation>

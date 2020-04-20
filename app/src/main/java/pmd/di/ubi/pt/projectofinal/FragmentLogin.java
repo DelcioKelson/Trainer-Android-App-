@@ -3,10 +3,14 @@ package pmd.di.ubi.pt.projectofinal;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
+import android.text.Editable;
 import android.util.Log;
+import android.util.Patterns;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,13 +19,14 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class FragmentLogin extends Fragment {
 
     private FirebaseAuth mAuth;
     private String email,password;
-    private EditText etEmail, etPassword;
+    private TextInputEditText etEmail, etPassword;
 
     public static FragmentLogin newInstance() {
         FragmentLogin fragment = new FragmentLogin();
@@ -40,27 +45,55 @@ public class FragmentLogin extends Fragment {
         TextView tvRegistrar = view.findViewById(R.id.tv_registrar);
         mAuth = FirebaseAuth.getInstance();
 
+
+        etPassword.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int i, KeyEvent keyEvent) {
+                if (isPasswordValid(etPassword.getText())) {
+                    etPassword.setError(null); //Clear the error
+                }
+                return false;
+            }
+        });
+
         btnLogin.setOnClickListener(v -> {
-            email = etEmail.getText().toString();
-            password = etPassword.getText().toString();
-            mAuth.signInWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(getActivity(), task -> {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d("loginEmail", "signInWithEmail:success");
-                            Intent intent = new Intent(getContext(), ActivityMain.class);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(intent);
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.d("loginEmail", "signInWithEmail:failure", task.getException());
-                            Toast.makeText(getContext(), "Email ou palavra-passe incorretos, tente novamente.", Toast.LENGTH_LONG).show();
-                        }
-                    });
+
+            if(isEmailValid(etEmail.getText())){
+
+                if(isPasswordValid(etPassword.getText())){
+                etPassword.setError(null); // Clear the error
+
+                    email = etEmail.getText().toString();
+                    password = etPassword.getText().toString();
+                    mAuth.signInWithEmailAndPassword(email, password)
+                            .addOnCompleteListener(getActivity(), task -> {
+                                if (task.isSuccessful()) {
+                                    Intent intent = new Intent(getContext(), ActivityMain.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    startActivity(intent);
+                                } else {
+                                    Toast.makeText(getContext(), "Email ou palavra-passe incorretos, tente novamente.", Toast.LENGTH_LONG).show();
+                                }
+                            });
+             }else {
+                etPassword.setError("Palavra passe invalida");
+            } }else {
+            etEmail.setError("Email invalido");
+
+        }
+
         });
         tvRegistrar.setOnClickListener(v ->
-        Navigation.findNavController(v).navigate(R.id.action_fragmentLogin_to_fragmentRegistro1));
-
+        Navigation.findNavController(v).navigate(R.id.fragmentSelecionarTipoConta));
         return view;
+    }
+
+    private boolean isPasswordValid(@Nullable Editable text) {
+        return text != null && text.length() >= 6;
+    }
+
+    private boolean isEmailValid( Editable text){
+        return text!=null && Patterns.EMAIL_ADDRESS.matcher(text.toString()).matches();
+
     }
 }

@@ -16,11 +16,15 @@
     <fragment
         android:id="@+id/fragmentMarcacoes"
         android:name="pmd.di.ubi.pt.projectofinal.FragmentMarcacoes"
-        android:label="MarcacoesFragment" />
+        android:label="Marcações" >
+        <action
+            android:id="@+id/action_fragmentMarcacoes_to_fragmentViewPagerMarcacoes"
+            app:destination="@id/fragmentViewPagerMarcacoes" />
+    </fragment>
     <fragment
         android:id="@+id/modalidadesFragment"
         android:name="pmd.di.ubi.pt.projectofinal.FragmentModalidades"
-        android:label="ModalidadesFragment" >
+        android:label="Modalidades">
         <action
             android:id="@+id/action_modalidadesFragment_to_personalsFragment"
             app:destination="@id/personalsFragment"
@@ -30,32 +34,30 @@
     <fragment
         android:id="@+id/mudarPasswordFragment"
         android:name="pmd.di.ubi.pt.projectofinal.FragmentMudarPassword"
-        android:label="MudarPasswordFragment" />
+        android:label="Mudar palavra passe" />
     <fragment
         android:id="@+id/personalsFragment"
         android:name="pmd.di.ubi.pt.projectofinal.FragmentTreinadores"
-        android:label="Treinadores">
+        android:label="Personal Treiners">
         <action
-            android:id="@+id/action_personalsFragment_to_persoanlPerfilFragment"
-            app:destination="@id/persoanlPerfilFragment" />
+            android:id="@+id/action_personalsFragment_to_imageHelp"
+            app:destination="@id/imageHelp" />
     </fragment>
     <fragment
         android:id="@+id/persoanlPerfilFragment"
         android:name="pmd.di.ubi.pt.projectofinal.FragmentPersoanlPerfil"
-        android:label="PersoanlPerfilFragment" />
+        android:label="Personal Treiners" />
     <fragment
         android:id="@+id/fragmentTodasMarcacoes"
         android:name="pmd.di.ubi.pt.projectofinal.FragmentTodasMarcacoes"
-        android:label="Marcacoes"
+        android:label="Marcações"
         tools:layout="@layout/fragment_todas_marcacoes">
         <action
             android:id="@+id/action_fragmentTodasMarcacoes_to_marcacoesFragment"
             app:destination="@id/fragmentMarcacoes" />
         <action
             android:id="@+id/action_fragmentTodasMarcacoes_to_modalidadesFragment"
-            app:destination="@id/modalidadesFragment"
-            app:enterAnim="@anim/anima"
-            app:popEnterAnim="@anim/fragment_fade_enter" />
+            app:destination="@id/modalidadesFragment" />
         <action
             android:id="@+id/action_fragmentTodasMarcacoes_to_persoanlPerfilFragment"
             app:destination="@id/persoanlPerfilFragment" />
@@ -63,6 +65,26 @@
     <fragment
         android:id="@+id/fragmentNotificacoes"
         android:name="pmd.di.ubi.pt.projectofinal.FragmentNotificacoes"
-        android:label="FragmentNotificacoes" />
+        android:label="Notificações" />
+    <fragment
+        android:id="@+id/imageHelp"
+        android:name="pmd.di.ubi.pt.projectofinal.FragmentViewPagerTreinadores"
+        android:label="Personal Treiners">
+        <action
+            android:id="@+id/action_imageHelp_to_persoanlPerfilFragment"
+            app:destination="@id/persoanlPerfilFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentDetalhesMarcacao"
+        android:name="pmd.di.ubi.pt.projectofinal.FragmentDetalhesMarcacao"
+        android:label="FragmentDetalhesMarcacao" />
+    <fragment
+        android:id="@+id/fragmentViewPagerMarcacoes"
+        android:name="pmd.di.ubi.pt.projectofinal.FragmentViewPagerMarcacoes"
+        android:label="FragmentViewPagerMarcacoes" >
+        <action
+            android:id="@+id/action_fragmentViewPagerMarcacoes_to_fragmentDetalhesMarcacao"
+            app:destination="@id/fragmentDetalhesMarcacao" />
+    </fragment>
 
 </navigation>

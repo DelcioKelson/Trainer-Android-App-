@@ -3,18 +3,19 @@ package pmd.di.ubi.pt.projectofinal;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.google.android.material.transition.MaterialContainerTransform;
+import com.google.android.material.transition.MaterialFade;
+import com.google.android.material.transition.MaterialFadeThrough;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -26,6 +27,8 @@ public class FragmentModalidades extends Fragment {
 
     private ArrayList<Map<String,Object>> modalidadeList;
     private AdapterModalidades adapterModalidades;
+    private RecyclerView recyclerView;
+
 
 
     public static FragmentModalidades newInstance() {
@@ -36,15 +39,18 @@ public class FragmentModalidades extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.gridview_fragment, container, false);
+        View view = inflater.inflate(R.layout.recyclerview_layout, container, false);
 
         //Objects.requireNonNull(getContext().getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         //getSupportActionBar().setTitle("Modalidades");
         modalidadeList = new ArrayList<>();
 
-        GridView gridView = (GridView) view.findViewById(R.id.gridview);
+        recyclerView = (RecyclerView) view.findViewById(R.id.my_recyclerview);
+        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(),1));
+
+
         adapterModalidades = new AdapterModalidades(getActivity(), modalidadeList);
-        gridView.setAdapter(adapterModalidades);
+        recyclerView.setAdapter(adapterModalidades);
 
         FirebaseFirestore.getInstance().collection("modalidades").get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult()!=null) {

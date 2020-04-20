@@ -7,67 +7,85 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        >
     <Button
         style="@style/Widget.AppCompat.Button.Borderless"
-        android:layout_marginLeft="5dp"
-        android:id="@+id/btn_fechar"
-        android:layout_width="50dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="left"
-        android:drawableLeft="@drawable/ic_arrow_back_black_24dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_tempo_inicio"
         android:layout_width="wrap_content"
+        android:text="Comentários"
+        android:id="@+id/btn_comentarios"
+        android:drawableEnd="@drawable/ic_arrow_forward_black_24dp"
+        android:textAllCaps="false"
         android:layout_height="wrap_content"
-        android:text="Escolher tempo de inicio"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        android:layout_gravity="right"/>
 
-    <TextView
-        android:id="@+id/tv_hora_inicio"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center" />
+        android:layout_gravity="center"
+        android:gravity="center">
 
+        <LinearLayout
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="100dp"
+            android:layout_gravity="center">
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:ems="10"
+                style="@style/LoginTextInputLayoutStyle"
+                android:hint="Hora"
+                app:hintAnimationEnabled="true">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_hora"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="false"
+                    android:gravity="center"
+                    android:inputType="textEmailAddress"
+                    />
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_dia_treino"
-        android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:ems="10"
+                style="@style/LoginTextInputLayoutStyle"
+                android:hint="Dia"
+                app:hintAnimationEnabled="true">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_dia"
+                    android:layout_width="match_parent"
+                    android:focusable="false"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:inputType="textEmailAddress"
+                    />
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+
+ <com.google.android.material.chip.ChipGroup
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Escolher Dia"
-        android:layout_gravity="center" />
-
-    <TextView
-        android:id="@+id/tv_dia_treino"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center" />
+        android:id="@+id/chip_group_horas_treino"
+        android:gravity="center"
+        android:layout_gravity="center"
+        app:selectionRequired="true"
+        app:singleSelection="true"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="tempo:"/>
-    <Spinner
-        android:id="@+id/sp_horas"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center" />
+
 
         <TextView
             android:layout_width="wrap_content"

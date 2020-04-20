@@ -2,34 +2,35 @@ package pmd.di.ubi.pt.projectofinal;
 
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
-import android.widget.TextView;
+import android.widget.QuickContactBadge;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.core.OrderBy;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
 
 public class FragmentNotificacoes extends Fragment {
-    private GridView gridView;
     private ArrayList<Map<String,Object>> notificacoesList;
     AdapterNotificacoes adapterNotificacoes;
+        CollectionReference notificacoesRef;
 
-
-
+    private RecyclerView recyclerView;
     public FragmentNotificacoes() {
         // Required empty public constructor
     }
@@ -42,22 +43,31 @@ public class FragmentNotificacoes extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.gridview_fragment, container, false);
-
+        View view = inflater.inflate(R.layout.recyclerview_layout, container, false);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        gridView = view.findViewById(R.id.gridview);
-        gridView.setNumColumns(1);
-        notificacoesList = new ArrayList<>();
-        adapterNotificacoes = new AdapterNotificacoes(getActivity(),notificacoesList);
-        gridView.setAdapter(adapterNotificacoes);
 
-        FirebaseFirestore.getInstance().collection("pessoas").document(user.getUid())
-                .collection("notificacoes").orderBy("data").get().addOnCompleteListener(task -> {
+        notificacoesRef = FirebaseFirestore.getInstance().collection("pessoas").document(user.getUid())
+                .collection("notificacoes");
+
+
+        recyclerView = (RecyclerView) view.findViewById(R.id.my_recyclerview);
+
+        LinearLayoutManager llm = new LinearLayoutManager(getContext());
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(llm);
+        notificacoesList = new ArrayList<>();
+
+
+
+        notificacoesRef.orderBy("data", Query.Direction.DESCENDING).get().addOnCompleteListener(task -> {
                     if(task.isSuccessful() && task.getResult()!=null){
                         for (DocumentSnapshot document:task.getResult()){
                             notificacoesList.add(document.getData());
+
                         }
-                        adapterNotificacoes.notifyDataSetChanged();
+                        ActivityMain.badge.setVisible(false);
+                        adapterNotificacoes = new AdapterNotificacoes(getActivity(),notificacoesList, user.getUid());
+                        recyclerView.setAdapter(adapterNotificacoes);
                     }
                 });
 

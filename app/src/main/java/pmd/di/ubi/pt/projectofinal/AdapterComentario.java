@@ -11,6 +11,8 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -26,63 +28,65 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 
-public class AdapterComentario extends BaseAdapter {
+public class AdapterComentario extends RecyclerView.Adapter<AdapterComentario.ComentarioHolder> {
 
     private Context context;
-    private ArrayList<Map<String, String>> comentariosList;
+    private ArrayList<Map<String, Object>> comentariosList;
 
-    public AdapterComentario(Context context, ArrayList<Map<String, String>> comentariosList) {
+    public AdapterComentario(Context context, ArrayList<Map<String, Object>> comentariosList) {
         this.context = context;
         this.comentariosList = comentariosList;
     }
 
+    @NonNull
     @Override
-    public int getCount() {
-        return comentariosList.size();
+    public ComentarioHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.card_comentario,parent,false);
+        return new ComentarioHolder(view);
     }
 
     @Override
-    public Object getItem(int position) {
-        return null;
+    public void onBindViewHolder(@NonNull ComentarioHolder holder, int position) {
+        Map<String, Object> comentario = comentariosList.get(position);
+        holder.setDetails(comentario);
     }
 
-    @Override
-    public long getItemId(int position) {
-        return 0;
-    }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        final Map<String, String> comentario = comentariosList.get(position);
-        if (convertView == null) {
-            final LayoutInflater layoutInflater = LayoutInflater.from(context);
-            convertView = layoutInflater.inflate(R.layout.card_comentario, null);
+    public int getItemCount() {
+        return comentariosList!=null?comentariosList.size():0;
+    }
+
+
+    public class ComentarioHolder extends RecyclerView.ViewHolder {
+        public ComentarioHolder(@NonNull View itemView) {
+            super(itemView);
         }
-        Log.d("FirebaseFirestore", "comentarioAp");
 
-        final TextView txtComentador = convertView.findViewById(R.id.nome_comentador);
-        final TextView txtComentario = convertView.findViewById(R.id.comentario);
-        final RatingBar ratingBar = convertView.findViewById(R.id.comentario_rating);
-        final ImageView imgPerfil = convertView.findViewById(R.id.img_comentador);
+        public void setDetails(Map<String, Object> comentario) {
+            final TextView txtComentador = itemView.findViewById(R.id.nome_comentador);
+            final TextView txtComentario = itemView.findViewById(R.id.comentario);
+            final RatingBar ratingBar = itemView.findViewById(R.id.comentario_rating);
+            final ImageView imgPerfil = itemView.findViewById(R.id.img_comentador);
 
-        txtComentador.setText(comentario.get("nomeComentador"));
-        txtComentario.setText(comentario.get("comentario"));
+            txtComentador.setText((String) comentario.get("nomeComentador"));
+            txtComentario.setText((String)comentario.get("comentario"));
 
-        StorageReference storageReference = FirebaseStorage.getInstance().getReference("image/"+comentario.get("uidUsuario"));
+            StorageReference storageReference = FirebaseStorage.getInstance().getReference("image/"+comentario.get("uidUsuario"));
 
-        final long ONE_MEGABYTE = 1024 * 1024;
-        storageReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(bytes -> {
-            if(bytes.length!=0){
-               try {
-                   Glide.with(context.getApplicationContext())
-                           .load(bytes)
-                           .into(imgPerfil);
-               }catch (Exception ignored){
+            final long ONE_MEGABYTE = 1024 * 1024;
+            storageReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(bytes -> {
+                if(bytes.length!=0){
+                    try {
+                        Glide.with(context.getApplicationContext())
+                                .load(bytes)
+                                .into(imgPerfil);
+                    }catch (Exception ignored){
 
-               }
-            }
-        });
-        ratingBar.setRating(Float.parseFloat(comentario.get("ratingComentario")));
-        return convertView;
+                    }
+                }
+            });
+            ratingBar.setRating(Float.parseFloat((String) comentario.get("ratingComentario")));
+        }
     }
 }

@@ -1,14 +1,142 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FragmentRegistroPersonal1">
+    android:orientation="vertical">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+
+        <ImageView
+            android:id="@+id/img_foto_personal"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_marginTop="5dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/btn_selected_foto_personal"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_marginTop="5dp"
+            android:gravity="center_vertical|center_horizontal"
+            android:text="Fotografia"
+            android:textColor="@color/gray"
+            android:drawableBottom="@drawable/ic_camera_white"
+            android:background="@color/colorPrimary"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_selected_foto_personal">
 
-</FrameLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:errorEnabled="true"
+            android:id="@+id/layout_nome"
+            android:ems="10"
+            android:hint="Nome"
+            app:hintAnimationEnabled="true"
+            style="@style/LoginTextInputLayoutStyle"
+            >
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_usarname_personal"
+                android:layout_width="match_parent"
+                android:inputType="textPersonName"
+                android:layout_height="wrap_content"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:id="@+id/layout_email"
+            app:errorEnabled="true"
+            android:ems="10"
+            android:hint="Email"
+            app:hintAnimationEnabled="true"
+            style="@style/LoginTextInputLayoutStyle">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_email_personal"
+                android:inputType="textEmailAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:errorEnabled="true"
+            android:id="@+id/layout_pass"
+            android:ems="10"
+            android:hint="Palavra passe"
+            app:hintAnimationEnabled="true"
+            style="@style/LoginTextInputLayoutStyle">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_password_personal"
+                android:inputType="textPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:id="@+id/layout_telefone"
+            app:errorEnabled="true"
+            android:ems="10"
+            android:hint="Telefone"
+            app:hintAnimationEnabled="true"
+            style="@style/LoginTextInputLayoutStyle">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_telefone_personal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="phone"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <ProgressBar
+            android:id="@+id/progressbar_registro_personal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"/>
+    </LinearLayout>
+
+
+ <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_register_personal"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:text="@string/registrar"
+            android:layout_gravity="center"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

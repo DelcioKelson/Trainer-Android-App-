@@ -10,4 +10,8 @@
     <dimen name="buy_button_min_width">200dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
 
+    <dimen name="cat_slider_value_width">48dp</dimen>
+    <dimen name="cat_slider_left_margin">16dp</dimen>
+    <dimen name="cat_slider_title_top_padding">16dp</dimen>
+
 </resources>

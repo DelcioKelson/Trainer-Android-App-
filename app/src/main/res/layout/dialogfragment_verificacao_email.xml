@@ -30,14 +30,13 @@
         android:id="@+id/btn_confirmar_email"
         />
 
-    <com.google.android.material.button.MaterialButton
-        style="@style/Widget.Design.FloatingActionButton"
+    <Button
+        style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
-        android:visibility="gone"
         android:text="Clique aqui se nao recebeu o email"
         android:id="@+id/btn_reenviar_email"
         />

@@ -1,6 +1,7 @@
 package pmd.di.ubi.pt.projectofinal;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,15 +18,20 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.viewpager.widget.ViewPager;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.transition.Hold;
+import com.google.android.material.transition.MaterialContainerTransform;
+import com.google.android.material.transition.MaterialFade;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
-public class FragmentTodasMarcacoes extends Fragment implements View.OnClickListener, DialogFragmentMarcacao.FlagMarcacaoConfirmadaDialogListener {
+public class FragmentTodasMarcacoes extends Fragment implements View.OnClickListener, DialogConfirmarFragmentMarcacao.FlagMarcacaoConfirmadaDialogListener {
     // TODO: Rename parameter arguments, choose names that match
     private TextView tvAceites;
     private TextView tvPendentes;
@@ -34,6 +40,7 @@ public class FragmentTodasMarcacoes extends Fragment implements View.OnClickList
     private FirebaseUser user;
     private FloatingActionButton btnNovaMarcacao;
     private boolean isUser;
+
 
     private PagerAdapter pagerAdapter;
     ViewPager viewPager;
@@ -46,6 +53,9 @@ public class FragmentTodasMarcacoes extends Fragment implements View.OnClickList
         user = FirebaseAuth.getInstance().getCurrentUser();
         SharedDataModel modelData = new ViewModelProvider(requireActivity()).get(SharedDataModel.class);
 
+        setExitTransition(MaterialFade.create(requireContext()));
+        setEnterTransition(MaterialFade.create(requireContext()));
+
         try {
             isUser = modelData.isUser().getValue();
         }catch (Exception e){
@@ -56,13 +66,21 @@ public class FragmentTodasMarcacoes extends Fragment implements View.OnClickList
         viewPager.setAdapter(pagerAdapter);
         TabLayout tabLayout = view.findViewById(R.id.tab_layout);
         tabLayout.setupWithViewPager(viewPager);
-        tabLayout.getTabAt(0).setIcon(R.drawable.ic_time_24dp);
-        tabLayout.getTabAt(1).setIcon(R.drawable.ic_favorite);
+        //tabLayout.getTabAt(0).setIcon(R.drawable.ic_time_24dp);
+        //tabLayout.getTabAt(1).setIcon(R.drawable.ic_favorite);
 
-
+        FirebaseFirestore.getInstance().collection("pessoas").document(user.getUid()).collection("notificacoes").whereEqualTo("vista",false).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful() && task.getResult()!=null && task.getResult().size()>0){
+                    ActivityMain.badge.setVisible(true);
+                    ActivityMain.badge.setNumber(task.getResult().size());
+                    Log.i("notificacoes",task.getResult().size()+"");
+                }
+            }
+        });
 
         if (isUser ) {
-
             viewPager.setVisibility(View.VISIBLE);
             if( !user.isEmailVerified()){
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
@@ -77,7 +95,6 @@ public class FragmentTodasMarcacoes extends Fragment implements View.OnClickList
                 newFragment.setCancelable(false);
                 newFragment.show(ft, "dialog");
             }
-
         }
 
         tvAceites = view.findViewById(R.id.tv_marcacoes_aceites);
@@ -121,9 +138,9 @@ public class FragmentTodasMarcacoes extends Fragment implements View.OnClickList
                             numeroMarcacaosPagas = 1 + numeroMarcacaosPagas;
                         }
                     }
-                    tvPendentes.setText("Marcacoes pendentes " + "(" + numeroMarcacaosPedentes + ")");
-                    tvAceites.setText("Marcacoes aceites " + "(" + numeroMarcacaosAceites + ")");
-                    tvPagas.setText("Marcacoes pagas " + "(" + numeroMarcacaosPagas + ")");
+                    tvPendentes.setText("pendentes " + "(" + numeroMarcacaosPedentes + ")");
+                    tvAceites.setText("aceites " + "(" + numeroMarcacaosAceites + ")");
+                    tvPagas.setText("pagas " + "(" + numeroMarcacaosPagas + ")");
                 }
             }
         });
@@ -166,7 +183,7 @@ public class FragmentTodasMarcacoes extends Fragment implements View.OnClickList
         @NonNull
         @Override
         public Fragment getItem(int position) {
-            Fragment fragment = new FragmentListTreinadores();
+            Fragment fragment = new FragmentTreinadoresFavoritosRecentes();
             Bundle args = new Bundle();
             if(position==0){
                 args.putString("tab","recente");

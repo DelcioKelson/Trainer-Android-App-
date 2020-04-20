@@ -3,17 +3,18 @@ package pmd.di.ubi.pt.projectofinal;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.GridView;
 import android.widget.RatingBar;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -26,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 
 /**
@@ -39,9 +39,9 @@ public class FragmentComentariosGerarPreco extends Fragment {
     private RatingBar comentarioRating;
     private EditText inputComentario;
     private FirebaseUser user;
-    private GridView gridView;
+    private RecyclerView recyclerView;
     private AlertDialog.Builder alertDialog;
-    private ArrayList<Map<String, String>> comentariosList;
+    private ArrayList<Map<String, Object>> comentariosList;
     private AdapterComentario adapterComentario;
     private DocumentSnapshot document;
     private int numeroComentarios;
@@ -85,24 +85,30 @@ public class FragmentComentariosGerarPreco extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_comentarios_gerar_preco, container, false);
-
+        View view = inflater.inflate(R.layout.fragment_comentarios, container, false);
+        recyclerView = (RecyclerView) view.findViewById(R.id.comentario_recyclerview);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         Button btnComentar = view.findViewById(R.id.btn_comentar);
-        Button btnGerarPreco = view.findViewById(R.id.btn_gerar_preco);
-        gridView = view.findViewById(R.id.gridview_comentario);
-        comentariosList = new ArrayList<Map<String, String>>();
+        Button btnVoltar = view.findViewById(R.id.btn_voltar);
+        comentariosList = new ArrayList<Map<String, Object>>();
         numeroComentarios=0;
         document = null;
+
+        Log.i("FragmentoComentario","passei");
 
         user = FirebaseAuth.getInstance().getCurrentUser();
         SharedDataModel modelData = new ViewModelProvider(requireActivity()).get(SharedDataModel.class);
         isUser = modelData.isUser().getValue();
         btnComentar.setVisibility(View.GONE);
         //sonal ==null quer dizer que eh a conta do tipo personal
+
+
+        intComentarios();
+
         if(!isUser){
             uidPersonal = user.getUid();
-            btnGerarPreco.setVisibility(View.GONE);
+            btnVoltar.setVisibility(View.GONE);
         }else {
             marcacoesRef.whereEqualTo("uidUsuario",user.getUid())
                     .whereEqualTo("estado","terminada").get().addOnCompleteListener(task -> {
@@ -113,27 +119,14 @@ public class FragmentComentariosGerarPreco extends Fragment {
                     });
                 }
             });
-            btnGerarPreco.setOnClickListener(v -> {
-                Bundle bundle = new Bundle();
-                bundle.putString("uidPersonal", String.valueOf(uidPersonal));
-                bundle.putString("preco",preco);
-                FragmentTransaction ft = getFragmentManager().beginTransaction();
-                Fragment prev = getFragmentManager().findFragmentByTag("dialog");
-                if (prev != null) {
-                    ft.remove(prev);
-                }
-                Fragment newFragment = FragmentGerarMarcacao.newInstance(bundle);
-                ft.replace(R.id.fragment_comentarios,newFragment);
-                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-                ft.addToBackStack(null);
-                ft.commit();
-                //newFragment.setTargetFragment(this, 300);
-                //newFragment.show(ft, "dialog");
-                //Navigation.findNavController(v).navigate(R.id.action_persoanlPerfilFragment_to_gerarMarcacaoFragment,bundle);
+            btnVoltar.setOnClickListener(v -> {
+                Navigation.findNavController(v).popBackStack();
+
             });
+
+
         }
 
-        intComentarios();
 
         return view;
     }
@@ -152,8 +145,8 @@ public class FragmentComentariosGerarPreco extends Fragment {
             comentarioRating.setRating(Float.parseFloat(document.getString("ratingComentario")));
         }
         alertDialog.setPositiveButton("Adicionar", (dialog, whichButton) -> {
-            Map<String, String> comentarioData;
-            comentarioData = new HashMap<>();
+            HashMap<String, Object> comentarioData;
+            comentarioData = new HashMap<String, Object>();
             final Calendar c = Calendar.getInstance();
             int year = c.get(Calendar.YEAR);
             int month = c.get(Calendar.MONTH);
@@ -176,11 +169,13 @@ public class FragmentComentariosGerarPreco extends Fragment {
             soma = comentarioRating.getRating() + soma;
             pessoaRef.document(uidPersonal).update("rating",""+soma/numeroComentarios+1);
 
-            gridView.setAdapter(new AdapterComentario(getActivity(), comentariosList));
+            recyclerView.setAdapter(new AdapterComentario(getActivity(), comentariosList));
         }).setNegativeButton("Cancelar", (dialog, whichButton) -> { }).show();
     }
 
     public void intComentarios(){
+        Log.i("FragmentoComentario",""+uidPersonal);
+
 
         comentariosRef.whereEqualTo("uidPersonal",uidPersonal).get().addOnCompleteListener(task12 -> {
             if (task12.isSuccessful()&& task12.getResult()!=null){
@@ -189,7 +184,8 @@ public class FragmentComentariosGerarPreco extends Fragment {
                 indice =0;
                 int indiceAux = 0;
                 for (DocumentSnapshot documentSnapshot : task12.getResult()){
-                    comentariosList.add(MapObjectToSring(documentSnapshot));
+                    comentariosList.add(documentSnapshot.getData());
+
                     soma = Float.parseFloat((String) documentSnapshot.get("ratingComentario")) + soma;
                     if(documentSnapshot.get("uidUsuario").equals(user.getUid())){
                         document=documentSnapshot;
@@ -197,19 +193,14 @@ public class FragmentComentariosGerarPreco extends Fragment {
                     }
                     indiceAux =indiceAux+ 1;
                 }
+
+                Log.i("FragmentoComentario",comentariosList.toString());
+
+
                 adapterComentario = new AdapterComentario(getActivity(), comentariosList);
-                gridView.setAdapter(adapterComentario);
+                recyclerView.setAdapter(adapterComentario);
             }
         });
     }
 
-    public Map<String, String> MapObjectToSring(DocumentSnapshot documentSnapshot){
-        Map<String,String> newMap =new HashMap<String,String>();
-        for (Map.Entry<String, Object> entry : Objects.requireNonNull(documentSnapshot.getData()).entrySet()) {
-            if(entry.getValue() instanceof String){
-                newMap.put(entry.getKey(), (String) entry.getValue());
-            }
-        }
-        return newMap;
-    }
 }

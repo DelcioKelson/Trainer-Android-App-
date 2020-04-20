@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -24,13 +25,17 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.wallet.AutoResolveHelper;
 import com.google.android.gms.wallet.PaymentData;
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONException;
@@ -41,54 +46,97 @@ public class ActivityMain extends AppCompatActivity {
     private AppBarConfiguration mAppBarConfiguration;
     private NavController navController;
     private MaterialToolbar toolbar;
-    private BottomNavigationView bottomNavigationView;
+    private  BottomNavigationView bottomNavigationView;
+    static BadgeDrawable badge;
 
+    private static final String KEY_CURRENT_POSITION = "com.google.samples.gridtopager.key.currentPosition";
+
+    static int currentPosition;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            currentPosition = savedInstanceState.getInt(KEY_CURRENT_POSITION, 0);
+            // Return here to prevent adding additional GridFragments when changing orientation.
+            return;
+        }
         user = FirebaseAuth.getInstance().getCurrentUser();
-        setContentView(R.layout.activity_main);
-        toolbar = findViewById(R.id.toolbar);
-        navController = Navigation.findNavController(this, R.id.container);
-        bottomNavigationView = findViewById(R.id.bottom_navigation);
+        setContentView(R.layout.first_layout);
+
+        iniciarSessao();
+}
+
+
+    public void iniciarSessao(){
+
+
+
 
         Log.i("userValue",""+user);
         if (user != null) {
-             FirebaseFirestore.getInstance().collection("pessoas").document(user.getUid()).get().addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        Log.i("activityInicial", "activityInicial");
-                        DocumentSnapshot document = task.getResult();
-                        if (document != null) {
+            FirebaseFirestore.getInstance().collection("pessoas").document(user.getUid()).get().addOnCompleteListener(task -> {
 
-                            toolbar.setVisibility(View.VISIBLE);
-                            bottomNavigationView.setVisibility(View.VISIBLE);
 
-                            SharedDataModel modelData = new ViewModelProvider(this).get(SharedDataModel.class);
-                            modelData.init();
-                            FirebaseMessaging.getInstance().subscribeToTopic(user.getUid());
-                            if(document.getString("tipoConta").equals("personal")){
+                if (task.isSuccessful()) {
+                    Log.i("activityInicial", "activityInicial");
+                    DocumentSnapshot document = task.getResult();
+                    if (document != null) {
+
+                        setContentView(R.layout.activity_main);
+                        toolbar = findViewById(R.id.toolbar);
+                        navController = Navigation.findNavController(this, R.id.container);
+                        bottomNavigationView = findViewById(R.id.bottom_navigation);
+                        toolbar.setVisibility(View.VISIBLE);
+                        bottomNavigationView.setVisibility(View.VISIBLE);
+                        SharedDataModel modelData = new ViewModelProvider(this).get(SharedDataModel.class);
+                        modelData.init();
+                        String tipoConta = document.getString("tipoConta");
+                        FirebaseMessaging.getInstance().subscribeToTopic(user.getUid());
+
+
+                        if (tipoConta.equals("personal") || tipoConta.equals("usuario") ){
+                            if(tipoConta.equals("personal")){
                                 modelData.personal();
-                                iniciarSessaoPersonal(document.getString("nome"));
-                            }else {
+                                iniciarSessaoPersonal();
+                            }else  if(tipoConta.equals("usuario")){
                                 modelData.usuario();
                                 iniciarSessaoUsuario();
                             }
-                            setSupportActionBar(toolbar);
-                            mAppBarConfiguration =
-                                    new AppBarConfiguration.Builder(navController.getGraph()).build();
+                            badge = bottomNavigationView.getOrCreateBadge(R.id.fragmentNotificacoes);
+                            badge.setVisible(false);
 
-                            NavigationUI.setupWithNavController(toolbar,navController);
-                            NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
-                            NavigationUI.setupWithNavController(bottomNavigationView, navController);
+
                         }
-                    }else {
-                        navController.setGraph(R.navigation.nav_graph_login);
 
+
+                        else if(tipoConta.equals("pendente")){
+                            navController.setGraph(R.navigation.nav_graph_personal_pendente);
+                            bottomNavigationView.setVisibility(View.GONE);
+                        }
+
+                        setSupportActionBar(toolbar);
+                        mAppBarConfiguration =
+                                new AppBarConfiguration.Builder(navController.getGraph()).build();
+
+                        NavigationUI.setupWithNavController(toolbar,navController);
+                        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
+                        NavigationUI.setupWithNavController(bottomNavigationView, navController);
                     }
-                });
+                }else {
+                    setContentView(R.layout.activity_main);
+                    navController = Navigation.findNavController(this, R.id.container);
+                    navController.setGraph(R.navigation.nav_graph_login);
+
+                }
+            });
 
         } else {
             {
+
+                setContentView(R.layout.activity_main);
+                navController = Navigation.findNavController(this, R.id.container);
+
                 navController.setGraph(R.navigation.nav_graph_login);
             }
         }
@@ -101,6 +149,7 @@ public class ActivityMain extends AppCompatActivity {
                 || super.onSupportNavigateUp();
     }
 
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         return NavigationUI.onNavDestinationSelected(item,navController)||super.onOptionsItemSelected(item);
@@ -110,21 +159,7 @@ public class ActivityMain extends AppCompatActivity {
         navController.setGraph(R.navigation.nav_graph_usuario);
         bottomNavigationView.inflateMenu(R.menu.bottom_usuario_menu);
     }
-    public void iniciarSessaoPersonal(String nome) {
-        OnCompleteListener<AuthResult> completeListener = new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful() && task.getResult()!= null) {
-                    if(task.getResult().getAdditionalUserInfo().isNewUser()){
-                        UserProfileChangeRequest.Builder builder = new UserProfileChangeRequest.Builder();
-                        builder.setDisplayName(nome);
-                        final UserProfileChangeRequest changeRequest = builder.build();
-                        user.updateProfile(changeRequest);
-                    }
-                }
-            }
-        };
-
+    public void iniciarSessaoPersonal() {
         navController.setGraph(R.navigation.nav_graph_personal);
         bottomNavigationView.inflateMenu(R.menu.bottom_personal_menu);
     }
@@ -134,6 +169,11 @@ public class ActivityMain extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_toolbar, menu);
         return true;
+    }
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(KEY_CURRENT_POSITION, currentPosition);
     }
 
     @Override
@@ -215,6 +255,8 @@ public class ActivityMain extends AppCompatActivity {
     private void handleError(int statusCode) {
         Log.w("loadPaymentDatafailed", String.format("Error code: %d", statusCode));
     }
+
+
 }
 
 

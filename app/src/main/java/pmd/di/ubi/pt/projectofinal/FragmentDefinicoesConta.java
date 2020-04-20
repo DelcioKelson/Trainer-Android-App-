@@ -25,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
@@ -65,14 +66,9 @@ public class FragmentDefinicoesConta extends Fragment {
         SharedDataModel modelData = new ViewModelProvider(requireActivity()).get(SharedDataModel.class);
         boolean isUser = modelData.isUser().getValue();
 
-        if (isUser){
-            ref = FirebaseStorage.getInstance().getReference("image/"+user.getUid());
 
-        }else {
-           ref = FirebaseStorage.getInstance().getReference("image/"+user.getUid()+".jpeg");
-            Log.i("refdefinicoes", "hgvjh");
+        ref = FirebaseStorage.getInstance().getReference("image/"+user.getUid());
 
-        }
 
         progressBar = (ProgressBar) view.findViewById(R.id.progressbar_conta);
         Button btnAlterarNome = view.findViewById(R.id.btn_alterar_nome);
@@ -80,7 +76,7 @@ public class FragmentDefinicoesConta extends Fragment {
         Button btnDiasIndisponiveis = view.findViewById(R.id.btn_dias_indispinives);
         imgVfoto = view.findViewById(R.id.img_foto_definicoes);
         btnFotoPerfil = view.findViewById(R.id.btn_selected_foto_definiceos);
-        TextView tvAlterarFoto = view.findViewById(R.id.tv_alterar_foto);
+        FloatingActionButton fbnAlterarFoto = view.findViewById(R.id.fbn_alterar_foto);
         btnSalvarFoto = view.findViewById(R.id.btn_salvar_foto);
         Button btnSairDaConta = view.findViewById(R.id.btn_sair_conta);
 
@@ -100,8 +96,7 @@ public class FragmentDefinicoesConta extends Fragment {
 
       }
 
-
-        tvAlterarFoto.setOnClickListener(v -> {
+        fbnAlterarFoto.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_PICK);
             intent.setType("image/*");
             startActivityForResult(intent,0);

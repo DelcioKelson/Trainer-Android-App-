@@ -2,21 +2,14 @@ package pmd.di.ubi.pt.projectofinal;
 
 import android.app.Dialog;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Calendar;
@@ -24,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class DialogFragmentMarcacao extends DialogFragment {
+public class DialogConfirmarFragmentMarcacao extends DialogFragment {
     private Bundle argumentos;
 
     private static final String ARG_PARAM1 = "preco";
@@ -43,11 +36,11 @@ public class DialogFragmentMarcacao extends DialogFragment {
 
 
 
-    public static DialogFragmentMarcacao newInstance(Bundle bundle) {
+    public static DialogConfirmarFragmentMarcacao newInstance(Bundle bundle) {
 
-        DialogFragmentMarcacao dialogFragmentMarcacao = new DialogFragmentMarcacao();
-        dialogFragmentMarcacao.setArguments(bundle);
-        return dialogFragmentMarcacao;
+        DialogConfirmarFragmentMarcacao dialogConfirmarFragmentMarcacao = new DialogConfirmarFragmentMarcacao();
+        dialogConfirmarFragmentMarcacao.setArguments(bundle);
+        return dialogConfirmarFragmentMarcacao;
     }
 
     public interface FlagMarcacaoConfirmadaDialogListener {
@@ -120,19 +113,18 @@ public class DialogFragmentMarcacao extends DialogFragment {
         marcacoesRef.document(marcacaoId).set(marcacaoData);
 
 
-        Calendar calendar = Calendar.getInstance();
-        //Returns current time in millis
-        long time = calendar.getTimeInMillis();
-
         Map<String, Object> notificacaoData;
         notificacaoData = new HashMap<>();
         notificacaoData.put("titulo","Nova marcacao" );;
         notificacaoData.put("mensagem", user.getDisplayName()+ " criou uma marcacao consigo");
-        notificacaoData.put("data", time);
+        notificacaoData.put("data", System.currentTimeMillis());
         notificacaoData.put("vista",false);
 
-        FirebaseFirestore.getInstance().collection("pessoas")
-                .document(uidPersonal).collection("notificacoes").document().set(notificacaoData);
+        DocumentReference notificacaoRef= FirebaseFirestore.getInstance().collection("pessoas")
+                .document(uidPersonal).collection("notificacoes").document();
+
+        notificacaoData.put("id",notificacaoRef.getId());
+        notificacaoRef.set(notificacaoData);
 
         Toast.makeText(getActivity(),"Marcaçao realizada com sucesso",Toast.LENGTH_LONG).show();
 

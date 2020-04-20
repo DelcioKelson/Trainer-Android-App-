@@ -10,16 +10,18 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.Map;
 
-public class AdapterModalidades extends BaseAdapter {
+public class AdapterModalidades extends RecyclerView.Adapter<AdapterModalidades.ModalidadesHolder> {
     private FragmentActivity context;
     private ArrayList<Map<String,Object>> modalidadeList;
 
@@ -28,14 +30,19 @@ public class AdapterModalidades extends BaseAdapter {
         this.modalidadeList = modalidadeList;
     }
 
+
+    @NonNull
     @Override
-    public int getCount() {
-        return modalidadeList.size();
+    public ModalidadesHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.card_modalidade,parent,false);
+        return new ModalidadesHolder(view);
     }
 
     @Override
-    public Object getItem(int position) {
-        return null;
+    public void onBindViewHolder(@NonNull ModalidadesHolder holder, int position) {
+
+        Map<String, Object> modalidade = modalidadeList.get(position);
+        holder.setDetails(modalidade);
     }
 
     @Override
@@ -44,29 +51,33 @@ public class AdapterModalidades extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        final Map<String,Object>  modalidade = modalidadeList.get(position);
+    public int getItemCount() {
+        return modalidadeList.size();    }
 
-        if (convertView == null) {
-            final LayoutInflater layoutInflater = LayoutInflater.from(context);
-            convertView = layoutInflater.inflate(R.layout.card_modalidade, null);
+
+
+    public class ModalidadesHolder extends RecyclerView.ViewHolder {
+        public ModalidadesHolder(@NonNull View itemView) {
+            super(itemView);
         }
-        final TextView txtTitulo = convertView.findViewById(R.id.titulo);
-        final ImageView imgModalidade = convertView.findViewById(R.id.modalidade_imagem);
-        final LinearLayout main = (LinearLayout) convertView.findViewById(R.id.linear);
 
-        txtTitulo.setText((CharSequence) modalidade.get("nome"));
+        public void setDetails(Map<String, Object> modalidade) {
+            final TextView txtTitulo = itemView.findViewById(R.id.titulo);
+            final ImageView imgModalidade = itemView.findViewById(R.id.modalidade_imagem);
+            final LinearLayout main = (LinearLayout) itemView.findViewById(R.id.linear);
 
-        //imgRestaurant.setImageResource(modalidade.getImg());
-        Glide.with(imgModalidade.getContext())
-                .load(modalidade.get("img"))
-                .into(imgModalidade);
+            txtTitulo.setText((CharSequence) modalidade.get("nome"));
 
-        main.setOnClickListener(v -> {
-            Bundle bundle = new Bundle();
-            bundle.putString("modalidade", String.valueOf(modalidade.get("nome")));
-            Navigation.findNavController(v).navigate(R.id.action_modalidadesFragment_to_personalsFragment,bundle);
-        });
-        return convertView;
+            //imgRestaurant.setImageResource(modalidade.getImg());
+            Glide.with(imgModalidade.getContext())
+                    .load(modalidade.get("img"))
+                    .into(imgModalidade);
+
+            main.setOnClickListener(v -> {
+                Bundle bundle = new Bundle();
+                bundle.putString("modalidade", String.valueOf(modalidade.get("nome")));
+                Navigation.findNavController(v).navigate(R.id.action_modalidadesFragment_to_personalsFragment,bundle);
+            });
+        }
     }
 }

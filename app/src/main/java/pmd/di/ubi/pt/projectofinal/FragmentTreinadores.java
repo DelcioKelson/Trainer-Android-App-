@@ -6,13 +6,15 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.core.app.SharedElementCallback;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.viewpager.widget.ViewPager;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.transition.TransitionInflater;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,9 +22,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridView;
 
-import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.transition.Hold;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -30,9 +31,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public class FragmentTreinadores extends Fragment implements DialogFragmentOrdernarFiltrar.DialogFragmentOrdernarMenuDialogListener, DialogFragmentOrdernarFiltrar.DialogFragmentFiltrarMenuDialogListener {
 
@@ -40,14 +40,15 @@ public class FragmentTreinadores extends Fragment implements DialogFragmentOrder
 
     // TODO: Rename and change types of parameters
     private String modalidade;
-    private GridView gridView;
+    private RecyclerView recyclerView;
+
+    private AdapterPersonalTreiners adapterPersonalTreiners;
     private ArrayList<Map<String, Object>> personalList,personalListOriginal;
     private int idOpOrdem =0;
 
     private boolean disponivel = false;
     private boolean diaDisponivel = false;
     private String diaDisponibilidade = "Dia/Mes/Ano";
-    private AdapterTreinadores adapterTreinadores;
     private FirebaseUser user;
 
     public FragmentTreinadores() {
@@ -64,13 +65,67 @@ public class FragmentTreinadores extends Fragment implements DialogFragmentOrder
     }
 
     @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        scrollToPosition();
+    }
+
+    private void scrollToPosition() {
+        recyclerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v,
+                                       int left,
+                                       int top,
+                                       int right,
+                                       int bottom,
+                                       int oldLeft,
+                                       int oldTop,
+                                       int oldRight,
+                                       int oldBottom) {
+                recyclerView.removeOnLayoutChangeListener(this);
+                final RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+                View viewAtPosition = layoutManager.findViewByPosition(ActivityMain.currentPosition);
+                // Scroll to position if the view for the current position is null (not currently part of
+                // layout manager children), or it's not completely visible.
+                if (viewAtPosition == null || layoutManager
+                        .isViewPartiallyVisible(viewAtPosition, false, true)) {
+                    recyclerView.post(() -> layoutManager.scrollToPosition(ActivityMain.currentPosition));
+                }
+            }
+        });
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.gridview_fragment, container, false);
-        gridView =  view.findViewById(R.id.gridview);
-        gridView.setNumColumns(1);
+        View view = inflater.inflate(R.layout.recyclerview_layout, container, false);
+        recyclerView = (RecyclerView) view.findViewById(R.id.my_recyclerview);
+
+        LinearLayoutManager llm = new LinearLayoutManager(getContext());
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(llm);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         personalList = new ArrayList<>();
+        setExitTransition(new Hold());
+
+        setExitSharedElementCallback(
+                new SharedElementCallback() {
+                    @Override
+                    public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
+                        // Locate the ViewHolder for the clicked position.
+                        RecyclerView.ViewHolder selectedViewHolder = recyclerView
+                                .findViewHolderForAdapterPosition(ActivityMain.currentPosition);
+                        if (selectedViewHolder == null) {
+                            return;
+                        }
+
+                        // Map the first shared element name to the child ImageView.
+                        sharedElements
+                                .put(names.get(0), selectedViewHolder.itemView.findViewById(R.id.personal_image));
+                    }
+                });
+
         initPersonalList();
         return view;
     }
@@ -80,16 +135,18 @@ public class FragmentTreinadores extends Fragment implements DialogFragmentOrder
         personalList = new ArrayList<Map<String, Object>>();
         FirebaseFirestore.getInstance().collection("pessoas").
                 whereEqualTo("tipoConta","personal").
-                whereEqualTo("especialidade",modalidade).get().addOnCompleteListener(task -> {
+                whereEqualTo("modalidades."+modalidade,true).get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult()!=null) {
                 for (DocumentSnapshot document : task.getResult()) {
                     if(document!=null){
                         personalList.add(document.getData());
                     }
                 }
+                SharedDataModel modelData = new ViewModelProvider(getActivity()).get(SharedDataModel.class);
+                modelData.addPersonalList(personalList);
                 personalListOriginal = new ArrayList<> (personalList);
-                adapterTreinadores = new AdapterTreinadores(getActivity(), personalList);
-                gridView.setAdapter(adapterTreinadores);
+                adapterPersonalTreiners = new AdapterPersonalTreiners(this, personalList);
+                recyclerView.setAdapter(adapterPersonalTreiners);
             }
             else {
                 Log.d("FirebaseFirestore", "Error getting documents: ", task.getException());
@@ -144,7 +201,7 @@ public class FragmentTreinadores extends Fragment implements DialogFragmentOrder
                 break;
         }
         idOpOrdem = selectedItem;
-        adapterTreinadores.notifyDataSetChanged();
+        adapterPersonalTreiners.notifyDataSetChanged();
     }
 
     @Override
@@ -180,8 +237,7 @@ public class FragmentTreinadores extends Fragment implements DialogFragmentOrder
                 }
             }
         }
-        adapterTreinadores.notifyDataSetChanged();
-
+        adapterPersonalTreiners.notifyDataSetChanged();
 
     }
 }

@@ -2,7 +2,6 @@ package pmd.di.ubi.pt.projectofinal;
 
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,29 +12,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.transition.Hold;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link FragmentListTreinadores#newInstance} factory method to
+ * Use the {@link FragmentTreinadoresFavoritosRecentes#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FragmentListTreinadores extends Fragment {
+public class FragmentTreinadoresFavoritosRecentes extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
 
     private GridView gridView;
@@ -48,7 +42,7 @@ public class FragmentListTreinadores extends Fragment {
     private AdapterPersonalFavoritosRecentes adapterPersonalFavoritosRecentes;
 
 
-    public FragmentListTreinadores() {
+    public FragmentTreinadoresFavoritosRecentes() {
         // Required empty public constructor
     }
 
@@ -63,7 +57,6 @@ public class FragmentListTreinadores extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         user = FirebaseAuth.getInstance().getCurrentUser();
         personalList = new ArrayList<>();
-        setExitTransition(new Hold());
 
         idsPersonais = new String[10];
 

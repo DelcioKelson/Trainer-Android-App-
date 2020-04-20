@@ -5,7 +5,6 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
-import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,14 +14,14 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 
-public class FragmentRegistro1 extends Fragment {
+public class FragmentRegistroCliente1 extends Fragment {
     private CheckBox c1,c2,c3,c4,c5,c6;
     private EditText morada,codigoPostal;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_registro1, container, false);
+        View view = inflater.inflate(R.layout.fragment_registro_cliente1, container, false);
 
         c1 = view.findViewById(R.id.cb1);
         c2 = view.findViewById(R.id.cb2);
@@ -35,6 +34,11 @@ public class FragmentRegistro1 extends Fragment {
         codigoPostal = view.findViewById(R.id.edit_codigo_postal);
 
         Button btnProximoPasso = (Button) view.findViewById(R.id.btn_proximo_passo);
+
+        view.findViewById(R.id.btn_voltar).setOnClickListener(v -> {
+            Navigation.findNavController(v).popBackStack();
+
+        });
 
         btnProximoPasso.setOnClickListener(v -> {
 

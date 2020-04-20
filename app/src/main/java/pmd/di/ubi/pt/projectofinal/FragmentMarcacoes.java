@@ -10,13 +10,19 @@ import android.view.ViewGroup;
 import android.widget.GridView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.gms.wallet.AutoResolveHelper;
 import com.google.android.gms.wallet.PaymentDataRequest;
 import com.google.android.gms.wallet.PaymentsClient;
+import com.google.android.material.transition.Hold;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -34,12 +40,12 @@ public class FragmentMarcacoes extends Fragment implements  AdapterMarcacao.OnRe
 
     private static final String ARG_PARAM2 = "estado";
 
-    private ArrayList<Map<String, String>> marcacaoArrayList;
+    private ArrayList<Map<String, Object>> marcacaoList;
     private AdapterMarcacao adapterMarcacao;
     private FirebaseUser user;
     private String estadoMarcacao;
     private boolean isUser;
-    private GridView gridView;
+    private RecyclerView recyclerView;
     TextView tvInfo;
     private static final int LOAD_PAYMENT_DATA_REQUEST_CODE = 991;
     private PaymentsClient paymentsClient;
@@ -57,9 +63,15 @@ public class FragmentMarcacoes extends Fragment implements  AdapterMarcacao.OnRe
     }
 
     @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        scrollToPosition();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.gridview_fragment, container, false);
+        View view = inflater.inflate(R.layout.recyclerview_layout, container, false);
 
         SharedDataModel modelData = new ViewModelProvider(requireActivity()).get(SharedDataModel.class);
         try {
@@ -67,6 +79,8 @@ public class FragmentMarcacoes extends Fragment implements  AdapterMarcacao.OnRe
         } catch (Exception e) {
 
         }
+        setExitTransition(new Hold());
+
 
         modelData.getAtualizarFragmentMarcaoes().observe(this, new Observer<Boolean>() {
             @Override
@@ -83,19 +97,26 @@ public class FragmentMarcacoes extends Fragment implements  AdapterMarcacao.OnRe
             }
         });
 
-        marcacaoArrayList = new ArrayList<java.util.Map<String, String>>();
+        recyclerView = (RecyclerView) view.findViewById(R.id.my_recyclerview);
+
+        LinearLayoutManager llm = new LinearLayoutManager(getContext());
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(llm);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
         user = FirebaseAuth.getInstance().getCurrentUser();
-        gridView = view.findViewById(R.id.gridview);
         tvInfo = view.findViewById(R.id.tv_page_info);
-        gridView.setNumColumns(1);
 
         if(estadoMarcacao.equals("aceite") && isUser){
             paymentsClient = PaymentsUtil.createPaymentsClient(getActivity());
+            modelData.setPaymentsClient(paymentsClient);
         }
 
-        adapterMarcacao = new AdapterMarcacao(getActivity(), marcacaoArrayList, isUser,this,paymentsClient);
+
+        marcacaoList = new ArrayList<>();
+        adapterMarcacao = new AdapterMarcacao(getActivity(), marcacaoList, isUser,this,paymentsClient);
         adapterMarcacao.setOnRequestPaymentListener(this);
-        gridView.setAdapter(adapterMarcacao);
+        recyclerView.setAdapter(adapterMarcacao);
         initMarcacoes();
         return view;
     }
@@ -109,31 +130,51 @@ public class FragmentMarcacoes extends Fragment implements  AdapterMarcacao.OnRe
                 for (DocumentSnapshot document : documentSnapshots) {
                     if (document != null) {
                         String marcacaoEstado = (String) document.get("estado");
-                        Map<String,String> newMap =new HashMap<String,String>();
-                        for (Map.Entry<String, Object> entry : Objects.requireNonNull(document.getData()).entrySet()) {
-                            if(entry.getValue() instanceof String){
-                                newMap.put(entry.getKey(), (String) entry.getValue());
-                            }
-                        }
+
                         if (marcacaoEstado != null) {
                             if (estadoMarcacao.equals("default") && (marcacaoEstado.equals("cancelada") || marcacaoEstado.equals("terminada"))) {
-                                marcacaoArrayList.add(newMap);
+                                marcacaoList.add(document.getData());
                             }
                             if (marcacaoEstado.equals(estadoMarcacao)) {
-                                marcacaoArrayList.add(newMap);
+                                marcacaoList.add(document.getData());
                             }
                         }
                     }
                 }
-                Log.d("FirebaseFirestore", marcacaoArrayList.toString());
-                if (marcacaoArrayList.isEmpty()){
+                if (marcacaoList.isEmpty()){
                     tvInfo.setVisibility(View.VISIBLE);
                 }
+                SharedDataModel modelData = new ViewModelProvider(getActivity()).get(SharedDataModel.class);
+                modelData.addMarcacoesList(marcacaoList);
                 adapterMarcacao.notifyDataSetChanged();
             }
         });
     }
 
+    private void scrollToPosition() {
+        recyclerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v,
+                                       int left,
+                                       int top,
+                                       int right,
+                                       int bottom,
+                                       int oldLeft,
+                                       int oldTop,
+                                       int oldRight,
+                                       int oldBottom) {
+                recyclerView.removeOnLayoutChangeListener(this);
+                final RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+                View viewAtPosition = layoutManager.findViewByPosition(ActivityMain.currentPosition);
+                // Scroll to position if the view for the current position is null (not currently part of
+                // layout manager children), or it's not completely visible.
+                if (viewAtPosition == null || layoutManager
+                        .isViewPartiallyVisible(viewAtPosition, false, true)) {
+                    recyclerView.post(() -> layoutManager.scrollToPosition(ActivityMain.currentPosition));
+                }
+            }
+        });
+    }
 
     @Override
     public void request(String price) {

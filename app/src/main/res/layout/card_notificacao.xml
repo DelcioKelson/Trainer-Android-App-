@@ -1,21 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
-<com.google.android.material.card.MaterialCardView android:layout_width="match_parent"
-    style="@style/Widget.MaterialComponents.CardView"
-    android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    >
-
 <LinearLayout android:orientation="vertical"
+    android:id="@+id/notification_linearLayout"
+    android:background="@color/lightGrey"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#f05545"
+    android:layout_marginBottom="2dp"
+    android:layout_marginStart="1dp"
+    android:layout_marginEnd="1dp"
+
+    android:layout_height="wrap_content"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <TextView
         android:layout_marginTop="10dp"
-        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
         android:id="@+id/tv_titulo_notificacao"
         android:layout_width="match_parent"
         style="@style/TextAppearance.AppCompat.Title"
@@ -24,16 +23,16 @@
         android:id="@+id/tv_mensagem_notificacao"
         android:layout_width="match_parent"
         style="@style/TextAppearance.AppCompat.Body1"
-        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
         android:layout_height="wrap_content"/>
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tv_data_notificacao"
         android:layout_width="match_parent"
         style="@style/TextAppearance.AppCompat.Body1"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
         />
-    </LinearLayout>
-</com.google.android.material.card.MaterialCardView>
+
+ </LinearLayout>
 
 

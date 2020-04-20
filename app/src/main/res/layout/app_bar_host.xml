@@ -6,15 +6,18 @@
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
+        app:elevation="0dp"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+    android:theme="@style/AppTheme.AppBarOverlay">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:visibility="gone"
             android:layout_width="match_parent"
+            android:background="@color/white"
             android:layout_height="?attr/actionBarSize"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
+
 
     </com.google.android.material.appbar.AppBarLayout>
 

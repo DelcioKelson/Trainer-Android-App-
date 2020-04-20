@@ -1,6 +1,7 @@
 package pmd.di.ubi.pt.projectofinal;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -8,10 +9,14 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 
 import android.os.FileUtils;
 import android.provider.MediaStore;
@@ -24,8 +29,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -35,16 +47,19 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
-public class FragmentConfirmarPersonal extends Fragment implements View.OnClickListener {
+public class FragmentSubmeterDocumentosPersonal extends Fragment implements View.OnClickListener {
 
-
-
-
-final int PICK_CURRICULO_REQUEST_CODE = 111;
-    final int PICK_ID_REQUEST_CODE = 112;
+    private final int PICK_CURRICULO_REQUEST_CODE = 111;
+    private final int PICK_ID_REQUEST_CODE = 112;
 
     private Uri curriculoUri,documentsUri;
+    private Map<String, Object> personal;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -58,32 +73,62 @@ final int PICK_CURRICULO_REQUEST_CODE = 111;
         btnCurriculo = view.findViewById(R.id.btn_curriculo);
         btnID = view.findViewById(R.id.btn_documento_id);
         btnSub = view.findViewById(R.id.btn_submeter_doc);
+
+
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        FirebaseFirestore.getInstance().collection("pessoas").
+                document(user.getUid()).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult()!=null) {
+                DocumentSnapshot document = task.getResult();
+                if(document!=null){
+                    personal  =document.getData();
+                    try {
+                        if(personal.get("aprovado").equals("sim")){
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+                            builder.setMessage("Já tem a conta aprovada, pretende continuar?");
+
+                            builder.setPositiveButton("continuar", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    Navigation.findNavController(view).navigate(R.id.action_fragmentConfirmarPersonal_to_fragmentSetupPersonalConta);
+                                }
+                            });
+                            builder.setNegativeButton("ficar", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    // User cancelled the dialog
+                                }
+                            });
+
+                            builder.create().show();
+
+                        }
+                    }catch (Exception e){ }
+
+                }
+            }
+
+        });
+
 
         btnSub.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 try {
-
-
                     if(curriculoUri!=null && documentsUri !=null){
-                        InputStream curriculoStream =   getActivity().getContentResolver().openInputStream(curriculoUri);
-                        InputStream documentStream =   getActivity().getContentResolver().openInputStream(documentsUri);
 
                         Log.i("onActivityResult","stream");
 
-                        final StorageReference ref = FirebaseStorage.getInstance().getReference("documents/"+user.getUid()+"/curriculo.pdf");
-                        ref.putStream(curriculoStream);
-                        ref.putStream(documentStream);
+                        final StorageReference ref = FirebaseStorage.getInstance().getReference("documents/"+user.getUid());
+                        ref.child("curriculo.pdf").putFile(curriculoUri);
+                        ref.child("id.pdf").putFile(documentsUri);
 
                     }
 
                 }catch (Exception e){
 
                 }
-
-
             }
         });
 
@@ -115,9 +160,7 @@ final int PICK_CURRICULO_REQUEST_CODE = 111;
             newFragment.show(ft, "dialog");
         }
 
-
-
-        return view;
+         return view;
     }
 
     @Override
@@ -161,28 +204,6 @@ final int PICK_CURRICULO_REQUEST_CODE = 111;
         startActivityForResult(intent, resquest_code_aux);
 
 
-    }
-
-    public String getPath(Context context, Uri uri) throws URISyntaxException {
-        if ("content".equalsIgnoreCase(uri.getScheme())) {
-            String[] projection = { "_data" };
-            Cursor cursor = null;
-
-            try {
-                cursor = context.getContentResolver().query(uri, projection, null, null, null);
-                int column_index = cursor.getColumnIndexOrThrow("_data");
-                if (cursor.moveToFirst()) {
-                    return cursor.getString(column_index);
-                }
-            } catch (Exception e) {
-                // Eat it
-            }
-        }
-        else if ("file".equalsIgnoreCase(uri.getScheme())) {
-            return uri.getPath();
-        }
-
-        return null;
     }
 
     @Override

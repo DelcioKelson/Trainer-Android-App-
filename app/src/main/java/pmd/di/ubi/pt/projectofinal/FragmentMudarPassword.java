@@ -2,9 +2,11 @@ package pmd.di.ubi.pt.projectofinal;
 
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
+import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,7 +47,11 @@ public class FragmentMudarPassword extends Fragment {
         btnConfirmar = view.findViewById(R.id.btn_mudarpass_continuar);
 
         btnConfirmar.setOnClickListener(v -> {
-            AuthCredential credential = EmailAuthProvider.getCredential(Objects.requireNonNull(user.getEmail()),etPasswordAtual.getText().toString());
+
+            if (isPasswordValid(etNovaPassword.getText())) {
+
+                AuthCredential credential = EmailAuthProvider.getCredential(Objects.requireNonNull(user.getEmail()),etPasswordAtual.getText().toString());
+
             user.reauthenticate(credential).addOnCompleteListener(task -> {
                 if(task.isSuccessful()){
                     if(etConfirmarPassword.getText().toString().equals(etNovaPassword.getText().toString())){
@@ -61,12 +67,21 @@ public class FragmentMudarPassword extends Fragment {
                     }
                 }
             }).addOnFailureListener(e -> Toast.makeText(getActivity(),"palavra actual errada",Toast.LENGTH_LONG).show());
+        }else {
+                etNovaPassword.setError("palavra passe deve ter 6 digitos ou mais");
+                return;
+            }
         });
 
         btnCancelar.setOnClickListener(v -> {
-            Navigation.findNavController(getView()).popBackStack();
+            Navigation.findNavController(v).popBackStack();
         });
 
         return view;
     }
+
+    private boolean isPasswordValid(@Nullable Editable text) {
+        return text.length() >= 6;
+    }
+
 }

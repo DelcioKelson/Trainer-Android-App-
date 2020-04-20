@@ -16,12 +16,11 @@ import com.google.android.material.transition.MaterialContainerTransform;
 import java.util.List;
 import java.util.Map;
 
-public class ViewPagerTreinadores extends Fragment{
+public class FragmentViewPagerTreinadores extends Fragment{
 
     private ViewPager viewPager;
-    private ViewGroup viewGroup;
 
-    public ViewPagerTreinadores(){
+    public FragmentViewPagerTreinadores(){
 
     }
 
@@ -30,11 +29,12 @@ public class ViewPagerTreinadores extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        viewPager = (ViewPager) inflater.inflate(R.layout.viewpager_layout, container, false);
+        viewPager = (ViewPager) inflater.inflate(R.layout.viewpager_layout_personal, container, false);
         //viewPager = (ViewPager) view.findViewById(R.id.pager);
-        viewPager.setAdapter(new ViewPagerTreinadoresAdapter(this));
+        viewPager.setAdapter(new AdapterViewPagerTreinadores(this));
+        viewPager.setPageTransformer(true, new ZoomOutPageTransformer());
+
         //viewPager.setOffscreenPageLimit(3);
-        viewGroup = container;
         // Set the current position and add a listener that will update the selection coordinator when
         // paging the images.
         viewPager.setCurrentItem(ActivityMain.currentPosition);
@@ -44,6 +44,7 @@ public class ViewPagerTreinadores extends Fragment{
                 ActivityMain.currentPosition = position;
             }
         });
+
 
         TabLayout tabLayout = (TabLayout) viewPager.findViewById(R.id.tab_layout);
         tabLayout.setupWithViewPager(viewPager, true);
@@ -91,5 +92,45 @@ public class ViewPagerTreinadores extends Fragment{
                         sharedElements.put(names.get(0), view.findViewById(R.id.iv_perfil));
                     }
                 });
+    }
+
+
+    public class ZoomOutPageTransformer implements ViewPager.PageTransformer {
+        private static final float MIN_SCALE = 0.85f;
+        private static final float MIN_ALPHA = 0.5f;
+
+        public void transformPage(View view, float position) {
+            int pageWidth = view.getWidth();
+            int pageHeight = view.getHeight();
+
+            if (position < -1) { // [-Infinity,-1)
+                // This page is way off-screen to the left.
+                view.setAlpha(0f);
+
+            } else if (position <= 1) { // [-1,1]
+                // Modify the default slide transition to shrink the page as well
+                float scaleFactor = Math.max(MIN_SCALE, 1 - Math.abs(position));
+                float vertMargin = pageHeight * (1 - scaleFactor) / 2;
+                float horzMargin = pageWidth * (1 - scaleFactor) / 2;
+                if (position < 0) {
+                    view.setTranslationX(horzMargin - vertMargin / 2);
+                } else {
+                    view.setTranslationX(-horzMargin + vertMargin / 2);
+                }
+
+                // Scale the page down (between MIN_SCALE and 1)
+                view.setScaleX(scaleFactor);
+                view.setScaleY(scaleFactor);
+
+                // Fade the page relative to its size.
+                view.setAlpha(MIN_ALPHA +
+                        (scaleFactor - MIN_SCALE) /
+                                (1 - MIN_SCALE) * (1 - MIN_ALPHA));
+
+            } else { // (1,+Infinity]
+                // This page is way off-screen to the right.
+                view.setAlpha(0f);
+            }
+        }
     }
 }

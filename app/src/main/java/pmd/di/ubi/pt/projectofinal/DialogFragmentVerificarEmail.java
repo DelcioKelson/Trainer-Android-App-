@@ -13,13 +13,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 public class DialogFragmentVerificarEmail extends DialogFragment {
 
-    FirebaseUser user;
+    private FirebaseUser user;
+    private Button btnConfirmar,btnReenviar,btnSair;
 
     public DialogFragmentVerificarEmail() {
 
@@ -37,33 +39,26 @@ public class DialogFragmentVerificarEmail extends DialogFragment {
         View view = inflater.inflate(R.layout.dialogfragment_verificacao_email, container, true);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
-        final Button btnConfirmar = view.findViewById(R.id.btn_confirmar_email);
-        final Button btnReenviar = view.findViewById(R.id.btn_reenviar_email);
-        final Button btnSair = view.findViewById(R.id.btn_sair);
+        btnConfirmar = view.findViewById(R.id.btn_confirmar_email);
+        btnReenviar = view.findViewById(R.id.btn_reenviar_email);
+        btnSair = view.findViewById(R.id.btn_sair);
 
         final TextView tvInfo = view.findViewById(R.id.tv_confirmacao_info);
         user.sendEmailVerification()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                      btnConfirmar.setVisibility(View.VISIBLE);
-                    }
-                    else {
-                        btnReenviar.setVisibility(View.VISIBLE);
+                     btnReenviar.setVisibility(View.VISIBLE);
                     }
                 });
 
-        btnReenviar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                user.sendEmailVerification()
-                        .addOnCompleteListener(task -> {
-                            if (task.isSuccessful()) {
-                                btnConfirmar.setVisibility(View.VISIBLE);
-                                btnReenviar.setVisibility(View.GONE);
-                            }
-                        });
-            }
-        });
+        btnReenviar.setOnClickListener(v ->
+                user.sendEmailVerification().addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Snackbar.make(view,"Foi enviado um novo email de verificaçao",Snackbar.LENGTH_LONG).show();
+
+                    }
+                }));
 
         btnConfirmar.setOnClickListener(v ->
                 user.reload().addOnCompleteListener(task -> {
@@ -72,7 +67,7 @@ public class DialogFragmentVerificarEmail extends DialogFragment {
                             Toast.makeText(getActivity(), "conta verificada com sucesso", Toast.LENGTH_LONG);
                             dismiss();
                         } else {
-                            tvInfo.setVisibility(View.VISIBLE);
+                            Snackbar.make(v,"Conta nao verificada",Snackbar.LENGTH_LONG).show();
                         }
                     }
                 }));

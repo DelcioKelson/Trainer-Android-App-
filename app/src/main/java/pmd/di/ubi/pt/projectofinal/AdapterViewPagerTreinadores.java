@@ -18,16 +18,14 @@ import androidx.viewpager.widget.ViewPager;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class ViewPagerTreinadoresAdapter extends FragmentStatePagerAdapter {
+public class AdapterViewPagerTreinadores extends FragmentStatePagerAdapter {
 
 
-    ArrayList<Map<String,Object>> personalList;
-    FragmentManager fragmentManager;
-    public ViewPagerTreinadoresAdapter(Fragment fragment) {
+    private ArrayList<Map<String,Object>> personalList;
+    public AdapterViewPagerTreinadores(Fragment fragment) {
 
         // Note: Initialize with the child fragment manager.
         super(fragment.getChildFragmentManager(), BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
-        this.fragmentManager = fragment.getChildFragmentManager();
 
         try {
             SharedDataModel modelData = new ViewModelProvider(fragment.getActivity()).get(SharedDataModel.class);

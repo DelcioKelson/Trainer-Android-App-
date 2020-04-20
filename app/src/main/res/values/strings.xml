@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Sillico</string>
+    <string name="app_name">Treiner</string>
     <string name="dia_mes_ano">dia/mês/ano</string>
     <string name="registrar">Registrar</string>
     <string name="altura">Altura</string>
@@ -41,5 +41,8 @@
     <string name="rating">rating</string>
     <string name="preco">preço</string>
     <string name="ordenar_por">Ordenar por:</string>
+
+    <string name="transition_image">image %d</string>
+    <string name="transition_name">name %d</string>
 
 </resources>

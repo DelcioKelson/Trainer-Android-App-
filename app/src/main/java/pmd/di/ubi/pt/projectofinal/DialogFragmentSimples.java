@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Calendar;
@@ -78,13 +79,11 @@ public class DialogFragmentSimples extends DialogFragment {
 
                             FirebaseUser user  = FirebaseAuth.getInstance().getCurrentUser();
 
-                            Calendar calendar = Calendar.getInstance();
-                            //Returns current time in millis
-                            long time = calendar.getTimeInMillis();
 
                             Map<String, Object> notificacaoData;
                             notificacaoData = new HashMap<>();
-                            notificacaoData.put("data", time);
+                            notificacaoData.put("data", System.currentTimeMillis());
+                            notificacaoData.put("vista",false);
 
                             switch (acao){
                                 case "cancelada":
@@ -103,12 +102,19 @@ public class DialogFragmentSimples extends DialogFragment {
 
                             }
                             if(isUser){
-                                FirebaseFirestore.getInstance().collection("pessoas")
-                                        .document(uidPersonal).collection("notificacoes").document().set(notificacaoData);
+
+                                DocumentReference notificacaoRef= FirebaseFirestore.getInstance().collection("pessoas")
+                                        .document(uidPersonal).collection("notificacoes").document();
+
+                                notificacaoData.put("id",notificacaoRef.getId());
+                                notificacaoRef.set(notificacaoData);
                             }
                             else {
-                                FirebaseFirestore.getInstance().collection("pessoas")
-                                    .document(uidUsuario).collection("notificacoes").document().set(notificacaoData);
+                                DocumentReference notificacaoRef= FirebaseFirestore.getInstance().collection("pessoas")
+                                    .document(uidUsuario).collection("notificacoes").document();
+
+                                notificacaoData.put("id",notificacaoRef.getId());
+                                notificacaoRef.set(notificacaoData);
 
                             }
 
