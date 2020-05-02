@@ -43,7 +43,7 @@
     </fragment>
     <fragment
         android:id="@+id/fragmentRegistroPersonal1"
-        android:name="pmd.di.ubi.pt.projectofinal.FragmentRegistroPersonal1"
+        android:name="pmd.di.ubi.pt.projectofinal.FragmentRegistroPersonal"
         android:label="FragmentRegistroPersonal1"
         tools:layout="@layout/fragment_registro_personal1"/>
 </navigation>

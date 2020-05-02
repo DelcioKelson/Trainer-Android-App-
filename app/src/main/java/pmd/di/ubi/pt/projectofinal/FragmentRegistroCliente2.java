@@ -217,7 +217,6 @@ public class FragmentRegistroCliente2 extends Fragment {
                             .getVisionFaceDetector();
                     isFotoValida = true;
 
-
                     detector.detectInImage(image)
                             .addOnSuccessListener(
                                     faces -> {

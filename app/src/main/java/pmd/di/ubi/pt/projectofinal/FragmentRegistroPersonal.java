@@ -42,10 +42,10 @@ import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link FragmentRegistroPersonal1#newInstance} factory method to
+ * Use the {@link FragmentRegistroPersonal#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FragmentRegistroPersonal1 extends Fragment {
+public class FragmentRegistroPersonal extends Fragment {
 
 
     private TextInputEditText emailText,passwordText,numeroTelefone ;
@@ -56,6 +56,8 @@ public class FragmentRegistroPersonal1 extends Fragment {
     private Uri fSelecteduri;
     private ImageView imgVfoto;
     private ProgressBar progressBar;
+    private boolean isFotoValida = true;
+
 
 
     @Override
@@ -148,6 +150,12 @@ public class FragmentRegistroPersonal1 extends Fragment {
             Toast.makeText(getContext(), "Selecione uma imagem", Toast.LENGTH_LONG).show();
             return;
         }
+
+        if (!isFotoValida) {
+            Toast.makeText(getContext(), "Selecione uma fotografia válida, precisa de ter uma face", Toast.LENGTH_LONG).show();
+            return;
+        }
+        
         if (nome.isEmpty()) {
             nomeLayout.setError(errorM);
             return;
