@@ -28,6 +28,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.ml.vision.FirebaseVision;
+import com.google.firebase.ml.vision.common.FirebaseVisionImage;
+import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetector;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -108,6 +111,23 @@ public class FragmentRegistroPersonal1 extends Fragment {
                     imgVfoto.setImageBitmap(bitmap);
                     imgVfoto.setImageDrawable(new BitmapDrawable(this.getResources(), bitmap));
                     btnFoto.setAlpha(0);
+
+                    FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(bitmap);
+                    FirebaseVisionFaceDetector detector = FirebaseVision.getInstance()
+                            .getVisionFaceDetector();
+                    isFotoValida = true;
+
+                    detector.detectInImage(image)
+                            .addOnSuccessListener(
+                                    faces -> {
+                                        if (faces.size() != 1) {
+                                            Toast.makeText(getContext(), "Fotografia inválida, precisa de ter uma face", Toast.LENGTH_LONG).show();
+                                            isFotoValida = false;
+                                        }
+
+                                    })
+                            .addOnFailureListener(
+                                    e -> Toast.makeText(getContext(), "não Tem face", Toast.LENGTH_LONG).show());
                 } catch (IOException ignored) {
 
                 }
