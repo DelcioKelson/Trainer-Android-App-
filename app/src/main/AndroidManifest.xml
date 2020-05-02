@@ -3,6 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="pmd.di.ubi.pt.projectofinal">
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/t"

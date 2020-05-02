@@ -31,6 +31,9 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.ml.vision.FirebaseVision;
+import com.google.firebase.ml.vision.common.FirebaseVisionImage;
+import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetector;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -276,7 +279,7 @@ public class FragmentDefinicoesConta extends Fragment {
 
 
             } else {
-                Toast.makeText(requireContext(), "peso invalidado", Toast.LENGTH_LONG).show();
+                Toast.makeText(requireContext(), "peso invalido", Toast.LENGTH_LONG).show();
             }
         }).setNegativeButton("Cancelar", (dialog, which) -> {
         }).show();
@@ -331,8 +334,24 @@ public class FragmentDefinicoesConta extends Fragment {
                         Bitmap bitmap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), fSelecteduri);
                         imgVfoto.setImageBitmap(bitmap);
                         btnFotoPerfil.setAlpha(0);
-                        btnSalvarFoto.setVisibility(View.VISIBLE);
-                        btnSalvarFoto.setClickable(true);
+                        FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(bitmap);
+                        FirebaseVisionFaceDetector detector = FirebaseVision.getInstance()
+                                .getVisionFaceDetector();
+
+                        detector.detectInImage(image)
+                                .addOnSuccessListener(
+                                        faces -> {
+                                            if (faces.size() != 1) {
+                                                Toast.makeText(getContext(), "Fotografia inválida, precisa de ter uma face", Toast.LENGTH_LONG).show();
+                                            }else {
+                                                btnSalvarFoto.setVisibility(View.VISIBLE);
+                                                btnSalvarFoto.setClickable(true);
+                                            }
+
+                                        })
+                                .addOnFailureListener(
+                                        e -> Toast.makeText(getContext(), "não Tem face", Toast.LENGTH_LONG).show());
+
                     } catch (IOException ignored) {
 
                     }

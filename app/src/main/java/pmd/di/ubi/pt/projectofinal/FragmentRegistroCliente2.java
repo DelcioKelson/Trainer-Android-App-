@@ -31,12 +31,14 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.ml.vision.FirebaseVision;
+import com.google.firebase.ml.vision.common.FirebaseVisionImage;
+import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetector;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -53,12 +55,13 @@ public class FragmentRegistroCliente2 extends Fragment {
     private Uri fSelecteduri;
     private ImageView imgVfoto;
     private ProgressBar progressBar;
+    private boolean isFotoValida = true;
 
     private AutoCompleteTextView generoAutoComplete;
 
 
     private TextInputLayout emailLayout, passwordLayout, alturaLayout, pesoLayout,
-            numeroLayout, nomeLayout, nascimentoLayout, moradaLayout,generoLayout;
+            numeroLayout, nomeLayout, nascimentoLayout, moradaLayout, generoLayout;
 
 
     public FragmentRegistroCliente2() {
@@ -111,7 +114,7 @@ public class FragmentRegistroCliente2 extends Fragment {
 
 
         generoAutoComplete.setInputType(0);
-        generoAutoComplete.setAdapter(new ArrayAdapter(requireContext(),R.layout.genero_list_element,Arrays.asList("M","F","Outro")));
+        generoAutoComplete.setAdapter(new ArrayAdapter(requireContext(), R.layout.genero_list_element, Arrays.asList("M", "F", "Outro")));
 
         TextWatcher tw = new TextWatcher() {
 
@@ -209,6 +212,23 @@ public class FragmentRegistroCliente2 extends Fragment {
                     imgVfoto.setImageBitmap(bitmap);
                     imgVfoto.setImageDrawable(new BitmapDrawable(this.getResources(), bitmap));
                     btnFoto.setAlpha(0);
+                    FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(bitmap);
+                    FirebaseVisionFaceDetector detector = FirebaseVision.getInstance()
+                            .getVisionFaceDetector();
+                    isFotoValida = true;
+
+
+                    detector.detectInImage(image)
+                            .addOnSuccessListener(
+                                    faces -> {
+                                        if (faces.size() != 1) {
+                                            Toast.makeText(getContext(), "Fotografia inválida, precisa de ter uma face", Toast.LENGTH_LONG).show();
+                                            isFotoValida = false;
+                                        }
+
+                                    })
+                            .addOnFailureListener(
+                                    e -> Toast.makeText(getContext(), "não Tem face", Toast.LENGTH_LONG).show());
                 } catch (IOException ignored) {
 
                 }
@@ -226,66 +246,67 @@ public class FragmentRegistroCliente2 extends Fragment {
         final String telefone = numeroTelefone.getText().toString();
         final String nascimento = nascimentoText.getText().toString();
         final String moradaText = morada.getText().toString();
-        final String genero =   generoAutoComplete.getText().toString();
+        final String genero = generoAutoComplete.getText().toString();
 
 
         String errorM = "Deve ser preenchido";
         boolean erro = false;
 
         if (imgVfoto.getDrawable() == null) {
-            Toast.makeText(getContext(), "Selecione uma imagem", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "Selecione uma fotografia", Toast.LENGTH_LONG).show();
+            return;
+        }
+        if (!isFotoValida) {
+            Toast.makeText(getContext(), "Selecione uma fotografia válida, precisa de ter uma face", Toast.LENGTH_LONG).show();
             return;
         }
         if (nome.isEmpty()) {
             nomeLayout.setError(errorM);
             erro = true;
-        }
-        else {
+        } else {
             nomeLayout.setError(null);
         }
 
         if (email.isEmpty()) {
             emailLayout.setError(errorM);
             erro = true;
-        }
-        else {
+        } else {
             emailLayout.setError(null);
         }
 
-        Log.i("Registro","passei");
+        Log.i("Registro", "passei");
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             emailText.setError("Email inválido");
             erro = true;
-        }else {
+        } else {
             emailText.setError(null);
         }
 
         if (senha.isEmpty()) {
             passwordLayout.setError(errorM);
-            erro =true;
-        }else {
+            erro = true;
+        } else {
             passwordLayout.setError(null);
 
             if (!isPasswordValid(passwordText.getText())) {
                 passwordText.setError("palavra passe deve ter 6 digitos ou mais");
                 erro = true;
-            }else {
+            } else {
                 passwordText.setError(null);
             }
         }
 
-        Log.i("Registro","passei");
+        Log.i("Registro", "passei");
 
         if (telefone.isEmpty()) {
             numeroLayout.setError(errorM);
             erro = true;
-        }else {
+        } else {
             numeroLayout.setError(null);
             if (!Patterns.PHONE.matcher(telefone).matches() || telefone.length() != 9) {
-                numeroTelefone.setError("número invalido");
+                numeroTelefone.setError("número inválido");
                 erro = true;
-            }
-            else {
+            } else {
                 numeroTelefone.setError(null);
             }
         }
@@ -293,13 +314,12 @@ public class FragmentRegistroCliente2 extends Fragment {
         if (nascimento.isEmpty()) {
             nascimentoLayout.setError(errorM);
             erro = true;
-        }else {
+        } else {
             nascimentoLayout.setError(null);
             if (nascimento.charAt(8) == 'Y') {
-                nascimentoText.setError("Data de nascimento invalida");
-                erro=true;
-            }
-            else {
+                nascimentoText.setError("Data de nascimento inválida");
+                erro = true;
+            } else {
                 nascimentoText.setError(null);
             }
         }
@@ -307,14 +327,14 @@ public class FragmentRegistroCliente2 extends Fragment {
         if (alturaAux.isEmpty()) {
             alturaLayout.setError(errorM);
             erro = true;
-        }else {
+        } else {
             alturaLayout.setError(null);
             double altura = Double.parseDouble(alturaAux);
 
             if (altura < 1 || altura > 2.5) {
-                alturaText.setError("altura invalida");
+                alturaText.setError("altura inválida");
                 erro = true;
-            }else {
+            } else {
                 alturaText.setError(null);
             }
         }
@@ -322,15 +342,13 @@ public class FragmentRegistroCliente2 extends Fragment {
         if (pesoAux.isEmpty()) {
             pesoLayout.setError(errorM);
             erro = true;
-        }
-        else {
+        } else {
             pesoLayout.setError(null);
             int peso = Integer.parseInt(pesoAux);
             if (!isNumericInt(pesoAux) && (peso < 20 || peso > 120)) {
-                pesoText.setError("peso invalido");
+                pesoText.setError("peso inválido");
                 erro = true;
-            }
-            else {
+            } else {
                 pesoText.setError(null);
             }
         }
@@ -338,18 +356,18 @@ public class FragmentRegistroCliente2 extends Fragment {
         if (moradaText.isEmpty()) {
             moradaLayout.setError(errorM);
             erro = true;
-        }else {
+        } else {
             moradaLayout.setError(null);
         }
 
-        if(genero.isEmpty()){
+        if (genero.isEmpty()) {
             generoLayout.setError(errorM);
-            erro=true;
-        }else {
+            erro = true;
+        } else {
             generoLayout.setError(null);
         }
 
-        if (erro){
+        if (erro) {
             return;
         }
 
@@ -413,7 +431,7 @@ public class FragmentRegistroCliente2 extends Fragment {
                 usuarioData.put("Uid", uid);
                 usuarioData.put("situacoes", situacoes);
                 usuarioData.put("morada", morada.getText().toString());
-                usuarioData.put("genero",generoAutoComplete.getText().toString());
+                usuarioData.put("genero", generoAutoComplete.getText().toString());
 
                 // adicionar dados do usario na base de dados
                 FirebaseFirestore.getInstance().collection("pessoas")
