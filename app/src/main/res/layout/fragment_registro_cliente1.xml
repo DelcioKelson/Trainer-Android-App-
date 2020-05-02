@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:app="http://schemas.android.com/apk/res-auto"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
 
     <Button
@@ -12,56 +12,59 @@ android:orientation="vertical">
         android:id="@+id/btn_voltar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:drawableStart="@drawable/ic_arrow_back_black_24dp"  />
+        android:drawableStart="@drawable/ic_arrow_back_black_24dp" />
 
-<TextView
-    style="@style/Widget.MaterialComponents.Snackbar.TextView"
-    android:background="@color/black"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="@string/selecione_com_muita_responsabilidade"
-    android:layout_gravity="center"
-    android:layout_marginTop="10dp"/>
+    <TextView
+        style="@style/Widget.MaterialComponents.Snackbar.TextView"
+        android:background="@color/black"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/selecione_com_muita_responsabilidade"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp" />
 
 
     <CheckBox
         android:id="@+id/cb1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Tenho doenças cardiovascular ou pulmonar"/>
+        android:text="Tenho doenças cardiovascular ou pulmonar" />
+
     <CheckBox
         android:id="@+id/cb2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Utilizo fármacos"/>
+        android:text="Utilizo fármacos" />
+
     <CheckBox
         android:id="@+id/cb3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Quando estou a fazer atividade física sinto dor no peito"/>
+        android:text="Quando estou a fazer atividade física sinto dor no peito" />
+
     <CheckBox
         android:id="@+id/cb4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Desisto com facilidade"/>
+        android:text="Desisto com facilidade" />
+
     <CheckBox
         android:id="@+id/cb5"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Cumpro as metas"/>
+        android:text="Cumpro as metas" />
 
     <CheckBox
         android:id="@+id/cb6"
         android:layout_width="match_parent"
         android:layout_height="31dp"
-        android:text="Já pratiquei uma modalidade desportiva"/>
+        android:text="Já pratiquei uma modalidade desportiva" />
 
     <Spinner
         android:id="@+id/spinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-        />
+        android:visibility="gone" />
 
     <View
         android:layout_width="match_parent"
@@ -69,65 +72,21 @@ android:orientation="vertical">
         android:background="@android:color/darker_gray" />
 
 
-
-    <LinearLayout
-        android:layout_width="300dp"
-        android:layout_marginTop="5dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center">
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:ems="10"
-            android:hint="Morada"
-            app:hintAnimationEnabled="true"
-            style="@style/LoginTextInputLayoutStyle">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edit_morada"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </com.google.android.material.textfield.TextInputLayout>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="300dp"
-        android:layout_marginTop="5dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center">
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:ems="10"
-            android:hint="Código postal"
-            app:hintAnimationEnabled="true"
-            style="@style/LoginTextInputLayoutStyle">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edit_codigo_postal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPostalAddress" />
-        </com.google.android.material.textfield.TextInputLayout>
-    </LinearLayout>
-
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_proximo_passo"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:text="@string/proximo_passo"
-        android:textSize="15sp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_proximo_passo"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:text="@string/proximo_passo"
+            android:textSize="15sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
 
 
 </LinearLayout>

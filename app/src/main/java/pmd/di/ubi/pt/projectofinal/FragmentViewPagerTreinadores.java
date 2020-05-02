@@ -37,11 +37,11 @@ public class FragmentViewPagerTreinadores extends Fragment{
         //viewPager.setOffscreenPageLimit(3);
         // Set the current position and add a listener that will update the selection coordinator when
         // paging the images.
-        viewPager.setCurrentItem(ActivityMain.currentPosition);
+        viewPager.setCurrentItem(Main.currentPosition);
         viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
-                ActivityMain.currentPosition = position;
+                Main.currentPosition = position;
             }
         });
 
@@ -69,7 +69,7 @@ public class FragmentViewPagerTreinadores extends Fragment{
                         .inflateTransition(R.transition.image_shared_element_transition);
         setSharedElementEnterTransition(transition);
 */
-        MaterialContainerTransform m = new MaterialContainerTransform(requireContext());
+        MaterialContainerTransform m = new MaterialContainerTransform();
         setSharedElementEnterTransition(m);
 
         // A similar mapping is set at the GridFragment with a setExitSharedElementCallback.
@@ -82,7 +82,7 @@ public class FragmentViewPagerTreinadores extends Fragment{
                         // At this stage, the method will simply return the fragment at the position and will
                         // not create a new one.
                         Fragment currentFragment = (Fragment) viewPager.getAdapter()
-                                .instantiateItem(viewPager, ActivityMain.currentPosition);
+                                .instantiateItem(viewPager, Main.currentPosition);
                         View view = currentFragment.getView();
                         if (view == null) {
                             return;

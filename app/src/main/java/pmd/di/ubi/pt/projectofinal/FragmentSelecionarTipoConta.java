@@ -13,11 +13,6 @@ import android.view.ViewGroup;
 import com.google.android.material.card.MaterialCardView;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link FragmentSelecionarTipoConta#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class FragmentSelecionarTipoConta extends Fragment {
 
     public FragmentSelecionarTipoConta() {

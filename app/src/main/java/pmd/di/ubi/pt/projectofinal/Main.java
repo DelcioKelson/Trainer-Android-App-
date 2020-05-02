@@ -1,6 +1,5 @@
 package pmd.di.ubi.pt.projectofinal;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,7 +10,6 @@ import android.view.MenuItem;
 import android.view.View;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -20,38 +18,33 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.gms.wallet.AutoResolveHelper;
 import com.google.android.gms.wallet.PaymentData;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class ActivityMain extends AppCompatActivity {
+public class Main extends AppCompatActivity {
     FirebaseUser user;
     private AppBarConfiguration mAppBarConfiguration;
     private NavController navController;
     private MaterialToolbar toolbar;
-    private  BottomNavigationView bottomNavigationView;
+    private BottomNavigationView bottomNavigationView;
     static BadgeDrawable badge;
+    static SharedDataModel sharedDataModel;
 
     private static final String KEY_CURRENT_POSITION = "com.google.samples.gridtopager.key.currentPosition";
 
     static int currentPosition;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,18 +58,15 @@ public class ActivityMain extends AppCompatActivity {
         setContentView(R.layout.first_layout);
 
         iniciarSessao();
-}
+    }
 
 
-    public void iniciarSessao(){
+    public void iniciarSessao() {
 
 
-
-
-        Log.i("userValue",""+user);
+        Log.i("userValue", "" + user);
         if (user != null) {
             FirebaseFirestore.getInstance().collection("pessoas").document(user.getUid()).get().addOnCompleteListener(task -> {
-
 
                 if (task.isSuccessful()) {
                     Log.i("activityInicial", "activityInicial");
@@ -89,28 +79,26 @@ public class ActivityMain extends AppCompatActivity {
                         bottomNavigationView = findViewById(R.id.bottom_navigation);
                         toolbar.setVisibility(View.VISIBLE);
                         bottomNavigationView.setVisibility(View.VISIBLE);
-                        SharedDataModel modelData = new ViewModelProvider(this).get(SharedDataModel.class);
-                        modelData.init();
+                        sharedDataModel = new ViewModelProvider(this).get(SharedDataModel.class);
+                        sharedDataModel.init();
                         String tipoConta = document.getString("tipoConta");
                         FirebaseMessaging.getInstance().subscribeToTopic(user.getUid());
+                        sharedDataModel.setUsuarioAtual(document.getData());
 
 
-                        if (tipoConta.equals("personal") || tipoConta.equals("usuario") ){
-                            if(tipoConta.equals("personal")){
-                                modelData.personal();
+                        if (tipoConta.equals("personal") || tipoConta.equals("usuario")) {
+                            if (tipoConta.equals("personal")) {
+                                sharedDataModel.personal();
                                 iniciarSessaoPersonal();
-                            }else  if(tipoConta.equals("usuario")){
-                                modelData.usuario();
+                            } else if (tipoConta.equals("usuario")) {
+                                sharedDataModel.usuario();
                                 iniciarSessaoUsuario();
                             }
                             badge = bottomNavigationView.getOrCreateBadge(R.id.fragmentNotificacoes);
                             badge.setVisible(false);
 
 
-                        }
-
-
-                        else if(tipoConta.equals("pendente")){
+                        } else if (tipoConta.equals("pendente")) {
                             navController.setGraph(R.navigation.nav_graph_personal_pendente);
                             bottomNavigationView.setVisibility(View.GONE);
                         }
@@ -119,11 +107,11 @@ public class ActivityMain extends AppCompatActivity {
                         mAppBarConfiguration =
                                 new AppBarConfiguration.Builder(navController.getGraph()).build();
 
-                        NavigationUI.setupWithNavController(toolbar,navController);
+                        NavigationUI.setupWithNavController(toolbar, navController);
                         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
                         NavigationUI.setupWithNavController(bottomNavigationView, navController);
                     }
-                }else {
+                } else {
                     setContentView(R.layout.activity_main);
                     navController = Navigation.findNavController(this, R.id.container);
                     navController.setGraph(R.navigation.nav_graph_login);
@@ -152,13 +140,14 @@ public class ActivityMain extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        return NavigationUI.onNavDestinationSelected(item,navController)||super.onOptionsItemSelected(item);
+        return NavigationUI.onNavDestinationSelected(item, navController) || super.onOptionsItemSelected(item);
     }
 
     public void iniciarSessaoUsuario() {
         navController.setGraph(R.navigation.nav_graph_usuario);
         bottomNavigationView.inflateMenu(R.menu.bottom_usuario_menu);
     }
+
     public void iniciarSessaoPersonal() {
         navController.setGraph(R.navigation.nav_graph_personal);
         bottomNavigationView.inflateMenu(R.menu.bottom_personal_menu);
@@ -170,6 +159,7 @@ public class ActivityMain extends AppCompatActivity {
         inflater.inflate(R.menu.menu_toolbar, menu);
         return true;
     }
+
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -187,13 +177,13 @@ public class ActivityMain extends AppCompatActivity {
             // value passed in AutoResolveHelper
             case 991:
                 switch (resultCode) {
-                    case Activity.RESULT_OK:
+                    case android.app.Activity.RESULT_OK:
                         PaymentData paymentData = PaymentData.getFromIntent(data);
                         handlePaymentSuccess(paymentData);
                         Log.w("loadPayment", "sucess");
 
                         break;
-                    case Activity.RESULT_CANCELED:
+                    case android.app.Activity.RESULT_CANCELED:
                         // Nothing to here normally - the user simply cancelled without selecting a
                         // payment method.
                         Log.w("loadPayment", "cancela");
@@ -209,6 +199,7 @@ public class ActivityMain extends AppCompatActivity {
                 break;
         }
     }
+
     private void handlePaymentSuccess(PaymentData paymentData) {
         String paymentInformation = paymentData.toJson();
 
@@ -255,8 +246,6 @@ public class ActivityMain extends AppCompatActivity {
     private void handleError(int statusCode) {
         Log.w("loadPaymentDatafailed", String.format("Error code: %d", statusCode));
     }
-
-
 }
 
 

@@ -12,7 +12,6 @@
         android:textSize="15sp" />
 
 
-
     <Button
         style="@style/Widget.AppCompat.Button.Borderless"
         android:id="@+id/btn_voltar"
@@ -24,11 +23,16 @@
         />
 
 
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/comentario_recyclerview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
        />
+    </androidx.core.widget.NestedScrollView>
 
 </LinearLayout>

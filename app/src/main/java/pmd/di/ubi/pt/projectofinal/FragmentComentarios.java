@@ -31,10 +31,10 @@ import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link FragmentComentariosGerarPreco#newInstance} factory method to
+ * Use the {@link FragmentComentarios#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FragmentComentariosGerarPreco extends Fragment {
+public class FragmentComentarios extends Fragment {
 
     private RatingBar comentarioRating;
     private EditText inputComentario;
@@ -55,19 +55,16 @@ public class FragmentComentariosGerarPreco extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "preco";
-    private static final String ARG_PARAM2 = "uidPersonal";
 
     // TODO: Rename and change types of parameters
-    private String preco;
     private String uidPersonal;
 
-    public FragmentComentariosGerarPreco() {
+    public FragmentComentarios() {
         // Required empty public constructor
     }
 
-    public static FragmentComentariosGerarPreco newInstance(Bundle bundle) {
-        FragmentComentariosGerarPreco fragment = new FragmentComentariosGerarPreco();
+    public static FragmentComentarios newInstance(Bundle bundle) {
+        FragmentComentarios fragment = new FragmentComentarios();
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -76,8 +73,7 @@ public class FragmentComentariosGerarPreco extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            preco = getArguments().getString(ARG_PARAM1);
-            uidPersonal = getArguments().getString(ARG_PARAM2);
+            uidPersonal = getArguments().getString("uidPersonal");
         }
     }
 
@@ -98,8 +94,7 @@ public class FragmentComentariosGerarPreco extends Fragment {
         Log.i("FragmentoComentario","passei");
 
         user = FirebaseAuth.getInstance().getCurrentUser();
-        SharedDataModel modelData = new ViewModelProvider(requireActivity()).get(SharedDataModel.class);
-        isUser = modelData.isUser().getValue();
+        isUser = Main.sharedDataModel.isUser().getValue();
         btnComentar.setVisibility(View.GONE);
         //sonal ==null quer dizer que eh a conta do tipo personal
 

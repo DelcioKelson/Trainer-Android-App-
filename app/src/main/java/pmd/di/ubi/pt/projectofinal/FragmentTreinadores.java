@@ -10,11 +10,9 @@ import androidx.core.app.SharedElementCallback;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.transition.TransitionInflater;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -84,12 +82,12 @@ public class FragmentTreinadores extends Fragment implements DialogFragmentOrder
                                        int oldBottom) {
                 recyclerView.removeOnLayoutChangeListener(this);
                 final RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
-                View viewAtPosition = layoutManager.findViewByPosition(ActivityMain.currentPosition);
+                View viewAtPosition = layoutManager.findViewByPosition(Main.currentPosition);
                 // Scroll to position if the view for the current position is null (not currently part of
                 // layout manager children), or it's not completely visible.
                 if (viewAtPosition == null || layoutManager
                         .isViewPartiallyVisible(viewAtPosition, false, true)) {
-                    recyclerView.post(() -> layoutManager.scrollToPosition(ActivityMain.currentPosition));
+                    recyclerView.post(() -> layoutManager.scrollToPosition(Main.currentPosition));
                 }
             }
         });
@@ -105,7 +103,6 @@ public class FragmentTreinadores extends Fragment implements DialogFragmentOrder
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(llm);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         personalList = new ArrayList<>();
         setExitTransition(new Hold());
 
@@ -115,7 +112,7 @@ public class FragmentTreinadores extends Fragment implements DialogFragmentOrder
                     public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
                         // Locate the ViewHolder for the clicked position.
                         RecyclerView.ViewHolder selectedViewHolder = recyclerView
-                                .findViewHolderForAdapterPosition(ActivityMain.currentPosition);
+                                .findViewHolderForAdapterPosition(Main.currentPosition);
                         if (selectedViewHolder == null) {
                             return;
                         }
@@ -142,8 +139,7 @@ public class FragmentTreinadores extends Fragment implements DialogFragmentOrder
                         personalList.add(document.getData());
                     }
                 }
-                SharedDataModel modelData = new ViewModelProvider(getActivity()).get(SharedDataModel.class);
-                modelData.addPersonalList(personalList);
+                Main.sharedDataModel.addPersonalList(personalList);
                 personalListOriginal = new ArrayList<> (personalList);
                 adapterPersonalTreiners = new AdapterPersonalTreiners(this, personalList);
                 recyclerView.setAdapter(adapterPersonalTreiners);

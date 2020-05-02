@@ -22,7 +22,7 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
         android:layout_gravity="center"
         android:gravity="center"
-        android:text="Treiner"/>
+        android:text="@string/trainer"/>
 
 
     <LinearLayout
@@ -68,6 +68,13 @@
         </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
 
+    <ProgressBar
+        android:layout_marginTop="10dp"
+        android:id="@+id/progressbar_login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_login"

@@ -1,25 +1,25 @@
 package pmd.di.ubi.pt.projectofinal;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.widget.Toast;
 
 import androidx.fragment.app.DialogFragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
 public class DialogFragmentSimples extends DialogFragment {
 
     private String marcacaoID,toastMessage,acao ,uidUsuario, uidPersonal;
+
+
+
 
     static DialogFragmentSimples newInstance(String acao, String marcacaoId, String uidUsuario, String uidPersonal) {
         DialogFragmentSimples f = new DialogFragmentSimples();
@@ -44,19 +44,19 @@ public class DialogFragmentSimples extends DialogFragment {
 
         switch (acao) {
             case "cancelada":
-                titulo = "Cancelar marcacao";
-                mensagem = "Deseja realmente cancelar a marcaçao?";
-                toastMessage = "Marcacao cancelada com sucesso";
+                titulo = "Cancelar marcação";
+                mensagem = "Deseja realmente cancelar a marcação?";
+                toastMessage = "marcação cancelada com sucesso";
                 break;
             case "aceite":
-                titulo = "Aceitar marcacao";
-                mensagem = "Deseja realmente aceitar a marcaçao?";
-                toastMessage = "Marcacao aceite com sucesso";
+                titulo = "Aceitar marcação";
+                mensagem = "Deseja realmente aceitar a marcação?";
+                toastMessage = "Marcação aceite com sucesso";
                 break;
             case "recusada":
-                titulo = "Recusar marcacao";
-                mensagem = "Deseja realmente recusar a marcaçao?";
-                toastMessage = "Marcacao recusada com sucesso";
+                titulo = "Recusar marcação";
+                mensagem = "Deseja realmente recusar a marcação?";
+                toastMessage = "Marcação recusada com sucesso";
                 break;
             default:
                 titulo = "error";
@@ -73,9 +73,8 @@ public class DialogFragmentSimples extends DialogFragment {
                             Toast.makeText(getActivity(),toastMessage,Toast.LENGTH_LONG).show();
 
                             // atualizar fragment das marcacoes:
-                            SharedDataModel modelData = new ViewModelProvider(requireActivity()).get(SharedDataModel.class);
-                            modelData.setAtualizarFragmentMarcaoes(true);
-                            boolean isUser = modelData.isUser().getValue();
+                            Main.sharedDataModel.setAtualizar(true);
+                            boolean isUser = Main.sharedDataModel.isUser().getValue();
 
                             FirebaseUser user  = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -84,20 +83,21 @@ public class DialogFragmentSimples extends DialogFragment {
                             notificacaoData = new HashMap<>();
                             notificacaoData.put("data", System.currentTimeMillis());
                             notificacaoData.put("vista",false);
+                            notificacaoData.put("marcacaoId",marcacaoID);
 
                             switch (acao){
                                 case "cancelada":
-                                    notificacaoData.put("mensagem", user.getDisplayName()+ " cancelou uma marcacao consigo");
-                                    notificacaoData.put("titulo","marcaçao cancelada" );;
+                                    notificacaoData.put("mensagem", user.getDisplayName()+ " cancelou uma marcação consigo");
+                                    notificacaoData.put("titulo","marcação cancelada" );
                                     break;
                                 case "recusada":
-                                    notificacaoData.put("mensagem", user.getDisplayName()+ " recusou a sua marcaçao");
-                                    notificacaoData.put("titulo","marcaçao recusada" );;
+                                    notificacaoData.put("mensagem", user.getDisplayName()+ " recusou a sua marcação");
+                                    notificacaoData.put("titulo","marcação recusada" );
                                     break;
 
                                 case "aceite":
-                                    notificacaoData.put("mensagem", user.getDisplayName()+ " aceitou uma marcacao consigo");
-                                    notificacaoData.put("titulo","marcaçao aceite" );
+                                    notificacaoData.put("mensagem", user.getDisplayName()+ " aceitou uma marcação consigo");
+                                    notificacaoData.put("titulo","marcação aceite" );
                                     break;
 
                             }
@@ -117,10 +117,6 @@ public class DialogFragmentSimples extends DialogFragment {
                                 notificacaoRef.set(notificacaoData);
 
                             }
-
-
-
-
 
                             dismiss();
 

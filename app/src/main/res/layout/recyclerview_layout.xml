@@ -10,17 +10,21 @@
         android:layout_gravity="center"
         android:layout_width="match_parent"
         android:gravity="center"
-
         android:visibility="gone"
         android:layout_height="wrap_content"
         style="@style/TextAppearance.AppCompat.Title"
-        android:text="Ainda nao ha nada por aqui"/>
+        android:text="@string/ainda_n_o_ha_nada_por_aqui"/>
 
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
 
         android:id="@+id/my_recyclerview"/>
+    </androidx.core.widget.NestedScrollView>
 
 
 </LinearLayout>

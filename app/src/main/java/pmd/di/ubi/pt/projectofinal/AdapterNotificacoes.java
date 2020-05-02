@@ -1,6 +1,7 @@
 package pmd.di.ubi.pt.projectofinal;
 
 import android.content.DialogInterface;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +14,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -29,23 +33,35 @@ import io.grpc.Context;
 
 public class AdapterNotificacoes extends RecyclerView.Adapter<AdapterNotificacoes.NotificacaoHolder> {
 
-    private FragmentActivity context;
+    private Fragment fragment;
     private ArrayList<Map<String,Object>> notificacoesList;
     private AdapterNotificacoes adapterThis = this;
     private String idUser;
 
+    static OnRequestPaymentListener requestPayment;
 
-    public AdapterNotificacoes(FragmentActivity context, ArrayList<Map<String, Object>> notificacoesList, String idUser) {
-        this.context = context;
+
+
+    public AdapterNotificacoes(Fragment fragment, ArrayList<Map<String, Object>> notificacoesList, String idUser) {
+        this.fragment = fragment;
         this.notificacoesList = notificacoesList;
         this.idUser = idUser;
+    }
+
+
+    public void setOnRequestPaymentListener(OnRequestPaymentListener requestPayment ){
+        this.requestPayment = requestPayment;
+    }
+
+    public interface OnRequestPaymentListener{
+        void request(String price);
     }
 
 
     @NonNull
     @Override
     public NotificacaoHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.card_notificacao,parent,false);
+        View view = LayoutInflater.from(fragment.getContext()).inflate(R.layout.card_notificacao,parent,false);
         return new NotificacaoHolder(view);    }
 
     @Override
@@ -76,6 +92,7 @@ public class AdapterNotificacoes extends RecyclerView.Adapter<AdapterNotificacoe
             final TextView tvData = itemView.findViewById(R.id.tv_data_notificacao);
             final LinearLayout linearLayout = itemView.findViewById(R.id.notification_linearLayout);
             final String ID =(String) notificacao.get("id");
+            final String marcacaoId = (String) notificacao.get("marcacaoId");
 
             final DocumentReference notificacoesRef = FirebaseFirestore.getInstance().collection("pessoas").document(idUser)
                     .collection("notificacoes").document(ID);
@@ -83,7 +100,7 @@ public class AdapterNotificacoes extends RecyclerView.Adapter<AdapterNotificacoe
 
             boolean vista = (boolean) notificacao.get("vista");
             if(!vista){
-                linearLayout.setBackgroundColor(context.getResources().getColor(R.color.colorAccent));
+                linearLayout.setBackgroundColor(fragment.getResources().getColor(R.color.colorAccent));
                 notificacoesRef.update("vista",true);
             }
 
@@ -110,10 +127,29 @@ public class AdapterNotificacoes extends RecyclerView.Adapter<AdapterNotificacoe
 
             }
 
+
+            linearLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    FragmentTransaction ft = fragment.getFragmentManager().beginTransaction();
+                    Fragment prev =fragment.getFragmentManager().findFragmentByTag("dialog");
+                    DialogFragment newFragment;
+                    if (prev != null) {
+                        ft.remove(prev);
+                    }
+                    ft.addToBackStack(null);
+                    Bundle b = new Bundle();
+                    b.putString("marcacaoId",marcacaoId);
+                    newFragment = FragmentDetalhesMarcacao.newInstance(b);
+                    newFragment.show(ft, "dialog");
+
+                }
+            });
+
             linearLayout.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(fragment.getContext());
 
                     builder.setMessage("Deseja eliminar a notificacao?");
 

@@ -4,7 +4,7 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">#b71c1c</item>
         <item name="colorPrimaryDark">#7f0000</item>
-        <item name="colorAccent">#ff795f</item>
+        <item name="colorAccent">#f05545</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:actionOverflowButtonStyle">@style/MyActionButtonOverflow</item>
@@ -36,6 +36,14 @@
         <item name="android:textColor">@color/black</item>
     </style>
 
+
+    <style name="AutoClompleteStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+        <item name="boxStrokeColor">#483D8B</item>
+        <item name="boxStrokeWidth">2dp</item>
+        <item name="hintTextColor">@color/black</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
     <style name="floatbtn" parent="Widget.MaterialComponents.ExtendedFloatingActionButton">
         <item name="color"> @color/colorPrimary</item>
         <item name="android:colorBackground">@color/colorPrimary</item>
@@ -49,7 +57,8 @@
 
 
     <style name="MyCardStyle" parent="Widget.MaterialComponents.CardView">
-        <item name="elevation">5dp</item>
+        <item name="elevation">100dp</item>
+        <item name="backgroundTint">@color/colorAccent</item>
         <item name="strokeWidth" >1dp</item>
         <item name="strokeColor">@color/colorPrimary</item>
     </style>

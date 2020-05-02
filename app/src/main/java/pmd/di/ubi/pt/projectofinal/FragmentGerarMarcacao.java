@@ -5,12 +5,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
-
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.navigation.Navigation;
-
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,33 +15,50 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipDrawable;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
-public class FragmentGerarMarcacao extends Fragment implements DialogConfirmarFragmentMarcacao.FlagMarcacaoConfirmadaDialogListener {
+public class FragmentGerarMarcacao extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM2 = "nome";
     private static final String ARG_PARAM3 = "preco";
     private static final String ARG_PARAM1 = "uidPersonal";
 
     private TextView tvPreco;
     private String uidPersonal;
-    private Button btnMarcar,btnComentario;
+    private Button btnMarcar, btnComentario;
     private String tempoDemora;
     private float preco;
     private String nomePersonal;
     private List<String> horasList;
     private String rating;
-    private TextInputEditText etDia,etHora;
+    private TextInputEditText etDia, etHora;
+    private String diasIndisponiveis;
+
+    private int posPersonal;
+    private Map<String, Object> personal;
+    CollectionReference marcacoesRef = FirebaseFirestore.getInstance().collection("marcacoes");
+
+    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
 
     public FragmentGerarMarcacao() {
         // Required empty public constructor
@@ -63,11 +75,26 @@ public class FragmentGerarMarcacao extends Fragment implements DialogConfirmarFr
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (getArguments() != null) {
-            uidPersonal = getArguments().getString(ARG_PARAM1);
-            preco = Float.parseFloat(Objects.requireNonNull(getArguments().getString(ARG_PARAM3)));
-            nomePersonal = getArguments().getString(ARG_PARAM2);
-            rating = getArguments().getString("rating");
+            posPersonal = getArguments().getInt("posPersonal");
+
+            if(getArguments().getBoolean("favorito")){
+                personal = Main.sharedDataModel.getPersonalListFavorito().getValue().get(posPersonal);
+
+            }else {
+                personal = Main.sharedDataModel.getPersonalList().getValue().get(posPersonal);
+                Log.i("PERSONAL", personal.toString());
+            }
+
+
+
+            uidPersonal = (String) personal.get("uid");
+            preco = Float.parseFloat(Objects.requireNonNull((String) personal.get(ARG_PARAM3)));
+            rating = (String) personal.get("rating");
+            diasIndisponiveis = (String) personal.get("diasIndisponiveis");
+            nomePersonal = (String) personal.get("nome");
+
 
         }
     }
@@ -85,47 +112,47 @@ public class FragmentGerarMarcacao extends Fragment implements DialogConfirmarFr
         etDia = view.findViewById(R.id.et_dia);
         etHora = view.findViewById(R.id.et_hora);
 
-        if(rating!=null && rating.equals("0")){
+        if (rating != null && rating.equals("0")) {
             btnComentario.setVisibility(View.GONE);
         }
 
-        horasList = Arrays.asList(new String[]{"00:30","01:00","01:30","02:00","02:30"});
+        horasList = Arrays.asList("00:30", "01:00", "01:30", "02:00", "02:30");
 
 
-        for (String h: horasList){
+        for (String h : horasList) {
             Chip chip = new Chip(getContext());
             ChipDrawable chipDrawable = ChipDrawable.createFromAttributes(getContext(), null, 0, R.style.Widget_MaterialComponents_Chip_Filter);
             chip.setChipDrawable(chipDrawable);
             chip.setText(h);
-            chipGroup.addView(chip); }
+            chipGroup.addView(chip);
+        }
 
         chipGroup.setOnCheckedChangeListener((group, checkedId) -> {
             Chip chip = view.findViewById(checkedId);
-            if(chip!=null){
+            if (chip != null) {
                 tempoDemora = chip.getText().toString();
-                switch (tempoDemora){
+                switch (tempoDemora) {
                     case "00:30":
-                        tvPreco.setText(""+(preco*0.5)+"€");
+                        tvPreco.setText("" + (preco * 0.5) + "€");
                         break;
                     case "01:00":
-                        tvPreco.setText(""+preco+"€");
+                        tvPreco.setText("" + preco + "€");
                         break;
                     case "01:30":
-                        tvPreco.setText(""+preco*1.5+"€");
+                        tvPreco.setText("" + preco * 1.5 + "€");
                         break;
                     case "02:00":
-                        tvPreco.setText(""+preco*2+"€");
+                        tvPreco.setText("" + preco * 2 + "€");
                         break;
                     case "02:30":
-                        tvPreco.setText(""+preco*2.5+"€");
+                        tvPreco.setText("" + preco * 2.5 + "€");
                         break;
                     default:
-                        tvPreco.setText(""+(preco*0.5+"€"));
+                        tvPreco.setText("" + (preco * 0.5 + "€"));
                 }
             }
 
         });
-
 
 
         tvPreco.setText("0.0");
@@ -134,10 +161,14 @@ public class FragmentGerarMarcacao extends Fragment implements DialogConfirmarFr
         btnMarcar.setOnClickListener(v -> gerarDetalhesMarcacao());
 
 
-        btnComentario.setOnClickListener(v -> Navigation.findNavController(view).navigate(R.id.action_fragmentGerarMarcacao_to_fragmentComentariosGerarPreco,getArguments()));
+        Bundle bundle = new Bundle();
+        bundle.putString("uidPersonal", uidPersonal);
+
+        btnComentario.setOnClickListener(v -> Navigation.findNavController(view).navigate(R.id.action_fragmentGerarMarcacao_to_fragmentComentariosGerarPreco, bundle));
 
 
         btnMarcar.setOnClickListener(v -> gerarDetalhesMarcacao());
+
 
         etHora.setOnClickListener(v -> {
             DialogFragment newFragment = new TimePickerFragment(etHora);
@@ -145,72 +176,100 @@ public class FragmentGerarMarcacao extends Fragment implements DialogConfirmarFr
         });
 
 
-
         etDia.setOnClickListener(v -> {
-            DialogFragment newFragment = new DatePickerFragment(etDia);
+            DialogFragment newFragment = new DatePickerFragment(etDia, diasIndisponiveis, nomePersonal);
             newFragment.show(getActivity().getSupportFragmentManager(), "datePicker");
         });
+
+        Log.i("PERSONAL", "imagebaytes");
 
         return view;
     }
 
-    public void gerarDetalhesMarcacao(){
-        String diaTreino = etDia.getText().toString();
-        String horaTreino = etHora.getText().toString();
-        String preco = tvPreco.getText().toString();
+    public void gerarDetalhesMarcacao() {
+        final String diaTreino = etDia.getText().toString();
+        final String horaTreino = etHora.getText().toString();
+        final String preco = tvPreco.getText().toString();
 
-        if(horaTreino.isEmpty()){
-            Toast.makeText(getActivity(),"selecione a hora de inicio do treino",Toast.LENGTH_LONG).show();
+        if (horaTreino.isEmpty()) {
+            Toast.makeText(getActivity(), "selecione a hora de inicio do treino", Toast.LENGTH_LONG).show();
             return;
         }
 
-        if(diaTreino.isEmpty()){
-            Toast.makeText(getActivity(),"selecione o dia em que deseja treinar",Toast.LENGTH_LONG).show();
+        if (diaTreino.isEmpty()) {
+            Toast.makeText(getActivity(), "selecione o dia em que deseja treinar", Toast.LENGTH_LONG).show();
             return;
         }
 
-        if(tempoDemora==null){
-            Toast.makeText(getActivity(),"selecione o tempo de treino",Toast.LENGTH_LONG).show();
+        if (tempoDemora == null) {
+            Toast.makeText(getActivity(), "selecione o tempo de treino", Toast.LENGTH_LONG).show();
             return;
 
 
         }
 
-        Bundle bundle = new Bundle();
-        bundle.putString("preco", preco);
-        bundle.putString("horaTreino",horaTreino);
-        bundle.putString("diaTreino",diaTreino);
-        bundle.putString("tempoDemora",tempoDemora);
-        bundle.putString("tipoConta","usuario");
-        bundle.putString("uidPersonal",uidPersonal);
+        final Calendar c = Calendar.getInstance();
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH);
+        int day = c.get(Calendar.DAY_OF_MONTH);
+        int hora = c.get(Calendar.HOUR_OF_DAY);
+        int minutos = c.get(Calendar.MINUTE);
+        final String marcacaoId = marcacoesRef.document().getId();
+
+        String message = "preço a pagar: " + preco
+                + "\nhora de inicio: " + horaTreino
+                + "\ndia do treino: " + diaTreino
+                + "\ntempo do treino:" + tempoDemora;
 
 
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        Fragment prev = getFragmentManager().findFragmentByTag("dialog");
-        if (prev != null) {
-            ft.remove(prev);
-        }
-        ft.addToBackStack(null);
+        new android.app.AlertDialog.Builder(getActivity())
+                .setMessage(message)
+                .setPositiveButton("Sim", (dialog, which) -> {
+                    Map<String, Object> marcacaoData;
+                    marcacaoData = new HashMap<>();
+                    marcacaoData.put("diaMarcacao", "" + day + "/" + month + "/" + year);
+                    marcacaoData.put("diaTreino", diaTreino);
+                    marcacaoData.put("estado", "pendente");
+                    marcacaoData.put("horaTreino", horaTreino);
+                    marcacaoData.put("uidPersonal", uidPersonal);
+                    marcacaoData.put("preco", preco.replace("€", ""));
+                    marcacaoData.put("tempoDuracao", tempoDemora);
+                    marcacaoData.put("uidUsuario", user.getUid());
+                    marcacaoData.put("horaMarcacao", "" + hora + ":" + minutos);
+                    marcacaoData.put("marcacaoId", marcacaoId);
+                    marcacoesRef.document(marcacaoId).set(marcacaoData);
 
-        DialogFragment newFragment = DialogConfirmarFragmentMarcacao.newInstance(bundle);
-        newFragment.setTargetFragment(this, 300);
-        newFragment.show(ft, "dialog");
+                    Map<String, Object> notificacaoData;
+                    notificacaoData = new HashMap<>();
+                    notificacaoData.put("titulo", "Nova marcação");
+                    notificacaoData.put("mensagem", user.getDisplayName() + " criou uma marcação consigo");
+                    notificacaoData.put("data", System.currentTimeMillis());
+                    notificacaoData.put("vista", false);
+
+                    notificacaoData.put("marcacaoId", marcacaoId);
+                    DocumentReference notificacaoRef = FirebaseFirestore.getInstance().collection("pessoas")
+                            .document(uidPersonal).collection("notificacoes").document();
+
+                    notificacaoData.put("id", notificacaoRef.getId());
+                    notificacaoRef.set(notificacaoData);
+
+                    Toast.makeText(getActivity(), "Marcaçao realizada com sucesso", Toast.LENGTH_LONG).show();
+                    btnMarcar.setText("marcar mais uma");
+
+
+                }).setNegativeButton("Nao", null)
+                .create().show();
+
+
     }
 
-
-    @Override
-    public void onFinishEditDialog(int flag) {
-        if (flag==1){
-            btnMarcar.setText("marcar mais uma");
-        }
-    }
 
     public static class TimePickerFragment extends DialogFragment
             implements TimePickerDialog.OnTimeSetListener {
 
-        private  TextInputEditText etHora;
+        private TextInputEditText etHora;
 
-        public TimePickerFragment(TextInputEditText etHora){
+        public TimePickerFragment(TextInputEditText etHora) {
             this.etHora = etHora;
         }
 
@@ -228,10 +287,10 @@ public class FragmentGerarMarcacao extends Fragment implements DialogConfirmarFr
 
         @Override
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-            if(minute<10){
-                etHora.setText(+hourOfDay+":0"+minute);
-            }else {
-                etHora.setText(hourOfDay+":"+minute);
+            if (minute < 10) {
+                etHora.setText(+hourOfDay + ":0" + minute);
+            } else {
+                etHora.setText(hourOfDay + ":" + minute);
 
             }
         }
@@ -241,9 +300,15 @@ public class FragmentGerarMarcacao extends Fragment implements DialogConfirmarFr
             implements DatePickerDialog.OnDateSetListener {
 
         private TextInputEditText etDia;
-        public DatePickerFragment(TextInputEditText etDia){
+        private String diasIndisponiveis;
+        private String nomePersonal;
+
+        public DatePickerFragment(TextInputEditText etDia, String diasIndisponiveis, String nomePersonal) {
             this.etDia = etDia;
+            this.diasIndisponiveis = diasIndisponiveis;
+            this.nomePersonal = nomePersonal;
         }
+
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             // Use the current date as the default date in the picker
@@ -253,13 +318,31 @@ public class FragmentGerarMarcacao extends Fragment implements DialogConfirmarFr
             int day = c.get(Calendar.DAY_OF_MONTH);
 
             // criar uma nova instancia do DatePickerDialog e retornar
-            return new DatePickerDialog(getActivity(), this, year, month, day);
+            return new DatePickerDialog(requireActivity(), this, year, month, day);
         }
+
         @SuppressLint("SetTextI18n")
         public void onDateSet(DatePicker view, int year, int month, int day) {
-            etDia.setText(""+day+"/"+(month+1)+"/"+year);
+
+            String dia = "" + day + "/" + (month + 1) + "/" + year;
+
+            if (diasIndisponiveis != null && diasIndisponiveis.contains(dia)) {
+                etDia.setText("");
+
+                new android.app.AlertDialog.Builder(getActivity())
+                        .setMessage(nomePersonal + " encontra-se indisponível neste dia!")
+                        .setPositiveButton("OK", (dialog, which) -> {
+
+                        }).create().show();
+
+            } else {
+                etDia.setText(dia);
+
+            }
         }
     }
+
+
 }
 
 

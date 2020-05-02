@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Treiner</string>
+    <string name="app_name">Trainer</string>
     <string name="dia_mes_ano">dia/mês/ano</string>
     <string name="registrar">Registrar</string>
     <string name="altura">Altura</string>
@@ -44,5 +44,17 @@
 
     <string name="transition_image">image %d</string>
     <string name="transition_name">name %d</string>
+    <string name="trainer">Trainer</string>
+    <string name="nascimento">Nascimento</string>
+    <string name="altura_ex_1_8">Altura. Ex:1.8</string>
+    <string name="ainda_n_o_ha_nada_por_aqui">Ainda não ha nada por aqui</string>
+    <string name="historico">Historico</string>
+    <string name="pendentes">Pendentes</string>
+    <string name="aceites">Aceites</string>
+    <string name="pagas">Pagas</string>
+    <string name="morada">Morada</string>
+    <string name="detalhes_do_cliente">Detalhes do cliente</string>
+    <string name="fotografia">Fotografia</string>
+    <string name="genero">gênero</string>
 
 </resources>

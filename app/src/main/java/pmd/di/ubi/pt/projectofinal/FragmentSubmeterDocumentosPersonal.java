@@ -1,25 +1,18 @@
 package pmd.di.ubi.pt.projectofinal;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
-import android.os.FileUtils;
-import android.provider.MediaStore;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -28,29 +21,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.material.chip.Chip;
-import com.google.android.material.chip.ChipGroup;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 public class FragmentSubmeterDocumentosPersonal extends Fragment implements View.OnClickListener {
@@ -60,6 +42,12 @@ public class FragmentSubmeterDocumentosPersonal extends Fragment implements View
 
     private Uri curriculoUri,documentsUri;
     private Map<String, Object> personal;
+    private Button btnCurriculo;
+    private Button btnID;
+    private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    private DocumentReference personalRef;
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -69,66 +57,31 @@ public class FragmentSubmeterDocumentosPersonal extends Fragment implements View
 
         setHasOptionsMenu(true);
 
-        Button btnCurriculo,btnID,btnSub;
         btnCurriculo = view.findViewById(R.id.btn_curriculo);
         btnID = view.findViewById(R.id.btn_documento_id);
-        btnSub = view.findViewById(R.id.btn_submeter_doc);
+        Button btnSub = view.findViewById(R.id.btn_submeter_doc);
+        personalRef =  FirebaseFirestore.getInstance().collection("pessoas").
+                document(user.getUid());
 
 
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        verificarSubimssao();
 
-        FirebaseFirestore.getInstance().collection("pessoas").
-                document(user.getUid()).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful() && task.getResult()!=null) {
-                DocumentSnapshot document = task.getResult();
-                if(document!=null){
-                    personal  =document.getData();
-                    try {
-                        if(personal.get("aprovado").equals("sim")){
-                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-                            builder.setMessage("Já tem a conta aprovada, pretende continuar?");
+        btnSub.setOnClickListener(v -> {
 
-                            builder.setPositiveButton("continuar", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    Navigation.findNavController(view).navigate(R.id.action_fragmentConfirmarPersonal_to_fragmentSetupPersonalConta);
-                                }
-                            });
-                            builder.setNegativeButton("ficar", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    // User cancelled the dialog
-                                }
-                            });
+            try {
+                if(curriculoUri!=null && documentsUri !=null){
 
-                            builder.create().show();
-
-                        }
-                    }catch (Exception e){ }
+                    final StorageReference ref = FirebaseStorage.getInstance().getReference("documents/"+user.getUid());
+                    ref.child("curriculo").putFile(curriculoUri);
+                    ref.child("id").putFile(documentsUri);
+                    personalRef.update("submeteu",true);
+                    criarDialogSub();
 
                 }
-            }
 
-        });
+            }catch (Exception e){
 
-
-        btnSub.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                try {
-                    if(curriculoUri!=null && documentsUri !=null){
-
-                        Log.i("onActivityResult","stream");
-
-                        final StorageReference ref = FirebaseStorage.getInstance().getReference("documents/"+user.getUid());
-                        ref.child("curriculo.pdf").putFile(curriculoUri);
-                        ref.child("id.pdf").putFile(documentsUri);
-
-                    }
-
-                }catch (Exception e){
-
-                }
             }
         });
 
@@ -175,7 +128,7 @@ public class FragmentSubmeterDocumentosPersonal extends Fragment implements View
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId()==R.id.sair) {
             FirebaseAuth.getInstance().signOut();
-            Intent intent = new Intent(getActivity(), ActivityMain.class);
+            Intent intent = new Intent(getActivity(), Main.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
             return true;
@@ -218,13 +171,63 @@ public class FragmentSubmeterDocumentosPersonal extends Fragment implements View
                 if (requestCode==PICK_ID_REQUEST_CODE) {
 
                     documentsUri = file;
+                    btnID.setCompoundDrawablesWithIntrinsicBounds(null,null,requireActivity().getDrawable(R.drawable.ic_check_white),null);
                 }else {
                     curriculoUri = file;
+                     btnCurriculo.setCompoundDrawablesWithIntrinsicBounds(null,null,requireActivity().getDrawable(R.drawable.ic_check_white),null);
                 }
 
 
         }
     }
 
+    public void criarDialogSub(){
+
+    new AlertDialog.Builder(requireActivity())
+        .setCancelable(false)
+        .setMessage("A sua submissao está a ser analizada")
+        .setPositiveButton("Actualizar", (dialog, whichButton) -> {
+            verificarSubimssao();
+
+        }).show();
+
+    }
+
+    private void verificarSubimssao() {
+
+        personalRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult()!=null) {
+                DocumentSnapshot document = task.getResult();
+                    personal  =document.getData();
+                    try {
+                        assert personal != null;
+                        if(personal.get("aprovado").equals("sim")){
+                            new AlertDialog.Builder(requireActivity())
+                                    .setCancelable(false)
+                            .setTitle("Já tem a conta aprovada!")
+                            .setPositiveButton("continuar", (dialog, id) -> Navigation.findNavController(requireView()).navigate(R.id.action_fragmentConfirmarPersonal_to_fragmentSetupPersonalConta))
+                           .show();
+
+                        }else if (personal.get("aprovado").equals("reprovado"))
+                        {
+                            new AlertDialog.Builder(requireActivity())
+                                    .setMessage("A sua submissao foi reprovada, pode submeter novamente")
+                                    .setPositiveButton("OK", (dialog, whichButton) -> {
+                                    }).show();
+
+                        }else {
+
+                            if((Boolean) personal.get("submeteu")){
+                                criarDialogSub();
+                            }
+                        }
+                    }catch (Exception e){ }
+
+
+            }
+
+        });
+
+    }
 
 }

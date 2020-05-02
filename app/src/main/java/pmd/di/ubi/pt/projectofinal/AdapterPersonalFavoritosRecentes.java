@@ -26,10 +26,13 @@ import java.util.Map;
 public class AdapterPersonalFavoritosRecentes extends RecyclerView.Adapter<AdapterPersonalFavoritosRecentes.PersonalHolder>{
     private Context context;
     private ArrayList<Map<String, Object>> personalTrainerList;
+    private boolean favoritoList;
 
-    AdapterPersonalFavoritosRecentes(Context context, ArrayList<Map<String, Object>> personalTrainerList){
+    AdapterPersonalFavoritosRecentes(Context context, ArrayList<Map<String, Object>> personalTrainerList,boolean favoritoList){
         this.context = context;
         this.personalTrainerList = personalTrainerList;
+        this.favoritoList = favoritoList;
+
     }
     @NonNull
     @Override
@@ -89,6 +92,7 @@ public class AdapterPersonalFavoritosRecentes extends RecyclerView.Adapter<Adapt
             storageReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(bytes -> {
                 if(bytes.length!=0){
                     try {
+                        personalTrainerList.get(getLayoutPosition()).put("imageBytes",bytes);
                         Glide.with(context.getApplicationContext() )
                                 .load(bytes)
                                 .into(imgPersonalTrainer);
@@ -96,13 +100,10 @@ public class AdapterPersonalFavoritosRecentes extends RecyclerView.Adapter<Adapt
                     }main.setOnClickListener(v -> {
                         Bundle bundle = new Bundle();
 
-                        bundle.putString("uidPersonal", uid);
-                        bundle.putByteArray("imageBytes",bytes);
-                        bundle.putString("nome", nomePersonal);
                         bundle.putInt("via",1);
+                        bundle.putInt("posPersonal",getLayoutPosition());
+                        bundle.putBoolean("favorito",favoritoList);
 
-                        bundle.putString("preco", preco);
-                        bundle.putString("rating", (String) personalTrainer.get("rating"));
                         Navigation.findNavController(v).navigate(R.id.action_fragmentTodasMarcacoes_to_persoanlPerfilFragment,bundle);
                     });
                 }

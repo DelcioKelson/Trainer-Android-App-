@@ -17,7 +17,7 @@
     <fragment
         android:id="@+id/mudarPasswordFragment"
         android:name="pmd.di.ubi.pt.projectofinal.FragmentMudarPassword"
-        android:label="Mudar palavra passe" />
+        android:label="Alterar a palavra passe" />
     <fragment
         android:id="@+id/fragmentPersoanlPerfil"
         android:name="pmd.di.ubi.pt.projectofinal.FragmentPersoanlPerfil"

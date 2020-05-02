@@ -1,67 +1,50 @@
 package pmd.di.ubi.pt.projectofinal;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Build;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.gms.wallet.AutoResolveHelper;
 import com.google.android.gms.wallet.IsReadyToPayRequest;
-import com.google.android.gms.wallet.PaymentData;
-import com.google.android.gms.wallet.PaymentDataRequest;
 import com.google.android.gms.wallet.PaymentsClient;
-import com.google.android.material.button.MaterialButton;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import static android.app.Activity.RESULT_OK;
 
 public class AdapterMarcacao extends RecyclerView.Adapter<AdapterMarcacao.MarcacaoHolder> {
 
     private Context context;
     private ArrayList<Map<String, Object>> marcacaoArrayList;
     private boolean isUser;
-    private Fragment B;
+    private Fragment fragment;
     static OnRequestPaymentListener requestPayment;
 
     private PaymentsClient paymentsClient;
     private static final int LOAD_PAYMENT_DATA_REQUEST_CODE = 991;
 
-    AdapterMarcacao(Context context, ArrayList<Map<String, Object>> marcacaoArrayList, boolean isUser, Fragment B, PaymentsClient paymentsClient) {
+    AdapterMarcacao(Context context, ArrayList<Map<String, Object>> marcacaoArrayList, boolean isUser, Fragment fragment, PaymentsClient paymentsClient) {
         this.context = context;
         this.marcacaoArrayList = marcacaoArrayList;
         this.isUser = isUser;
-        this.B = B;
+        this.fragment = fragment;
         this.paymentsClient = paymentsClient;
     }
 
@@ -119,7 +102,7 @@ public class AdapterMarcacao extends RecyclerView.Adapter<AdapterMarcacao.Marcac
             // The call to isReadyToPay is asynchronous and returns a Task. We need to provide an
             // OnCompleteListener to be triggered when the result of the call is known.
             Task<Boolean> task = paymentsClient.isReadyToPay(request);
-            task.addOnCompleteListener(B.getActivity(),
+            task.addOnCompleteListener(fragment.requireActivity(),
                     new OnCompleteListener<Boolean>() {
                         @Override
                         public void onComplete(@NonNull Task<Boolean> task) {
@@ -140,7 +123,6 @@ public class AdapterMarcacao extends RecyclerView.Adapter<AdapterMarcacao.Marcac
 
         final TextView tvDiaTreino = itemView.findViewById(R.id.tv_dia_detalhe);
         final TextView tvHoraTreino = itemView.findViewById(R.id.tv_hora_detalhe);
-        final TextView tvEstado = itemView.findViewById(R.id.tv_estado_detalhe);
         final TextView tvPreco = itemView.findViewById(R.id.tv_preco_detalhe);
         final TextView tvTempoDemora = itemView.findViewById(R.id.tv_tempo_detalhe);
 
@@ -149,11 +131,10 @@ public class AdapterMarcacao extends RecyclerView.Adapter<AdapterMarcacao.Marcac
         final View mGooglePayButton =itemView.findViewById(R.id.googlepay_button);
 
         String marcacaoEstado = (String) marcacao.get("estado");
-        tvPreco.setText("preço a pagar: " + marcacao.get("preco"));
-        tvHoraTreino.setText("hora de inicio: " + marcacao.get("horaTreino"));
-        tvDiaTreino.setText("dia do treino: " + marcacao.get("diaTreino"));
-        tvTempoDemora.setText("tempo do treino:" + marcacao.get("tempoDuracao"));
-        tvEstado.setText("estado da marcaçao :" + marcacaoEstado);
+        tvPreco.setText("Preço: " + marcacao.get("preco") +"€");
+        tvHoraTreino.setText("Hora: " + marcacao.get("horaTreino"));
+        tvDiaTreino.setText("Dia: " + marcacao.get("diaTreino"));
+        tvTempoDemora.setText("Duração: " + marcacao.get("tempoDuracao"));
         final  String marcacaoId = (String) marcacao.get("marcacaoId");
 
         marcacaoCard.setOnClickListener(this);
@@ -163,11 +144,12 @@ public class AdapterMarcacao extends RecyclerView.Adapter<AdapterMarcacao.Marcac
                 btnEsquero.setVisibility(View.GONE);
 
                 btnDireito.setVisibility(View.VISIBLE);
-                btnDireito.setText("Cancelar Marcacao");
+                //btnDireito.setText("Cancelar");
+                btnDireito.setCompoundDrawablesWithIntrinsicBounds(fragment.getResources().getDrawable(R.drawable.ic_close_white),null,null,null);
                 btnDireito.setOnClickListener(v -> {
                     FragmentTransaction ft1;
-                    ft1 = B.getChildFragmentManager().beginTransaction();
-                    Fragment prev1 = B.getChildFragmentManager().findFragmentByTag("dialog1");
+                    ft1 = fragment.getChildFragmentManager().beginTransaction();
+                    Fragment prev1 = fragment.getChildFragmentManager().findFragmentByTag("dialog1");
                     if (prev1 != null) {
                         ft1.remove(prev1);
                     }
@@ -189,38 +171,39 @@ public class AdapterMarcacao extends RecyclerView.Adapter<AdapterMarcacao.Marcac
 
             if (marcacaoEstado.equals("pendente")) {
                 btnEsquero.setVisibility(View.VISIBLE);
-                btnEsquero.setText("aceitar");
+                //btnEsquero.setText("aceitar");
+                btnEsquero.setCompoundDrawablesWithIntrinsicBounds(fragment.getResources().getDrawable(R.drawable.ic_check_white),null,null,null);
+
                 btnEsquero.setOnClickListener(v -> {
                     // marcacoesRef.document(marcacao.getId()).update("estado","aceite");
 
                     FragmentTransaction ft2;
 
-                    ft2 = B.getChildFragmentManager().beginTransaction();
-                    Fragment prev2 = B.getChildFragmentManager().findFragmentByTag("dialog2");
+                    ft2 = fragment.getChildFragmentManager().beginTransaction();
+                    Fragment prev2 = fragment.getChildFragmentManager().findFragmentByTag("dialog2");
                     if (prev2 != null) {
                         ft2.remove(prev2);
                     }
                     ft2.addToBackStack(null);
                     DialogFragmentSimples dialog = DialogFragmentSimples.newInstance("aceite",marcacaoId,(String) marcacao.get("uidUsuario"),(String) marcacao.get("uidPersonal"));
                     dialog.show(ft2,"dialog2");
-                    Toast.makeText(context,"marcacao aceite com sucesso",Toast.LENGTH_LONG);
                 });
                 btnDireito.setVisibility(View.VISIBLE);
 
-                btnDireito.setText("Recusar");
+                //btnDireito.setText("Recusar");
+                btnDireito.setCompoundDrawablesWithIntrinsicBounds(fragment.getResources().getDrawable(R.drawable.ic_close_white),null,null,null);
+
                 btnDireito.setOnClickListener(v -> {
                     FragmentTransaction ft3;
 
-                    ft3 = B.getChildFragmentManager().beginTransaction();
-                    Fragment prev3 = B.getChildFragmentManager().findFragmentByTag("dialog3");
+                    ft3 = fragment.getChildFragmentManager().beginTransaction();
+                    Fragment prev3 = fragment.getChildFragmentManager().findFragmentByTag("dialog3");
                     if (prev3 != null) {
                         ft3.remove(prev3);
                     }
                     ft3.addToBackStack(null);
                     DialogFragmentSimples dialog = DialogFragmentSimples.newInstance("recusada",marcacaoId,(String) marcacao.get("uidUsuario"),(String) marcacao.get("uidPersonal"));
                     dialog.show(ft3,"dialog3");
-                    Toast.makeText(context,"marcacao aceite com sucesso",Toast.LENGTH_LONG);
-                    //getActivity().getSupportFragmentManager().popBackStack();
                 } );
             }
         }
@@ -229,10 +212,10 @@ public class AdapterMarcacao extends RecyclerView.Adapter<AdapterMarcacao.Marcac
 
         @Override
         public void onClick(View v) {
-            ActivityMain.currentPosition = getAdapterPosition();
+            Main.currentPosition = getAdapterPosition();
 
-            FragmentTransaction ft = B.getFragmentManager().beginTransaction();
-            Fragment prev =B.getFragmentManager().findFragmentByTag("dialog");
+            FragmentTransaction ft = fragment.getFragmentManager().beginTransaction();
+            Fragment prev =fragment.getFragmentManager().findFragmentByTag("dialog");
             DialogFragment newFragment;
             if (prev != null) {
                 ft.remove(prev);
@@ -240,8 +223,6 @@ public class AdapterMarcacao extends RecyclerView.Adapter<AdapterMarcacao.Marcac
             ft.addToBackStack(null);
                     newFragment = new FragmentViewPagerMarcacoes();
                     newFragment.show(ft, "dialog");
-
-           // Navigation.findNavController(v).navigate(R.id.action_fragmentMarcacoes_to_fragmentViewPagerMarcacoes);
 
         }
     }

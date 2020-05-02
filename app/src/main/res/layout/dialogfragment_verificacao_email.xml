@@ -18,10 +18,8 @@
         />
 
     <com.google.android.material.button.MaterialButton
-        style="@style/Widget.Design.FloatingActionButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
         android:layout_gravity="center"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
@@ -37,7 +35,7 @@
         android:layout_gravity="center"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
-        android:text="Clique aqui se nao recebeu o email"
+        android:text="Clique aqui se não recebeu o email"
         android:id="@+id/btn_reenviar_email"
         />
 
@@ -45,7 +43,7 @@
         style="@style/Widget.MaterialComponents.Snackbar.TextView"
         android:id="@+id/tv_confirmacao_info"
         android:layout_width="wrap_content"
-        android:text="Conta nao verificada"
+        android:text="Conta não verificada"
         android:background="@color/colorAccent"
         android:visibility="gone"
         android:layout_height="wrap_content"

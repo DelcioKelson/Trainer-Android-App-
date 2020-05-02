@@ -151,6 +151,8 @@ public class FragmentDiasIndisponiveis extends Fragment {
             userDocumentReference.update("diasIndisponiveis",diasFerias);
 
 
+
+
         }
     }
 }

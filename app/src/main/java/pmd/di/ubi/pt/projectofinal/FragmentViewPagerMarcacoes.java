@@ -8,10 +8,13 @@ import android.widget.Button;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
+
+import java.util.ArrayList;
+import java.util.Map;
 
 public class FragmentViewPagerMarcacoes extends DialogFragment {
 
@@ -28,11 +31,7 @@ public class FragmentViewPagerMarcacoes extends DialogFragment {
                              @Nullable Bundle savedInstanceState) {
         View view =  inflater.inflate(R.layout.viewpager_layout_marcacao, container, false);
         viewPager = (ViewPager) view.findViewById(R.id.pager);
-        viewPager.setAdapter(new AdapterViewPagerMarcacoes(this));
-        viewPager.setPageTransformer(true, new ZoomOutPageTransformer());
-        //viewPager.setOffscreenPageLimit(3);
-        // Set the current position and add a listener that will update the selection coordinator when
-        // paging the images.
+
 
         Button btnClose = view.findViewById(R.id.btn_close);
 
@@ -42,16 +41,40 @@ public class FragmentViewPagerMarcacoes extends DialogFragment {
                 dismiss();
             }
         });
-        viewPager.setCurrentItem(ActivityMain.currentPosition);
-        viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            @Override
-            public void onPageSelected(int position) {
-                ActivityMain.currentPosition = position;
-            }
-        });
+
 
         TabLayout tabLayout = (TabLayout) viewPager.findViewById(R.id.tab_layout);
         tabLayout.setupWithViewPager(viewPager, true);
+
+
+        try {
+
+            ArrayList<Map<String, Object>> maps = Main.sharedDataModel.getMarcacoesList().getValue();
+                    viewPager.setAdapter(new AdapterViewPagerMarcacoes(FragmentViewPagerMarcacoes.this,maps));
+                    viewPager.setPageTransformer(true, new ZoomOutPageTransformer());
+                    viewPager.setCurrentItem(Main.currentPosition);
+                    viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+                        @Override
+                        public void onPageSelected(int position) {
+                            Main.currentPosition = position;
+                }
+            });
+
+            Main.sharedDataModel.getFecharViewPager().observe(this, new Observer<Boolean>() {
+                @Override
+                public void onChanged(Boolean aBoolean) {
+                    if(aBoolean){
+                        Main.sharedDataModel.setFecharViewPager(false);
+                        dismiss();
+                    }
+                }
+            });
+
+        }catch (Exception e){
+
+        }
+
+
 
 
         return view;

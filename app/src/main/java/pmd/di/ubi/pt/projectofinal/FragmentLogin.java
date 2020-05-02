@@ -8,14 +8,13 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import android.text.Editable;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +26,8 @@ public class FragmentLogin extends Fragment {
     private FirebaseAuth mAuth;
     private String email,password;
     private TextInputEditText etEmail, etPassword;
+    private ProgressBar progressBar;
+
 
     public static FragmentLogin newInstance() {
         FragmentLogin fragment = new FragmentLogin();
@@ -44,6 +45,7 @@ public class FragmentLogin extends Fragment {
         Button btnLogin  = view.findViewById(R.id.btn_login);
         TextView tvRegistrar = view.findViewById(R.id.tv_registrar);
         mAuth = FirebaseAuth.getInstance();
+        progressBar = view.findViewById(R.id.progressbar_login);
 
 
         etPassword.setOnKeyListener(new View.OnKeyListener() {
@@ -61,6 +63,8 @@ public class FragmentLogin extends Fragment {
             if(isEmailValid(etEmail.getText())){
 
                 if(isPasswordValid(etPassword.getText())){
+                    progressBar.setVisibility(View.VISIBLE);
+                    btnLogin.setClickable(false);
                 etPassword.setError(null); // Clear the error
 
                     email = etEmail.getText().toString();
@@ -68,11 +72,13 @@ public class FragmentLogin extends Fragment {
                     mAuth.signInWithEmailAndPassword(email, password)
                             .addOnCompleteListener(getActivity(), task -> {
                                 if (task.isSuccessful()) {
-                                    Intent intent = new Intent(getContext(), ActivityMain.class);
+                                    Intent intent = new Intent(getContext(), Main.class);
                                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                     startActivity(intent);
                                 } else {
                                     Toast.makeText(getContext(), "Email ou palavra-passe incorretos, tente novamente.", Toast.LENGTH_LONG).show();
+                                    progressBar.setVisibility(View.GONE);
+                                    btnLogin.setClickable(true);
                                 }
                             });
              }else {

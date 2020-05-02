@@ -9,16 +9,9 @@ import android.app.NotificationChannel;
         import android.net.Uri;
         import android.os.Build;
 
-import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
         import android.util.Log;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessagingService;
         import com.google.firebase.messaging.RemoteMessage;
 
@@ -74,7 +67,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         Intent intent;
 
-        intent = new Intent(MyFirebaseMessagingService.this, ActivityMain.class);;
+        intent = new Intent(MyFirebaseMessagingService.this, Main.class);;
 
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(MyFirebaseMessagingService.this, 0 /* Request code */, intent,

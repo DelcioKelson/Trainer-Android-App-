@@ -10,17 +10,6 @@
     tools:context=".FragmentTodasMarcacoes">
 
 
-    <com.google.android.material.card.MaterialCardView
-        android:layout_width="match_parent"
-        android:elevation="10dp"
-        android:layout_height="300dp"
-        app:shapeAppearance="@style/card_round"
-        android:layout_gravity="center">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:orientation="horizontal"
@@ -29,28 +18,34 @@
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="110dp"
                     android:layout_margin="10dp"
+                    android:backgroundTint="@color/colorAccent"
+                    android:elevation="100dp"
                     android:id="@+id/cv_1"
                     android:layout_height="110dp">
                     <TextView
                         android:gravity="center"
                         android:id="@+id/tv_marcacaoes_pendentes"
                         android:layout_width="match_parent"
+                        android:textColor="@color/white"
                         style="@style/TextAppearance.AppCompat.Title"
                         android:layout_height="match_parent"
-                        android:text="pendentes" />
+                        android:text="@string/pendentes" />
                 </com.google.android.material.card.MaterialCardView>
 
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="110dp"
                     android:layout_margin="10dp"
+                    android:elevation="100dp"
+                    android:backgroundTint="@color/colorAccent"
                     android:layout_height="110dp">
                     <TextView
                         android:gravity="center"
                         android:id="@+id/tv_marcacoes_aceites"
                         android:layout_width="match_parent"
+                        android:textColor="@color/white"
                         android:layout_height="match_parent"
                         style="@style/TextAppearance.AppCompat.Title"
-                        android:text="aceites" />
+                        android:text="@string/aceites" />
                 </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
 
@@ -69,6 +64,8 @@
 
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="110dp"
+                    android:elevation="100dp"
+                    android:backgroundTint="@color/colorAccent"
                     android:layout_height="110dp"
                     android:layout_margin="10dp">
 
@@ -76,13 +73,16 @@
                         android:id="@+id/tv_marcacoes_pagas"
                         style="@style/TextAppearance.AppCompat.Title"
                         android:layout_width="match_parent"
+                        android:textColor="@color/white"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:text="pagas" />
+                        android:text="@string/pagas" />
                 </com.google.android.material.card.MaterialCardView>
 
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="110dp"
+                    android:elevation="100dp"
+                    android:backgroundTint="@color/colorAccent"
                     android:layout_height="110dp"
                     android:layout_margin="10dp">
 
@@ -91,28 +91,17 @@
                         style="@style/TextAppearance.AppCompat.Title"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:textColor="@color/white"
                         android:gravity="center"
-                        android:text="Historico" />
+                        android:text="@string/historico" />
                 </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
-
-
-
-
-        </LinearLayout>
-
-
-
-    </com.google.android.material.card.MaterialCardView>
-
-
 
 
     <androidx.viewpager.widget.ViewPager
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/pager"
         android:visibility="gone"
-
         android:layout_width="match_parent"
         android:layout_height="fill_parent">
         <com.google.android.material.tabs.TabLayout

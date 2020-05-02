@@ -16,6 +16,6 @@
     </fragment>
     <fragment
         android:id="@+id/fragmentComentariosGerarPreco"
-        android:name="pmd.di.ubi.pt.projectofinal.FragmentComentariosGerarPreco"
+        android:name="pmd.di.ubi.pt.projectofinal.FragmentComentarios"
         android:label="FragmentComentariosGerarPreco" />
 </navigation>

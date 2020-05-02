@@ -78,7 +78,7 @@ public class DialogFragmentVerificarEmail extends DialogFragment {
             public void onClick(View v) {
                 FirebaseAuth.getInstance().signOut();
                 FirebaseMessaging.getInstance().unsubscribeFromTopic(user.getUid());
-                Intent intent = new Intent(getActivity(), ActivityMain.class);
+                Intent intent = new Intent(getActivity(), Main.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }

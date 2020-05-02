@@ -66,13 +66,6 @@
             android:visibility="gone"
             />
 
-        <TextView
-            android:id="@+id/infoclassificacao"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="ainda nao tem classificaçoes"
-            android:textSize="15dp"
-            android:visibility="gone" />
 
         </LinearLayout>
     </LinearLayout>

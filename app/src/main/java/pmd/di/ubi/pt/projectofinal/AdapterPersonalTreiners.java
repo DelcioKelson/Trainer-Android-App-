@@ -1,25 +1,18 @@
 package pmd.di.ubi.pt.projectofinal;
 
-import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.transition.TransitionSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.FragmentNavigator;
 import androidx.recyclerview.widget.RecyclerView;
@@ -101,7 +94,6 @@ public class AdapterPersonalTreiners extends RecyclerView.Adapter<AdapterPersona
             final TextView tvNome = itemView.findViewById(R.id.nomePersonal);
             final ImageView imgPersonalTrainer = itemView.findViewById(R.id.personal_image);
             final RatingBar ratingBar =  itemView.findViewById(R.id.rating);
-            final TextView txtInfo = itemView.findViewById(R.id.infoclassificacao);
             final TextView tvPreco = itemView.findViewById(R.id.tv_preco_card);
             final ToggleButton heartToggle = itemView.findViewById(R.id.button_favorite);
 
@@ -142,8 +134,6 @@ public class AdapterPersonalTreiners extends RecyclerView.Adapter<AdapterPersona
                         ratingBar.setVisibility(View.VISIBLE);
                         ratingBar.setRating(Float.parseFloat(""+classificao));
                     }
-                }else {
-                    txtInfo.setVisibility(View.VISIBLE);
                 }
             }
             catch (Exception ignored){
@@ -207,7 +197,7 @@ public class AdapterPersonalTreiners extends RecyclerView.Adapter<AdapterPersona
         @Override
         public void onLoadCompleted(ImageView view, int position) {
             // Call startPostponedEnterTransition only when the 'selected' image loading is completed.
-            if (ActivityMain.currentPosition != position) {
+            if (Main.currentPosition != position) {
                 return;
             }
             if (enterTransitionStarted.getAndSet(true)) {
@@ -219,7 +209,7 @@ public class AdapterPersonalTreiners extends RecyclerView.Adapter<AdapterPersona
         @Override
         public void onItemClicked(View view, int adapterPosition,  ArrayList<Map<String,Object>> personalList) {
 
-            ActivityMain.currentPosition = adapterPosition;
+            Main.currentPosition = adapterPosition;
             ((Hold) fragment.getExitTransition()).excludeTarget(view, true);
 
             ImageView imgPersonalTrainer = view.findViewById(R.id.personal_image);

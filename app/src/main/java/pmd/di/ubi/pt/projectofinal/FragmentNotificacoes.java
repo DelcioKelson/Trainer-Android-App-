@@ -1,8 +1,11 @@
 package pmd.di.ubi.pt.projectofinal;
 
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -10,25 +13,31 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridView;
-import android.widget.QuickContactBadge;
 
+import com.google.android.gms.wallet.AutoResolveHelper;
+import com.google.android.gms.wallet.PaymentDataRequest;
+import com.google.android.gms.wallet.PaymentsClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.core.OrderBy;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 
-public class FragmentNotificacoes extends Fragment {
+public class FragmentNotificacoes extends Fragment implements AdapterNotificacoes.OnRequestPaymentListener {
     private ArrayList<Map<String,Object>> notificacoesList;
     AdapterNotificacoes adapterNotificacoes;
         CollectionReference notificacoesRef;
+    private static final int LOAD_PAYMENT_DATA_REQUEST_CODE = 991;
+    private PaymentsClient paymentsClient;
+
+
 
     private RecyclerView recyclerView;
     public FragmentNotificacoes() {
@@ -52,6 +61,25 @@ public class FragmentNotificacoes extends Fragment {
 
         recyclerView = (RecyclerView) view.findViewById(R.id.my_recyclerview);
 
+
+        paymentsClient = Main.sharedDataModel.getPaymentsClient().getValue();
+
+
+        Main.sharedDataModel.getFecharViewPager().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                if(aBoolean){
+                    Main.sharedDataModel.setFecharViewPager(false);
+                    FragmentTransaction ft = getFragmentManager().beginTransaction();
+                    if (Build.VERSION.SDK_INT >= 26) {
+                        ft.setReorderingAllowed(false);
+                    }
+                    ft.detach(FragmentNotificacoes.this).attach(FragmentNotificacoes.this).commit() ;
+                    Main.sharedDataModel.setAtualizar(false);
+                }
+            }
+        });
+
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(llm);
@@ -65,13 +93,35 @@ public class FragmentNotificacoes extends Fragment {
                             notificacoesList.add(document.getData());
 
                         }
-                        ActivityMain.badge.setVisible(false);
-                        adapterNotificacoes = new AdapterNotificacoes(getActivity(),notificacoesList, user.getUid());
+                        Main.badge.setVisible(false);
+                        adapterNotificacoes = new AdapterNotificacoes(this,notificacoesList, user.getUid());
+                        adapterNotificacoes.setOnRequestPaymentListener(this);
                         recyclerView.setAdapter(adapterNotificacoes);
                     }
                 });
 
 
         return view;
+    }
+
+    @Override
+    public void request(String price) {
+        // TransactionInfo transaction = PaymentsUtil.createTransaction(price);
+        Optional<JSONObject> paymentDataRequestJson = PaymentsUtil.getPaymentDataRequest(price);
+        if (!paymentDataRequestJson.isPresent()) {
+            return;
+        }
+        PaymentDataRequest requestP =
+                PaymentDataRequest.fromJson(paymentDataRequestJson.get().toString());
+
+        // Since loadPaymentData may show the UI asking the user to select a payment method, we use
+        // AutoResolveHelper to wait for the user interacting with it. Once completed,
+        // onActivityResult will be called with the result.
+        Log.w("loadPayment", "onrequest");
+
+        if (requestP != null) {
+            AutoResolveHelper.resolveTask(
+                    paymentsClient.loadPaymentData(requestP), getActivity(), LOAD_PAYMENT_DATA_REQUEST_CODE);
+        }
     }
 }

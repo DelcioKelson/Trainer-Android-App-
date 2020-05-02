@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,7 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -31,9 +30,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import org.json.JSONObject;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 public class FragmentMarcacoes extends Fragment implements  AdapterMarcacao.OnRequestPaymentListener{
@@ -73,16 +70,16 @@ public class FragmentMarcacoes extends Fragment implements  AdapterMarcacao.OnRe
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.recyclerview_layout, container, false);
 
-        SharedDataModel modelData = new ViewModelProvider(requireActivity()).get(SharedDataModel.class);
         try {
-            isUser = modelData.isUser().getValue();
+            isUser = Main.sharedDataModel.isUser().getValue();
+            paymentsClient = Main.sharedDataModel.getPaymentsClient().getValue();
         } catch (Exception e) {
 
         }
         setExitTransition(new Hold());
 
 
-        modelData.getAtualizarFragmentMarcaoes().observe(this, new Observer<Boolean>() {
+        Main.sharedDataModel.getAtualizar().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
 
@@ -92,7 +89,7 @@ public class FragmentMarcacoes extends Fragment implements  AdapterMarcacao.OnRe
                         ft.setReorderingAllowed(false);
                     }
                     ft.detach(FragmentMarcacoes.this).attach(FragmentMarcacoes.this).commit() ;
-                    modelData.setAtualizarFragmentMarcaoes(false);
+                    Main.sharedDataModel.setAtualizar(false);
                 }
             }
         });
@@ -101,16 +98,12 @@ public class FragmentMarcacoes extends Fragment implements  AdapterMarcacao.OnRe
 
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(llm);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
 
         user = FirebaseAuth.getInstance().getCurrentUser();
         tvInfo = view.findViewById(R.id.tv_page_info);
 
-        if(estadoMarcacao.equals("aceite") && isUser){
-            paymentsClient = PaymentsUtil.createPaymentsClient(getActivity());
-            modelData.setPaymentsClient(paymentsClient);
-        }
+
 
 
         marcacaoList = new ArrayList<>();
@@ -132,7 +125,7 @@ public class FragmentMarcacoes extends Fragment implements  AdapterMarcacao.OnRe
                         String marcacaoEstado = (String) document.get("estado");
 
                         if (marcacaoEstado != null) {
-                            if (estadoMarcacao.equals("default") && (marcacaoEstado.equals("cancelada") || marcacaoEstado.equals("terminada"))) {
+                            if (estadoMarcacao.equals("default") && (marcacaoEstado.equals("cancelada") || marcacaoEstado.equals("terminada") || marcacaoEstado.equals("recusada"))) {
                                 marcacaoList.add(document.getData());
                             }
                             if (marcacaoEstado.equals(estadoMarcacao)) {
@@ -144,8 +137,7 @@ public class FragmentMarcacoes extends Fragment implements  AdapterMarcacao.OnRe
                 if (marcacaoList.isEmpty()){
                     tvInfo.setVisibility(View.VISIBLE);
                 }
-                SharedDataModel modelData = new ViewModelProvider(getActivity()).get(SharedDataModel.class);
-                modelData.addMarcacoesList(marcacaoList);
+                Main.sharedDataModel.addMarcacoesList(marcacaoList);
                 adapterMarcacao.notifyDataSetChanged();
             }
         });
@@ -165,12 +157,12 @@ public class FragmentMarcacoes extends Fragment implements  AdapterMarcacao.OnRe
                                        int oldBottom) {
                 recyclerView.removeOnLayoutChangeListener(this);
                 final RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
-                View viewAtPosition = layoutManager.findViewByPosition(ActivityMain.currentPosition);
+                View viewAtPosition = layoutManager.findViewByPosition(Main.currentPosition);
                 // Scroll to position if the view for the current position is null (not currently part of
                 // layout manager children), or it's not completely visible.
                 if (viewAtPosition == null || layoutManager
                         .isViewPartiallyVisible(viewAtPosition, false, true)) {
-                    recyclerView.post(() -> layoutManager.scrollToPosition(ActivityMain.currentPosition));
+                    recyclerView.post(() -> layoutManager.scrollToPosition(Main.currentPosition));
                 }
             }
         });

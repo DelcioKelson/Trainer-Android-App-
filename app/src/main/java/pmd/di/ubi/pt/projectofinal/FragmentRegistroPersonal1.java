@@ -1,17 +1,12 @@
 package pmd.di.ubi.pt.projectofinal;
 
-import android.annotation.SuppressLint;
-import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
 import android.provider.MediaStore;
@@ -22,8 +17,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -40,7 +33,6 @@ import com.google.firebase.storage.StorageReference;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -132,41 +124,61 @@ public class FragmentRegistroPersonal1 extends Fragment {
 
         String errorM = "Deve ser preenchido";
 
-
-        if(imgVfoto.getDrawable()==null){
-            Toast.makeText(getContext(),"Selecione uma imagem", Toast.LENGTH_LONG).show();
-            return;
-        } else if (nome.isEmpty()) {
-            nomeLayout.setError(errorM);
-            return;
-        } else if (email.isEmpty() ){
-            nomeLayout.setError(null);
-            nomeText.setError(null);
-            emailLayout.setError(errorM);
-            return;
-        } else if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
-            emailText.setError("Email inválido");
-            emailLayout.setError(null);
-            return;
-        } else if (senha.isEmpty()){
-            emailText.setError(null);
-            passwordLayout.setError(errorM);
+        if (imgVfoto.getDrawable() == null) {
+            Toast.makeText(getContext(), "Selecione uma imagem", Toast.LENGTH_LONG).show();
             return;
         }
-        else if (!isPasswordValid(passwordText.getText())) {
-            passwordLayout.setError(null);
+        if (nome.isEmpty()) {
+            nomeLayout.setError(errorM);
+            return;
+        }
+
+        nomeLayout.setError(null);
+
+        if (email.isEmpty()) {
+            emailLayout.setError(errorM);
+            return;
+        }
+        emailLayout.setError(null);
+
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            emailText.setError("Email inválido");
+
+            return;
+        }
+        emailText.setError(null);
+
+        if (senha.isEmpty()) {
+            passwordLayout.setError(errorM);
+
+            return;
+        }
+
+        passwordLayout.setError(null);
+
+
+        if (!isPasswordValid(passwordText.getText())) {
             passwordText.setError("palavra passe deve ter 6 digitos ou mais");
             return;
         }
-        else if (telefone.isEmpty()) {
-            passwordText.setError(null);
+
+        passwordText.setError(null);
+
+
+        if (telefone.isEmpty()) {
             numeroLayout.setError(errorM);
             return;
-        } else if ( !Patterns.PHONE.matcher(telefone).matches() || telefone.length()!=9) {
-            numeroLayout.setError(null);
+        }
+
+        numeroLayout.setError(null);
+
+        if (!Patterns.PHONE.matcher(telefone).matches() || telefone.length() != 9) {
             numeroTelefone.setError("número invalido");
             return;
         }
+        numeroTelefone.setError(null);
+
+
         progressBar.setVisibility(View.VISIBLE);
         btnRegistrar.setClickable(false);
 
@@ -183,6 +195,7 @@ public class FragmentRegistroPersonal1 extends Fragment {
                     }
                     else {
                         Toast.makeText(getContext(), "Ja existe uma conta com este E-mail", Toast.LENGTH_SHORT).show();
+                        progressBar.setVisibility(View.GONE);
                     }
                 });
     }
@@ -211,7 +224,9 @@ public class FragmentRegistroPersonal1 extends Fragment {
                 usuarioData.put("nome", nomeText.getText().toString());;
                 usuarioData.put("numeroTelefone", numeroTelefone.getText().toString());
                 usuarioData.put("tipoConta","pendente");
-                usuarioData.put("Uid",uid);
+                usuarioData.put("submeteu",false);
+                usuarioData.put("aprovado","nao");
+                usuarioData.put("uid",uid);
                 // adicionar dados do usario na base de dados
                 FirebaseFirestore.getInstance().collection("pessoas")
                         .document(uid)
@@ -219,7 +234,7 @@ public class FragmentRegistroPersonal1 extends Fragment {
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
-                                Intent intent = new Intent(getActivity(), ActivityMain.class);
+                                Intent intent = new Intent(getActivity(), Main.class);
                                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                 startActivity(intent);
                             }

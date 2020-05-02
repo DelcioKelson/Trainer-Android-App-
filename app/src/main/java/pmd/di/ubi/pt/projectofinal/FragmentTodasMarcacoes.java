@@ -14,16 +14,14 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.wallet.PaymentsClient;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
-import com.google.android.material.transition.Hold;
-import com.google.android.material.transition.MaterialContainerTransform;
 import com.google.android.material.transition.MaterialFade;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -31,7 +29,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
-public class FragmentTodasMarcacoes extends Fragment implements View.OnClickListener, DialogConfirmarFragmentMarcacao.FlagMarcacaoConfirmadaDialogListener {
+public class FragmentTodasMarcacoes extends Fragment implements View.OnClickListener{
     // TODO: Rename parameter arguments, choose names that match
     private TextView tvAceites;
     private TextView tvPendentes;
@@ -40,6 +38,8 @@ public class FragmentTodasMarcacoes extends Fragment implements View.OnClickList
     private FirebaseUser user;
     private FloatingActionButton btnNovaMarcacao;
     private boolean isUser;
+    private PaymentsClient paymentsClient;
+
 
 
     private PagerAdapter pagerAdapter;
@@ -51,13 +51,12 @@ public class FragmentTodasMarcacoes extends Fragment implements View.OnClickList
         View view = inflater.inflate(R.layout.fragment_todas_marcacoes, container, false);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
-        SharedDataModel modelData = new ViewModelProvider(requireActivity()).get(SharedDataModel.class);
 
-        setExitTransition(MaterialFade.create(requireContext()));
-        setEnterTransition(MaterialFade.create(requireContext()));
+        setExitTransition(MaterialFade.create(true));
+        setEnterTransition(MaterialFade.create(true));
 
         try {
-            isUser = modelData.isUser().getValue();
+            isUser = Main.sharedDataModel.isUser().getValue();
         }catch (Exception e){
         }
 
@@ -73,14 +72,18 @@ public class FragmentTodasMarcacoes extends Fragment implements View.OnClickList
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if(task.isSuccessful() && task.getResult()!=null && task.getResult().size()>0){
-                    ActivityMain.badge.setVisible(true);
-                    ActivityMain.badge.setNumber(task.getResult().size());
+                    Main.badge.setVisible(true);
+                    Main.badge.setNumber(task.getResult().size());
                     Log.i("notificacoes",task.getResult().size()+"");
                 }
             }
         });
 
         if (isUser ) {
+
+            paymentsClient = PaymentsUtil.createPaymentsClient(getActivity());
+            Main.sharedDataModel.setPaymentsClient(paymentsClient);
+
             viewPager.setVisibility(View.VISIBLE);
             if( !user.isEmailVerified()){
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
@@ -167,11 +170,6 @@ public class FragmentTodasMarcacoes extends Fragment implements View.OnClickList
         }
 
         Navigation.findNavController(v).navigate(R.id.action_fragmentTodasMarcacoes_to_marcacoesFragment, bundle);
-    }
-
-    @Override
-    public void onFinishEditDialog(int flag) {
-
     }
 
     public static class PagerAdapter extends FragmentStatePagerAdapter {

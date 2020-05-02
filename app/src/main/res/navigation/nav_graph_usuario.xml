@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/fragmentDefinicoesConta"
         android:name="pmd.di.ubi.pt.projectofinal.FragmentDefinicoesConta"
-        android:label="DefinicoesContaFragment" >
+        android:label="Definições">
         <action
             android:id="@+id/action_definicoesContaFragment_to_mudarPasswordFragment"
             app:destination="@id/mudarPasswordFragment" />
@@ -16,11 +16,7 @@
     <fragment
         android:id="@+id/fragmentMarcacoes"
         android:name="pmd.di.ubi.pt.projectofinal.FragmentMarcacoes"
-        android:label="Marcações" >
-        <action
-            android:id="@+id/action_fragmentMarcacoes_to_fragmentViewPagerMarcacoes"
-            app:destination="@id/fragmentViewPagerMarcacoes" />
-    </fragment>
+        android:label="Marcações" />
     <fragment
         android:id="@+id/modalidadesFragment"
         android:name="pmd.di.ubi.pt.projectofinal.FragmentModalidades"
@@ -34,11 +30,11 @@
     <fragment
         android:id="@+id/mudarPasswordFragment"
         android:name="pmd.di.ubi.pt.projectofinal.FragmentMudarPassword"
-        android:label="Mudar palavra passe" />
+        android:label="Alterar palavra passe" />
     <fragment
         android:id="@+id/personalsFragment"
         android:name="pmd.di.ubi.pt.projectofinal.FragmentTreinadores"
-        android:label="Personal Treiners">
+        android:label="Personal Trainers">
         <action
             android:id="@+id/action_personalsFragment_to_imageHelp"
             app:destination="@id/imageHelp" />
@@ -46,7 +42,7 @@
     <fragment
         android:id="@+id/persoanlPerfilFragment"
         android:name="pmd.di.ubi.pt.projectofinal.FragmentPersoanlPerfil"
-        android:label="Personal Treiners" />
+        android:label="Personal Trainers" />
     <fragment
         android:id="@+id/fragmentTodasMarcacoes"
         android:name="pmd.di.ubi.pt.projectofinal.FragmentTodasMarcacoes"
@@ -69,22 +65,10 @@
     <fragment
         android:id="@+id/imageHelp"
         android:name="pmd.di.ubi.pt.projectofinal.FragmentViewPagerTreinadores"
-        android:label="Personal Treiners">
+        android:label="Personal Trainers">
         <action
             android:id="@+id/action_imageHelp_to_persoanlPerfilFragment"
             app:destination="@id/persoanlPerfilFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/fragmentDetalhesMarcacao"
-        android:name="pmd.di.ubi.pt.projectofinal.FragmentDetalhesMarcacao"
-        android:label="FragmentDetalhesMarcacao" />
-    <fragment
-        android:id="@+id/fragmentViewPagerMarcacoes"
-        android:name="pmd.di.ubi.pt.projectofinal.FragmentViewPagerMarcacoes"
-        android:label="FragmentViewPagerMarcacoes" >
-        <action
-            android:id="@+id/action_fragmentViewPagerMarcacoes_to_fragmentDetalhesMarcacao"
-            app:destination="@id/fragmentDetalhesMarcacao" />
     </fragment>
 
 </navigation>

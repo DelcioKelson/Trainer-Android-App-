@@ -16,24 +16,12 @@ public class AdapterViewPagerMarcacoes extends FragmentStatePagerAdapter {
 
 
     ArrayList<Map<String,Object>> marcacoes;
-    public AdapterViewPagerMarcacoes(Fragment fragment) {
+    public AdapterViewPagerMarcacoes(Fragment fragment,ArrayList<Map<String,Object>> marcacoes) {
 
-        // Note: Initialize with the child fragment manager.
         super(fragment.getChildFragmentManager(), BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
 
-        try {
-            SharedDataModel modelData = new ViewModelProvider(fragment.getActivity()).get(SharedDataModel.class);
+        this.marcacoes = marcacoes;
 
-            modelData.getMarcacoesList().observe(fragment.getActivity(), new Observer<ArrayList<Map<String, Object>>>() {
-                @Override
-                public void onChanged(ArrayList<Map<String, Object>> maps) {
-                    marcacoes=maps;
-                }
-            });
-
-        }catch (Exception e){
-
-        }
     }
 
     @Override
@@ -45,11 +33,8 @@ public class AdapterViewPagerMarcacoes extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int position) {
         Bundle bundle = new Bundle();
-        bundle.putString("estado", (String) marcacoes.get(position).get("estado"));
-        bundle.putString("preco", (String) marcacoes.get(position).get("preco"));
-        bundle.putString("horaTreino", (String) marcacoes.get(position).get("horaTreino"));
-        bundle.putString("diaTreino", (String) marcacoes.get(position).get("diaTreino"));
-        bundle.putString("tempoDuracao", (String) marcacoes.get(position).get("tempoDuracao"));
+        bundle.putInt("pos",position);
+
         return FragmentDetalhesMarcacao.newInstance(bundle);
     }
 }
