@@ -14,8 +14,8 @@ export const notificacaoAtualizada =  functions.firestore.document("marcacoes/{u
                                 "marcacaoID": `${after.marcacaoId}`
                               },
                               notification: {
-                                "title": "marcaçao aceite",
-                                "text": `${snap.get('nome')} aceitou a sua marcaçao, pode efectuar o pagamento`
+                                "title": "marcação aceite",
+                                "text": `${snap.get('nome')} aceitou a sua marcação, pode efectuar o pagamento`
                               }
                       }
                       return admin.messaging().sendToTopic(after.uidUsuario,payload)
@@ -32,8 +32,8 @@ export const notificacaoAtualizada =  functions.firestore.document("marcacoes/{u
                         "tipoDeconta": "personal"
                       },
                       notification: {
-                        "title": "marcaçao paga",
-                        "text":`${snap.get('nome')} efetuou o pagamento da marcaçao a sua marcaçao, pode efectuar o pagamento, ver detalhes`
+                        "title": "marcação paga",
+                        "text":`${snap.get('nome')} efetuou o pagamento da marcação a sua marcação, pode efectuar o pagamento, ver detalhes`
                       }
               }
               return admin.messaging().sendToTopic(after.uidPersonal,payload)
@@ -54,8 +54,8 @@ export const notificacaoAtualizada =  functions.firestore.document("marcacoes/{u
                         "tipoDeconta": "personal"
                       },
                       notification: {
-                        "title": "Foi marcada uma sessao consigo",
-                        "text": "Foi marcada uma sessao consigo, .",
+                        "title": "Foi marcada uma sessão consigo",
+                        "text": "Foi marcada uma sessão consigo, .",
                       }
               }
               return admin.messaging().sendToTopic(marcacao.uidPersonal,payload)

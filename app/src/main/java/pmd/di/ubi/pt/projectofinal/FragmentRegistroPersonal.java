@@ -155,7 +155,7 @@ public class FragmentRegistroPersonal extends Fragment {
             Toast.makeText(getContext(), "Selecione uma fotografia válida, precisa de ter uma face", Toast.LENGTH_LONG).show();
             return;
         }
-        
+
         if (nome.isEmpty()) {
             nomeLayout.setError(errorM);
             return;

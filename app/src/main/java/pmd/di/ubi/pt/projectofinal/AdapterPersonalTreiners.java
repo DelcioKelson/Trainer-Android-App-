@@ -55,7 +55,7 @@ public class AdapterPersonalTreiners extends RecyclerView.Adapter<AdapterPersona
 
     AdapterPersonalTreiners(Fragment fragment, ArrayList<Map<String, Object>> personalTrainerList){
         this.personalTrainerList = personalTrainerList;
-        this.requestManager = Glide.with(fragment);
+        this.requestManager = Glide.with(fragment.requireContext());
         this.viewHolderListener = new ViewHolderListenerImpl(fragment);
         this.fragment =fragment;
 

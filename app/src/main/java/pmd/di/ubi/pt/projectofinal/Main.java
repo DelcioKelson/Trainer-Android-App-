@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,12 +26,17 @@ import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Main extends AppCompatActivity {
     FirebaseUser user;
@@ -40,6 +46,8 @@ public class Main extends AppCompatActivity {
     private BottomNavigationView bottomNavigationView;
     static BadgeDrawable badge;
     static SharedDataModel sharedDataModel;
+    private static final int LOAD_PAYMENT_DATA_REQUEST_CODE = 991;
+
 
     private static final String KEY_CURRENT_POSITION = "com.google.samples.gridtopager.key.currentPosition";
 
@@ -172,33 +180,31 @@ public class Main extends AppCompatActivity {
 
         Log.w("loadPayment", "onActivityresult");
 
-        switch (requestCode) {
-
-            // value passed in AutoResolveHelper
-            case 991:
+        if (LOAD_PAYMENT_DATA_REQUEST_CODE==requestCode && data!=null){
                 switch (resultCode) {
-                    case android.app.Activity.RESULT_OK:
-                        PaymentData paymentData = PaymentData.getFromIntent(data);
-                        handlePaymentSuccess(paymentData);
-                        Log.w("loadPayment", "sucess");
+                        case android.app.Activity.RESULT_OK:
+                            PaymentData paymentData = PaymentData.getFromIntent(data);
+                            handlePaymentSuccess(paymentData);
+                            Log.w("loadPayment", "sucess");
 
-                        break;
-                    case android.app.Activity.RESULT_CANCELED:
-                        // Nothing to here normally - the user simply cancelled without selecting a
-                        // payment method.
-                        Log.w("loadPayment", "cancela");
+                            break;
+                        case android.app.Activity.RESULT_CANCELED:
+                            // Nothing to here normally - the user simply cancelled without selecting a
+                            // payment method.
+                            Log.w("loadPayment", "cancela");
 
-                        break;
-                    case AutoResolveHelper.RESULT_ERROR:
-                        Status status = AutoResolveHelper.getStatusFromIntent(data);
-                        handleError(status.getStatusCode());
-                        break;
-                    default:
-                        // Do nothing.
-                }
-                break;
+                            break;
+                        case AutoResolveHelper.RESULT_ERROR:
+                            Status status = AutoResolveHelper.getStatusFromIntent(data);
+                            handleError(status.getStatusCode());
+                            break;
+                        default:
+                            // Do nothing.
+                    }
+            }
         }
-    }
+
+
 
     private void handlePaymentSuccess(PaymentData paymentData) {
         String paymentInformation = paymentData.toJson();
@@ -221,15 +227,49 @@ public class Main extends AppCompatActivity {
                     .getJSONObject("tokenizationData")
                     .getString("token")
                     .equals("examplePaymentMethodToken")) {
+
+                // marcacoesRef.document(marcacao.getId()).update("estado","aceite");
+
+                String marcacaoId = sharedDataModel.getPersonalIdMarcacao().getValue().get("idmarcacao");
+                String idPersonal = sharedDataModel.getPersonalIdMarcacao().getValue().get("idpersonal");
+
+                CollectionReference pessoasRef = FirebaseFirestore.getInstance().collection("pessoas");
+
+                DocumentReference marcacaoReference = FirebaseFirestore.getInstance().collection("marcacoes").document(marcacaoId);
+
+                marcacaoReference.update("estado", "paga");
+                //Toast.makeText(this, "Marcação paga com sucesso", Toast.LENGTH_LONG).show();
+
+                Map<String, Object> notificacaoData;
+                notificacaoData = new HashMap<>();
+                notificacaoData.put("data", System.currentTimeMillis());
+                notificacaoData.put("vista", false);
+                notificacaoData.put("mensagem", user.getDisplayName() + " pagou uma marcação consigo");
+                notificacaoData.put("titulo", "marcação paga");
+                notificacaoData.put("marcacaoId", marcacaoId);
+
+                DocumentReference notificacaoRef = pessoasRef
+                        .document(idPersonal).collection("notificacoes").document();
+
+
+                sharedDataModel.setFecharViewPager(true);
+                sharedDataModel.setAtualizar(true);
+
+
+
+                notificacaoData.put("id", notificacaoRef.getId());
+                notificacaoRef.set(notificacaoData);
                 AlertDialog alertDialog =
                         new AlertDialog.Builder(this)
-                                .setTitle("Warning")
-                                .setMessage(
-                                        "Gateway name set to \"example\" - please modify "
-                                                + "Constants.java and replace it with your own gateway.")
+                                .setTitle("Marcação paga com sucesso")
                                 .setPositiveButton("OK", null)
                                 .create();
                 alertDialog.show();
+
+                sharedDataModel.setFecharViewPager(false);
+                sharedDataModel.setAtualizar(false);
+
+
             }
 
             String billingName =

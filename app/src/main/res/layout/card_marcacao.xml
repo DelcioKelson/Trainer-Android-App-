@@ -2,7 +2,6 @@
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_marginTop="5dp"
     android:layout_marginRight="10dp"
     android:layout_marginLeft="10dp"
@@ -16,13 +15,27 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <TextView
-            style="@style/TextAppearance.AppCompat.Body1"
-            android:id="@+id/tv_preco_detalhe"
-            android:layout_margin="5dp"
-            android:textColor="@color/white"
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content">
+
+            <TextView
+                style="@style/TextAppearance.AppCompat.Body1"
+                android:id="@+id/tv_preco_detalhe"
+                android:layout_margin="5dp"
+                android:textColor="@color/white"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                style="@style/TextAppearance.AppCompat.Body1"
+                android:id="@+id/tv_preco_promocao"
+                android:layout_margin="5dp"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:textColor="@color/white"/>
+
+        </LinearLayout>
 
         <TextView
             style="@style/TextAppearance.AppCompat.Body1"
@@ -40,7 +53,6 @@
             android:textColor="@color/white"
             android:layout_height="wrap_content" />
 
-
         <TextView
             style="@style/TextAppearance.AppCompat.Body1"
             android:id="@+id/tv_tempo_detalhe"
@@ -48,7 +60,6 @@
             android:layout_margin="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -62,8 +73,7 @@
                 android:layout_gravity="end"
                 android:layout_height="wrap_content"
                 android:visibility="gone"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                />
+                style="@style/Widget.AppCompat.Button.Borderless" />
 
             <include
                 android:id="@+id/googlepay_button"
@@ -83,6 +93,5 @@
 
         </LinearLayout>
     </LinearLayout>
-
 
 </com.google.android.material.card.MaterialCardView>

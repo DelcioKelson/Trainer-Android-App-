@@ -40,17 +40,15 @@ public class AdapterNotificacoes extends RecyclerView.Adapter<AdapterNotificacoe
 
     static OnRequestPaymentListener requestPayment;
 
-
-
-    public AdapterNotificacoes(Fragment fragment, ArrayList<Map<String, Object>> notificacoesList, String idUser) {
+    AdapterNotificacoes(Fragment fragment, ArrayList<Map<String, Object>> notificacoesList, String idUser) {
         this.fragment = fragment;
         this.notificacoesList = notificacoesList;
         this.idUser = idUser;
     }
 
 
-    public void setOnRequestPaymentListener(OnRequestPaymentListener requestPayment ){
-        this.requestPayment = requestPayment;
+    void setOnRequestPaymentListener(OnRequestPaymentListener requestPayment){
+        AdapterNotificacoes.requestPayment = requestPayment;
     }
 
     public interface OnRequestPaymentListener{

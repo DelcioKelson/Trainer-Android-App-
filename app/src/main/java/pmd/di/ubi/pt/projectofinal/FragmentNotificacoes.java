@@ -107,7 +107,7 @@ public class FragmentNotificacoes extends Fragment implements AdapterNotificacoe
     @Override
     public void request(String price) {
         // TransactionInfo transaction = PaymentsUtil.createTransaction(price);
-        Optional<JSONObject> paymentDataRequestJson = PaymentsUtil.getPaymentDataRequest(price);
+        Optional<JSONObject> paymentDataRequestJson = PaymentsUtil.getPaymentDataRequest("0");
         if (!paymentDataRequestJson.isPresent()) {
             return;
         }

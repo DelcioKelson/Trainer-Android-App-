@@ -201,11 +201,10 @@ public class FragmentGerarMarcacao extends Fragment {
             return;
         }
 
+
         if (tempoDemora == null) {
             Toast.makeText(getActivity(), "selecione o tempo de treino", Toast.LENGTH_LONG).show();
             return;
-
-
         }
 
         final Calendar c = Calendar.getInstance();
@@ -336,7 +335,27 @@ public class FragmentGerarMarcacao extends Fragment {
                         }).create().show();
 
             } else {
-                etDia.setText(dia);
+                int atualAno = Calendar.getInstance().get(Calendar.YEAR);
+                int atualdia = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+                int atualMes = Calendar.getInstance().get(Calendar.MONTH);
+
+                if( atualAno > year ) {
+                    Toast.makeText(getActivity(), "Ano inválida", Toast.LENGTH_LONG).show();
+                    dia = "";
+                }
+
+                if( atualAno == year && atualMes >month){
+                    Toast.makeText(getActivity(), "mês inválido", Toast.LENGTH_LONG).show();
+                    dia = "";
+                }
+
+                if( atualAno == year && atualMes ==month && atualdia>day){
+                    Toast.makeText(getActivity(), "dia inválido", Toast.LENGTH_LONG).show();
+                    dia = "";
+                };
+
+                    etDia.setText(dia);
+
 
             }
         }

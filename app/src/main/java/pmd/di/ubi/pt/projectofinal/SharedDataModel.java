@@ -7,15 +7,19 @@ import androidx.lifecycle.ViewModel;
 import com.google.android.gms.wallet.PaymentsClient;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 
 public class SharedDataModel extends ViewModel {
 
-    MutableLiveData<Boolean> user;
-    MutableLiveData<Boolean> atualizar;
-    MutableLiveData<Boolean> fecharViewPager= new MutableLiveData<>();
-    MutableLiveData<Map<String,Object>> usuarioAtual = new MutableLiveData<>();
+    private MutableLiveData<Boolean> user;
+    private MutableLiveData<Boolean> atualizar;
+    private MutableLiveData<Boolean> fecharViewPager= new MutableLiveData<>();
+    private MutableLiveData<Map<String,Object>> usuarioAtual = new MutableLiveData<>();
+
+    private MutableLiveData<Map<String,String>> personalIdMarcacao = new MutableLiveData<>();
+
 
     private  MutableLiveData<ArrayList<Map<String,Object>>> personalList = new MutableLiveData<>();
     private  MutableLiveData<ArrayList<Map<String,Object>>> personalListFavorito = new MutableLiveData<>();
@@ -30,6 +34,17 @@ public class SharedDataModel extends ViewModel {
         atualizar = new MutableLiveData<>();
         atualizar.setValue(false);
         fecharViewPager.setValue(false);
+    }
+
+    public MutableLiveData<Map<String, String>> getPersonalIdMarcacao() {
+        return personalIdMarcacao;
+    }
+
+    public void setPersonalIdMarcacao(String idPersonal, String idMarcacao) {
+        Map<String, String> aux = new HashMap<>();
+        aux.put("idpersonal",idPersonal);
+        aux.put("idmarcacao",idMarcacao);
+        this.personalIdMarcacao.setValue(aux);
     }
 
     public MutableLiveData<Boolean> getFecharViewPager() {
@@ -101,4 +116,6 @@ public class SharedDataModel extends ViewModel {
     public void setUsuarioAtual(Map<String, Object> usuarioAtual) {
         this.usuarioAtual.setValue(usuarioAtual);
     }
+
+
 }

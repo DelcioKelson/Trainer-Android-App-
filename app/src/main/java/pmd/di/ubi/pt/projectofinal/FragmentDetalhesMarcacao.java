@@ -1,5 +1,6 @@
 package pmd.di.ubi.pt.projectofinal;
 
+import android.graphics.Paint;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -44,7 +45,7 @@ public class FragmentDetalhesMarcacao extends DialogFragment {
     boolean isUser = false;
     private PaymentsClient paymentsClient;
 
-    private TextView tvDiaTreino, tvHoraTreino, tvEstado, tvPreco, tvTempoDemora;
+    private TextView tvDiaTreino, tvHoraTreino, tvEstado, tvPreco, tvTempoDemora, tvPrecoPromocao;
 
     private Button btnEsquero, btnDireito;
     private View mGooglePayButton;
@@ -57,6 +58,8 @@ public class FragmentDetalhesMarcacao extends DialogFragment {
     private LinearLayout informacoes;
     private ToggleButton tbExpand;
     private final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+    private String marcacaoId, idPersonal, idUsuario;
 
     private CollectionReference pessoasRef = FirebaseFirestore.getInstance().collection("pessoas");
 
@@ -84,6 +87,7 @@ public class FragmentDetalhesMarcacao extends DialogFragment {
         tvHoraTreino = view.findViewById(R.id.tv_hora_detalhe);
         tvEstado = view.findViewById(R.id.tv_estado_detalhe);
         tvPreco = view.findViewById(R.id.tv_preco_detalhe);
+        tvPrecoPromocao = view.findViewById(R.id.tv_preco_detalhe_promocao);
         tvTempoDemora = view.findViewById(R.id.tv_tempo_detalhe);
         tvNome = view.findViewById(R.id.tv_nome_detalhe);
         cardView = view.findViewById(R.id.card_informacoes);
@@ -111,7 +115,17 @@ public class FragmentDetalhesMarcacao extends DialogFragment {
         try {
             paymentsClient = Main.sharedDataModel.getPaymentsClient().getValue();
             isUser = Main.sharedDataModel.isUser().getValue();
-        } catch (Exception e) {
+
+            Main.sharedDataModel.getFecharViewPager().observe(this, new Observer<Boolean>() {
+                @Override
+                public void onChanged(Boolean aBoolean) {
+                    if(aBoolean){
+                        dismiss();
+                        Main.sharedDataModel.setFecharViewPager(false);
+                    }
+                }
+            });
+        } catch (Exception ignored) {
 
         }
         cardView.setOnClickListener(v -> {
@@ -127,16 +141,23 @@ public class FragmentDetalhesMarcacao extends DialogFragment {
         });
 
 
-        String idMarcacao = getArguments().getString("marcacaoId");
-        if (idMarcacao != null) {
+        marcacaoId = getArguments().getString("marcacaoId");
+        if (marcacaoId != null) {
 
-            FirebaseFirestore.getInstance().collection("marcacoes").document(idMarcacao).get().
+            FirebaseFirestore.getInstance().collection("marcacoes").document(marcacaoId).get().
                     addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                             if (task.isSuccessful() && task.getResult() != null) {
 
                                 marcacao = task.getResult().getData();
+                                idPersonal = (String) marcacao.get("uidPersonal");
+                                idUsuario = (String) marcacao.get("uidUsuario");
+                                mGooglePayButton.setOnClickListener(v ->
+                                {
+                                    AdapterNotificacoes.requestPayment.request((String) marcacao.get("preco"));
+                                    Main.sharedDataModel.setPersonalIdMarcacao(idPersonal, marcacaoId);
+                                });
                                 opcoesDialog();
                                 inicializarDados();
 
@@ -146,28 +167,26 @@ public class FragmentDetalhesMarcacao extends DialogFragment {
             Button btnClose = view.findViewById(R.id.btn_close);
             btnClose.setVisibility(View.VISIBLE);
 
-            btnClose.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dismiss();
-                }
-            });
-
-            mGooglePayButton.setOnClickListener(v -> AdapterNotificacoes.requestPayment.request((String) marcacao.get("preco")));
-
+            btnClose.setOnClickListener(v -> dismiss());
 
         } else {
             marcacao = Main.sharedDataModel.getMarcacoesList().getValue().get(getArguments().getInt("pos"));
+            idPersonal = (String) marcacao.get("uidPersonal");
+            idUsuario = (String) marcacao.get("uidUsuario");
+            marcacaoId = (String) marcacao.get("marcacaoId");
             opcoesDialog();
             inicializarDados();
 
-            mGooglePayButton.setOnClickListener(v -> AdapterMarcacao.requestPayment.request((String) marcacao.get("preco")));
+            mGooglePayButton.setOnClickListener(v ->
+            {
+                AdapterMarcacao.requestPayment.request((String) marcacao.get("preco"));
+                Main.sharedDataModel.setPersonalIdMarcacao(idPersonal, marcacaoId);
+            });
         }
 
         Main.sharedDataModel.getAtualizar().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
-
                 if (aBoolean) {
                     FragmentDetalhesMarcacao.this.dismiss();
                     Main.sharedDataModel.setAtualizar(false);
@@ -180,21 +199,18 @@ public class FragmentDetalhesMarcacao extends DialogFragment {
 
     private void opcoesDialog() {
         String marcacaoEstado = (String) marcacao.get("estado");
-        tvPreco.setText("Preço: " + marcacao.get("preco") + "€");
+        tvPreco.setText(marcacao.get("preco") + "€");
+        tvPreco.setPaintFlags(tvPreco.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
         tvHoraTreino.setText("Hora: " + marcacao.get("horaTreino"));
+        tvPrecoPromocao.setText("0.0€");
         tvDiaTreino.setText("Dia: " + marcacao.get("diaTreino"));
         tvTempoDemora.setText("Duração: " + marcacao.get("tempoDuracao"));
         tvEstado.setText("Estado: " + marcacaoEstado);
         tvDataCriacao.setText("Criada em: " + marcacao.get("diaMarcacao") + " ás " + marcacao.get("horaMarcacao") + "h");
-
-        final String marcacaoId = (String) marcacao.get("marcacaoId");
-        final String idPersonal = (String) marcacao.get("uidPersonal");
-        final String idUsuario = (String) marcacao.get("uidUsuario");
+        //Log.i("marcacaoid",marcacaoId);
+        Log.i("marcacaoid", "efdc");
 
         final DocumentReference marcacaoReference = FirebaseFirestore.getInstance().collection("marcacoes").document(marcacaoId);
-
-        Log.i("marcacaoId", marcacaoId);
-
 
         if (isUser) {
             if (marcacaoEstado.equals("pendente")) {
@@ -222,13 +238,11 @@ public class FragmentDetalhesMarcacao extends DialogFragment {
                     notificacaoRef.set(notificacaoData);
                     Main.sharedDataModel.setAtualizar(true);
                     Main.sharedDataModel.setFecharViewPager(true);
-
                 });
             }
             if (marcacaoEstado.equals("aceite")) {
 
                 possiblyShowGooglePayButton(mGooglePayButton);
-
                 //processarPagamento();
             }
         } else {
@@ -303,16 +317,13 @@ public class FragmentDetalhesMarcacao extends DialogFragment {
         // OnCompleteListener to be triggered when the result of the call is known.
         Task<Boolean> task = paymentsClient.isReadyToPay(request);
         task.addOnCompleteListener(requireActivity(),
-                new OnCompleteListener<Boolean>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Boolean> task) {
-                        if (task.isSuccessful() && task.getResult() != null) {
-                            if (task.getResult()) {
-                                mGooglePayButton.setVisibility(View.VISIBLE);
-                            }
-                        } else {
-                            Log.w("isReadyToPay failed", task.getException());
+                task1 -> {
+                    if (task1.isSuccessful() && task1.getResult() != null) {
+                        if (task1.getResult()) {
+                            mGooglePayButton.setVisibility(View.VISIBLE);
                         }
+                    } else {
+                        Log.w("isReadyToPay failed", task1.getException());
                     }
                 });
     }

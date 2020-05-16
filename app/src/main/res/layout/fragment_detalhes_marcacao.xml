@@ -25,13 +25,27 @@
             android:layout_height="wrap_content"
             android:id="@+id/tv_nome_detalhe" />
 
-        <TextView
-            style="@style/TextAppearance.AppCompat.Body2"
-            android:textSize="15sp"
-            android:layout_margin="2dp"
-            android:id="@+id/tv_preco_detalhe"
+
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content">
+            <TextView
+                style="@style/TextAppearance.AppCompat.Body2"
+                android:textSize="15sp"
+                android:layout_margin="2dp"
+                android:id="@+id/tv_preco_detalhe"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                style="@style/TextAppearance.AppCompat.Body2"
+                android:id="@+id/tv_preco_detalhe_promocao"
+                android:textSize="15sp"
+                android:layout_margin="2dp"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"/>
+        </LinearLayout>
+
 
         <TextView
             style="@style/TextAppearance.AppCompat.Body2"

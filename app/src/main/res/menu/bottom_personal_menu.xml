@@ -3,17 +3,17 @@
 
 
     <item android:id="@+id/fragmentPersoanlPerfil"
-        android:title="perfil"
+        android:title="Perfil"
         android:icon="@drawable/ic_person"/>
 
 
     <item android:id="@+id/fragmentTodasMarcacoes"
-        android:title="Marcacoes"
+        android:title="Marcações"
         android:icon="@drawable/ic_marcacoes"
         />
 
     <item android:id="@+id/fragmentNotificacoes"
-        android:title="Notificacoes"
+        android:title="Notificações"
         android:icon="@drawable/ic_notifications_black_24dp"
         />
 </menu>

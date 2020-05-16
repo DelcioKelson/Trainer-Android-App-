@@ -43,13 +43,13 @@
                     android:id="@+id/radioButton_c_mema"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Classificaçao: menor para maior" />
+                    android:text="classificação: menor para maior" />
 
                 <RadioButton
                     android:id="@+id/radioButton_c_mame"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Classificacao: maior para menor     " />
+                    android:text="classificação: maior para menor     " />
             </RadioGroup>
 
             <View

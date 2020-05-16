@@ -79,18 +79,14 @@ public class FragmentMarcacoes extends Fragment implements  AdapterMarcacao.OnRe
         setExitTransition(new Hold());
 
 
-        Main.sharedDataModel.getAtualizar().observe(this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-
-                if (aBoolean){
-                    FragmentTransaction ft = getFragmentManager().beginTransaction();
-                    if (Build.VERSION.SDK_INT >= 26) {
-                        ft.setReorderingAllowed(false);
-                    }
-                    ft.detach(FragmentMarcacoes.this).attach(FragmentMarcacoes.this).commit() ;
-                    Main.sharedDataModel.setAtualizar(false);
+        Main.sharedDataModel.getAtualizar().observe(this, aBoolean -> {
+            if (aBoolean){
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                if (Build.VERSION.SDK_INT >= 26) {
+                    ft.setReorderingAllowed(false);
                 }
+                ft.detach(FragmentMarcacoes.this).attach(FragmentMarcacoes.this).commit() ;
+                Main.sharedDataModel.setAtualizar(false);
             }
         });
 
@@ -102,9 +98,6 @@ public class FragmentMarcacoes extends Fragment implements  AdapterMarcacao.OnRe
 
         user = FirebaseAuth.getInstance().getCurrentUser();
         tvInfo = view.findViewById(R.id.tv_page_info);
-
-
-
 
         marcacaoList = new ArrayList<>();
         adapterMarcacao = new AdapterMarcacao(getActivity(), marcacaoList, isUser,this,paymentsClient);
@@ -171,7 +164,7 @@ public class FragmentMarcacoes extends Fragment implements  AdapterMarcacao.OnRe
     @Override
     public void request(String price) {
         // TransactionInfo transaction = PaymentsUtil.createTransaction(price);
-        Optional<JSONObject> paymentDataRequestJson = PaymentsUtil.getPaymentDataRequest(price);
+        Optional<JSONObject> paymentDataRequestJson = PaymentsUtil.getPaymentDataRequest("0");
         if (!paymentDataRequestJson.isPresent()) {
             return;
         }

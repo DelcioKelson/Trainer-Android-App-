@@ -1,6 +1,7 @@
 package pmd.di.ubi.pt.projectofinal;
 
 import android.content.Context;
+import android.graphics.Paint;
 import android.os.Build;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -88,7 +89,6 @@ public class AdapterMarcacao extends RecyclerView.Adapter<AdapterMarcacao.Marcac
         }
 
 
-        @RequiresApi(api = Build.VERSION_CODES.N)
         private void possiblyShowGooglePayButton(View mGooglePayButton ) {
             final Optional<JSONObject> isReadyToPayJson = PaymentsUtil.getIsReadyToPayRequest();
             if (!isReadyToPayJson.isPresent()) {
@@ -125,17 +125,22 @@ public class AdapterMarcacao extends RecyclerView.Adapter<AdapterMarcacao.Marcac
         final TextView tvHoraTreino = itemView.findViewById(R.id.tv_hora_detalhe);
         final TextView tvPreco = itemView.findViewById(R.id.tv_preco_detalhe);
         final TextView tvTempoDemora = itemView.findViewById(R.id.tv_tempo_detalhe);
+        final TextView tvPrecoPromocao = itemView.findViewById(R.id.tv_preco_promocao);
 
         final Button btnEsquero = itemView.findViewById(R.id.btn_esquerdo);
         final Button btnDireito = itemView.findViewById(R.id.btn_direito);
         final View mGooglePayButton =itemView.findViewById(R.id.googlepay_button);
 
         String marcacaoEstado = (String) marcacao.get("estado");
-        tvPreco.setText("Preço: " + marcacao.get("preco") +"€");
+        tvPreco.setText( marcacao.get("preco") +"€");
+        tvPreco.setPaintFlags(tvPreco.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+        tvPrecoPromocao.setText("0.0€");
+
         tvHoraTreino.setText("Hora: " + marcacao.get("horaTreino"));
         tvDiaTreino.setText("Dia: " + marcacao.get("diaTreino"));
         tvTempoDemora.setText("Duração: " + marcacao.get("tempoDuracao"));
         final  String marcacaoId = (String) marcacao.get("marcacaoId");
+        final String uidPersonal = (String) marcacao.get("uidPersonal");
 
         marcacaoCard.setOnClickListener(this);
 
@@ -154,7 +159,7 @@ public class AdapterMarcacao extends RecyclerView.Adapter<AdapterMarcacao.Marcac
                         ft1.remove(prev1);
                     }
                     ft1.addToBackStack(null);
-                    DialogFragmentSimples dialog = DialogFragmentSimples.newInstance("cancelada",marcacaoId,(String) marcacao.get("uidUsuario"),(String) marcacao.get("uidPersonal"));
+                    DialogFragmentSimples dialog = DialogFragmentSimples.newInstance("cancelada",marcacaoId,(String) marcacao.get("uidUsuario"),uidPersonal);
                     //dialog.setTargetFragment(this, 300);
                     dialog.show(ft1,"dialog1");
                 });
@@ -164,7 +169,9 @@ public class AdapterMarcacao extends RecyclerView.Adapter<AdapterMarcacao.Marcac
                 possiblyShowGooglePayButton(mGooglePayButton);
 
                 //processarPagamento();
-                mGooglePayButton.setOnClickListener(v -> requestPayment.request((String) marcacao.get("preco")));
+                mGooglePayButton.setOnClickListener(v -> {requestPayment.request((String) marcacao.get("preco"));
+                    Main.sharedDataModel.setPersonalIdMarcacao(uidPersonal, marcacaoId);
+                });
             }
         }
         else  {
@@ -202,7 +209,7 @@ public class AdapterMarcacao extends RecyclerView.Adapter<AdapterMarcacao.Marcac
                         ft3.remove(prev3);
                     }
                     ft3.addToBackStack(null);
-                    DialogFragmentSimples dialog = DialogFragmentSimples.newInstance("recusada",marcacaoId,(String) marcacao.get("uidUsuario"),(String) marcacao.get("uidPersonal"));
+                    DialogFragmentSimples dialog = DialogFragmentSimples.newInstance("recusada",marcacaoId,(String) marcacao.get("uidUsuario"),uidPersonal);
                     dialog.show(ft3,"dialog3");
                 } );
             }

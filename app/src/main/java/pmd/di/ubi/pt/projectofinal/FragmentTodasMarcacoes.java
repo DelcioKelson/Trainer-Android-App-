@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,9 +26,14 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.transition.MaterialFade;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 public class FragmentTodasMarcacoes extends Fragment implements View.OnClickListener{
     // TODO: Rename parameter arguments, choose names that match
@@ -36,9 +42,10 @@ public class FragmentTodasMarcacoes extends Fragment implements View.OnClickList
     private TextView tvPagas;
     private TextView tvHistorico;
     private FirebaseUser user;
-    private FloatingActionButton btnNovaMarcacao;
     private boolean isUser;
     private PaymentsClient paymentsClient;
+    private final CollectionReference marcacoesRef = FirebaseFirestore.getInstance().collection("marcacoes");
+
 
 
 
@@ -105,7 +112,7 @@ public class FragmentTodasMarcacoes extends Fragment implements View.OnClickList
         tvPendentes = view.findViewById(R.id.tv_marcacaoes_pendentes);
         tvHistorico = view.findViewById(R.id.tv_historico);
 
-        btnNovaMarcacao = view.findViewById(R.id.btn_nova_marcacao);
+        FloatingActionButton btnNovaMarcacao = view.findViewById(R.id.btn_nova_marcacao);
         if (!isUser) {
             btnNovaMarcacao.setVisibility(View.GONE);
         }
@@ -123,7 +130,7 @@ public class FragmentTodasMarcacoes extends Fragment implements View.OnClickList
 
         String auxTipoConta = isUser ? "uidUsuario" : "uidPersonal";
 
-        FirebaseFirestore.getInstance().collection("marcacoes").whereEqualTo(auxTipoConta, user.getUid()).get().addOnCompleteListener(task -> {
+        marcacoesRef.whereEqualTo(auxTipoConta, user.getUid()).get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult() != null) {
                 QuerySnapshot queryDocumentSnapshots = task.getResult();
                 int numeroMarcacaosPedentes = 0;
@@ -131,13 +138,14 @@ public class FragmentTodasMarcacoes extends Fragment implements View.OnClickList
                 int numeroMarcacaosPagas = 0;
                 for (DocumentSnapshot document : queryDocumentSnapshots) {
                     if (document != null) {
-                        if (document.get("estado").equals("pendente")) {
-                            numeroMarcacaosPedentes = numeroMarcacaosPedentes + 1;
+                        if (document.get("estado").equals("pendente")&&!mudarEstado(document,"cancelada")) {
+                                numeroMarcacaosPedentes = numeroMarcacaosPedentes + 1;
                         }
-                        if (document.get("estado").equals("aceite")) {
+                        if (document.get("estado").equals("aceite") && !mudarEstado(document,"cancelada")) {
                             numeroMarcacaosAceites = 1 + numeroMarcacaosAceites;
                         }
-                        if (document.get("estado").equals("pagas")) {
+                        if (document.get("estado").equals("paga") && ! mudarEstado(document,"terminada")) {
+
                             numeroMarcacaosPagas = 1 + numeroMarcacaosPagas;
                         }
                     }
@@ -147,6 +155,30 @@ public class FragmentTodasMarcacoes extends Fragment implements View.OnClickList
                 }
             }
         });
+    }
+
+    private boolean mudarEstado(DocumentSnapshot marcacao , String novoEstado){
+
+
+        String dia = (String) marcacao.get("diaTreino");
+        String hora =(String) marcacao.get("horaTreino");
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+
+        try {
+            dia = dia +" "+ hora;
+            Date date = sdf.parse(dia);
+            long millis = date.getTime();
+
+            if(Calendar.getInstance().getTimeInMillis() > millis){
+                marcacoesRef.document(marcacao.getId()).update("estado",novoEstado);
+                return true;
+            }
+        }catch (Exception e){
+
+        }
+        return false;
+
     }
 
     @Override

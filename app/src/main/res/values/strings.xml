@@ -13,7 +13,7 @@
     <string name="sair">Sair</string>
     <string name="palavra_passe">Palavra-passe:</string>
     <string name="selecione_com_muita_responsabilidade">Selecione com muita responsabilidade</string>
-    <string name="proximo_passo">proximo passo</string>
+    <string name="proximo_passo">próximo passo</string>
 
     <string-array name="horas_array">
         <item>00:30</item>
