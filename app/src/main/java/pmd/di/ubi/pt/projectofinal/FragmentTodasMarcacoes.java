@@ -40,17 +40,10 @@ public class FragmentTodasMarcacoes extends Fragment implements View.OnClickList
     private TextView tvAceites;
     private TextView tvPendentes;
     private TextView tvPagas;
-    private TextView tvHistorico;
     private FirebaseUser user;
     private boolean isUser;
-    private PaymentsClient paymentsClient;
     private final CollectionReference marcacoesRef = FirebaseFirestore.getInstance().collection("marcacoes");
 
-
-
-
-    private PagerAdapter pagerAdapter;
-    ViewPager viewPager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -67,8 +60,8 @@ public class FragmentTodasMarcacoes extends Fragment implements View.OnClickList
         }catch (Exception e){
         }
 
-        pagerAdapter = new PagerAdapter(getChildFragmentManager());
-        viewPager = view.findViewById(R.id.pager);
+        PagerAdapter pagerAdapter = new PagerAdapter(getChildFragmentManager());
+        ViewPager viewPager = view.findViewById(R.id.pager);
         viewPager.setAdapter(pagerAdapter);
         TabLayout tabLayout = view.findViewById(R.id.tab_layout);
         tabLayout.setupWithViewPager(viewPager);
@@ -88,7 +81,7 @@ public class FragmentTodasMarcacoes extends Fragment implements View.OnClickList
 
         if (isUser ) {
 
-            paymentsClient = PaymentsUtil.createPaymentsClient(getActivity());
+            PaymentsClient paymentsClient = PaymentsUtil.createPaymentsClient(getActivity());
             Main.sharedDataModel.setPaymentsClient(paymentsClient);
 
             viewPager.setVisibility(View.VISIBLE);
@@ -110,13 +103,13 @@ public class FragmentTodasMarcacoes extends Fragment implements View.OnClickList
         tvAceites = view.findViewById(R.id.tv_marcacoes_aceites);
         tvPagas = view.findViewById(R.id.tv_marcacoes_pagas);
         tvPendentes = view.findViewById(R.id.tv_marcacaoes_pendentes);
-        tvHistorico = view.findViewById(R.id.tv_historico);
+        TextView tvHistorico = view.findViewById(R.id.tv_historico);
 
         FloatingActionButton btnNovaMarcacao = view.findViewById(R.id.btn_nova_marcacao);
         if (!isUser) {
             btnNovaMarcacao.setVisibility(View.GONE);
         }
-        btnNovaMarcacao.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.action_fragmentTodasMarcacoes_to_modalidadesFragment));
+        btnNovaMarcacao.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.action_fragmentTodasMarcacoes_to_fragmentLugarTreino));
 
         tvAceites.setOnClickListener(this);
         tvHistorico.setOnClickListener(this);

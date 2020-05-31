@@ -66,7 +66,10 @@ public class AdapterModalidades extends RecyclerView.Adapter<AdapterModalidades.
             final ImageView imgModalidade = itemView.findViewById(R.id.modalidade_imagem);
             final LinearLayout main = (LinearLayout) itemView.findViewById(R.id.linear);
 
-            txtTitulo.setText((CharSequence) modalidade.get("nome"));
+            final String nomeModalidade = String.valueOf(modalidade.get("nome"));
+            final String gymNome = String.valueOf(modalidade.get("gym"));
+
+            txtTitulo.setText(nomeModalidade);
 
             //imgRestaurant.setImageResource(modalidade.getImg());
             Glide.with(imgModalidade.getContext())
@@ -75,8 +78,14 @@ public class AdapterModalidades extends RecyclerView.Adapter<AdapterModalidades.
 
             main.setOnClickListener(v -> {
                 Bundle bundle = new Bundle();
-                bundle.putString("modalidade", String.valueOf(modalidade.get("nome")));
-                Navigation.findNavController(v).navigate(R.id.action_modalidadesFragment_to_personalsFragment,bundle);
+                bundle.putString("modalidade",nomeModalidade );
+
+                if(gymNome.equals("nao")){
+                    Navigation.findNavController(v).navigate(R.id.action_modalidadesFragment_to_personalsFragment,bundle);
+                }else {
+                    bundle.putString("gymNome",gymNome);
+                    Navigation.findNavController(v).navigate(R.id.action_modalidadesFragment_to_fragmentGymPerfil,bundle);
+                }
             });
         }
     }

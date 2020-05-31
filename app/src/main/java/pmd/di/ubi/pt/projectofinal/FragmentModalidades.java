@@ -52,7 +52,18 @@ public class FragmentModalidades extends Fragment {
         adapterModalidades = new AdapterModalidades(getActivity(), modalidadeList);
         recyclerView.setAdapter(adapterModalidades);
 
-        FirebaseFirestore.getInstance().collection("modalidades").get().addOnCompleteListener(task -> {
+
+        String gymNome;
+        if(getArguments()==null){
+             gymNome = "nao";
+
+        }else {
+             gymNome = getArguments().getString("nome");
+        }
+
+        Log.i("FragmentModalidades",gymNome);
+
+        FirebaseFirestore.getInstance().collection("modalidades").whereEqualTo("gym",gymNome).get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult()!=null) {
                 for (QueryDocumentSnapshot document : task.getResult()) {
                     modalidadeList.add(document.getData());

@@ -8,6 +8,7 @@
     <fragment
         android:id="@+id/fragmentDefinicoesConta"
         android:name="pmd.di.ubi.pt.projectofinal.FragmentDefinicoesConta"
+        tools:layout="@layout/fragment_definicoes_conta"
         android:label="Definições">
         <action
             android:id="@+id/action_definicoesContaFragment_to_mudarPasswordFragment"
@@ -16,24 +17,31 @@
     <fragment
         android:id="@+id/fragmentMarcacoes"
         android:name="pmd.di.ubi.pt.projectofinal.FragmentMarcacoes"
+        tools:layout="@layout/recyclerview_layout"
         android:label="Marcações" />
     <fragment
         android:id="@+id/modalidadesFragment"
         android:name="pmd.di.ubi.pt.projectofinal.FragmentModalidades"
+        tools:layout="@layout/recyclerview_layout"
         android:label="Modalidades">
         <action
             android:id="@+id/action_modalidadesFragment_to_personalsFragment"
             app:destination="@id/personalsFragment"
             app:launchSingleTop="false"
             app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_modalidadesFragment_to_fragmentGymPerfil"
+            app:destination="@id/fragmentGymPerfil" />
     </fragment>
     <fragment
         android:id="@+id/mudarPasswordFragment"
         android:name="pmd.di.ubi.pt.projectofinal.FragmentMudarPassword"
+        tools:layout="@layout/fragment_mudar_password"
         android:label="Alterar palavra passe" />
     <fragment
         android:id="@+id/personalsFragment"
         android:name="pmd.di.ubi.pt.projectofinal.FragmentTreinadores"
+        tools:layout="@layout/recyclerview_layout"
         android:label="Personal Trainers">
         <action
             android:id="@+id/action_personalsFragment_to_imageHelp"
@@ -42,6 +50,7 @@
     <fragment
         android:id="@+id/persoanlPerfilFragment"
         android:name="pmd.di.ubi.pt.projectofinal.FragmentPersoanlPerfil"
+        tools:layout="@layout/fragment_personal_trainer_perfil"
         android:label="Personal Trainers" />
     <fragment
         android:id="@+id/fragmentTodasMarcacoes"
@@ -52,23 +61,51 @@
             android:id="@+id/action_fragmentTodasMarcacoes_to_marcacoesFragment"
             app:destination="@id/fragmentMarcacoes" />
         <action
-            android:id="@+id/action_fragmentTodasMarcacoes_to_modalidadesFragment"
-            app:destination="@id/modalidadesFragment" />
-        <action
             android:id="@+id/action_fragmentTodasMarcacoes_to_persoanlPerfilFragment"
             app:destination="@id/persoanlPerfilFragment" />
+        <action
+            android:id="@+id/action_fragmentTodasMarcacoes_to_fragmentLugarTreino"
+            app:destination="@id/fragmentLugarTreino" />
     </fragment>
     <fragment
         android:id="@+id/fragmentNotificacoes"
         android:name="pmd.di.ubi.pt.projectofinal.FragmentNotificacoes"
+        tools:layout="@layout/card_notificacao"
         android:label="Notificações" />
     <fragment
         android:id="@+id/imageHelp"
         android:name="pmd.di.ubi.pt.projectofinal.FragmentViewPagerTreinadores"
+        tools:layout="@layout/viewpager_layout_personal"
         android:label="Personal Trainers">
         <action
             android:id="@+id/action_imageHelp_to_persoanlPerfilFragment"
             app:destination="@id/persoanlPerfilFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/fragmentLugarTreino"
+        android:name="pmd.di.ubi.pt.projectofinal.FragmentLugarTreino"
+        android:label="Onde quer treinar?"
+        tools:layout="@layout/fragment_lugar_treino">
+        <action
+            android:id="@+id/action_fragmentLugarTreino_to_modalidadesFragment"
+            app:destination="@id/modalidadesFragment" />
+        <action
+            android:id="@+id/action_fragmentLugarTreino_to_fragmentMapList"
+            app:destination="@id/fragmentMapList" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentMapList"
+        android:name="pmd.di.ubi.pt.projectofinal.FragmentMapList"
+        android:label="Gyms"
+        tools:layout="@layout/fragment_map_list">
+        <action
+            android:id="@+id/action_fragmentMapList_to_modalidadesFragment2"
+            app:destination="@id/modalidadesFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentGymPerfil"
+        android:name="pmd.di.ubi.pt.projectofinal.FragmentGymPerfil"
+        android:label="Gym"
+        tools:layout="@layout/fragment_gym_perfil" />
 
 </navigation>

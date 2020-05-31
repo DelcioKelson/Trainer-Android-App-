@@ -17,18 +17,19 @@
     <fragment
         android:id="@+id/mudarPasswordFragment"
         android:name="pmd.di.ubi.pt.projectofinal.FragmentMudarPassword"
+        tools:layout="@layout/fragment_mudar_password"
         android:label="Alterar a palavra passe" />
     <fragment
         android:id="@+id/fragmentPersoanlPerfil"
         android:name="pmd.di.ubi.pt.projectofinal.FragmentPersoanlPerfil"
+        tools:layout="@layout/fragment_personal_trainer_perfil"
         android:label="Perfil">
-        <action
-            android:id="@+id/action_fragmentPersoanlPerfil_to_fragmentDefinicoesConta"
-            app:destination="@id/fragmentDefinicoesConta" />
+
     </fragment>
     <fragment
         android:id="@+id/fragmentDefinicoesConta"
         android:name="pmd.di.ubi.pt.projectofinal.FragmentDefinicoesConta"
+        tools:layout="@layout/fragment_definicoes_conta"
         android:label="Definições">
         <action
             android:id="@+id/action_definicoesContaFragment_to_mudarPasswordFragment"

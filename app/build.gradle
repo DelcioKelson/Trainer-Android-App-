@@ -12,6 +12,12 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        def secureProps = new Properties()
+        if (file("secure.properties").exists()) {
+            file("secure.properties")?.withInputStream { secureProps.load(it) }
+        }
+        resValue "string", "google_maps_key", (secureProps.getProperty("MAPS_API_KEY") ?: "")
     }
     buildTypes {
         release {
@@ -39,7 +45,7 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'com.google.firebase:firebase-functions:19.0.2'
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13'
     implementation 'com.google.firebase:firebase-database:19.3.0'
     implementation 'de.hdodenhof:circleimageview:3.0.1'
     implementation 'com.firebaseui:firebase-ui-database:6.1.0'
@@ -62,6 +68,12 @@ dependencies {
 
     implementation 'com.google.firebase:firebase-ml-vision:24.0.3'
 
-    implementation 'com.google.firebase:firebase-ml-vision-face-model:20.0.1'
+    implementation 'com.google.android.gms:play-services-maps:17.0.0'
+    implementation "com.google.android.gms:play-services-location:17.0.0"
+    implementation 'com.google.android.libraries.places:places:2.3.0'
+
+
+
+    //implementation 'com.google.firebase:firebase-ml-vision-face-model:20.0.1'
 
 }

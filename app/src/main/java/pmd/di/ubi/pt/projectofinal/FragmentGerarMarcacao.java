@@ -39,8 +39,6 @@ import java.util.Objects;
 public class FragmentGerarMarcacao extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM3 = "preco";
-    private static final String ARG_PARAM1 = "uidPersonal";
 
     private TextView tvPreco;
     private String uidPersonal;
@@ -88,9 +86,8 @@ public class FragmentGerarMarcacao extends Fragment {
             }
 
 
-
             uidPersonal = (String) personal.get("uid");
-            preco = Float.parseFloat(Objects.requireNonNull((String) personal.get(ARG_PARAM3)));
+            preco = Float.parseFloat(Objects.requireNonNull((String) personal.get("preco")));
             rating = (String) personal.get("rating");
             diasIndisponiveis = (String) personal.get("diasIndisponiveis");
             nomePersonal = (String) personal.get("nome");
@@ -161,14 +158,12 @@ public class FragmentGerarMarcacao extends Fragment {
         btnMarcar.setOnClickListener(v -> gerarDetalhesMarcacao());
 
 
-        Bundle bundle = new Bundle();
-        bundle.putString("uidPersonal", uidPersonal);
 
-        btnComentario.setOnClickListener(v -> Navigation.findNavController(view).navigate(R.id.action_fragmentGerarMarcacao_to_fragmentComentariosGerarPreco, bundle));
-
-
-        btnMarcar.setOnClickListener(v -> gerarDetalhesMarcacao());
-
+        btnComentario.setOnClickListener(v -> {
+            Bundle bundle = new Bundle();
+            bundle.putString("uidPersonal", uidPersonal);
+            Navigation.findNavController(view).navigate(R.id.action_fragmentGerarMarcacao_to_fragmentComentariosGerarPreco, bundle);
+        });
 
         etHora.setOnClickListener(v -> {
             DialogFragment newFragment = new TimePickerFragment(etHora);

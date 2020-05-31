@@ -213,8 +213,6 @@ public class FragmentDefinicoesConta extends Fragment {
             } else {
                 Toast.makeText(requireContext(), "Nome invalidado", Toast.LENGTH_LONG).show();
             }
-
-
         }).setNegativeButton("Cancelar", (dialog, which) -> {
         }).show();
     }
@@ -235,13 +233,9 @@ public class FragmentDefinicoesConta extends Fragment {
             final String preco = input.getText().toString();
 
             if (!preco.isEmpty()) {
-
                 FirebaseFirestore.getInstance().collection("pessoas").document(user.getUid()).update("preco", preco);
                 Toast.makeText(requireContext(), "preço alterado", Toast.LENGTH_LONG).show();
                 Main.sharedDataModel.getUsuarioAtual().getValue().put("preco",preco);
-
-
-
             } else {
                 Toast.makeText(requireContext(), "preço invalidado", Toast.LENGTH_LONG).show();
             }

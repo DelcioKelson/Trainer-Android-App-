@@ -1,14 +1,17 @@
 package pmd.di.ubi.pt.projectofinal;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -18,65 +21,55 @@ import com.google.firebase.storage.StorageReference;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class AdapterGym extends RecyclerView.Adapter<AdapterGym.ComentarioHolder> {
+public class AdapterGym extends RecyclerView.Adapter<AdapterGym.gymHolder> {
 
     private Context context;
-    private ArrayList<Map<String, Object>> comentariosList;
+    private ArrayList<Map<String, Object>> gymsList;
 
-    public AdapterGym(Context context, ArrayList<Map<String, Object>> comentariosList) {
+    public AdapterGym(Context context, ArrayList<Map<String, Object>> gymsList) {
         this.context = context;
-        this.comentariosList = comentariosList;
+        this.gymsList = gymsList;
     }
 
     @NonNull
     @Override
-    public ComentarioHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.card_comentario,parent,false);
-        return new ComentarioHolder(view);
+    public gymHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.card_gym,parent,false);
+        return new gymHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ComentarioHolder holder, int position) {
-        Map<String, Object> comentario = comentariosList.get(position);
-        holder.setDetails(comentario);
+    public void onBindViewHolder(@NonNull gymHolder holder, int position) {
+        Map<String, Object> gym = gymsList.get(position);
+        holder.setDetails(gym);
     }
 
 
     @Override
     public int getItemCount() {
-        return comentariosList!=null?comentariosList.size():0;
+        return gymsList!=null?gymsList.size():0;
     }
 
 
-    public class ComentarioHolder extends RecyclerView.ViewHolder {
-        public ComentarioHolder(@NonNull View itemView) {
+    public class gymHolder extends RecyclerView.ViewHolder {
+        public gymHolder(@NonNull View itemView) {
             super(itemView);
         }
 
-        public void setDetails(Map<String, Object> comentario) {
-            final TextView txtComentador = itemView.findViewById(R.id.nome_comentador);
-            final TextView txtComentario = itemView.findViewById(R.id.comentario);
-            final RatingBar ratingBar = itemView.findViewById(R.id.comentario_rating);
-            final ImageView imgPerfil = itemView.findViewById(R.id.img_comentador);
+        public void setDetails(Map<String, Object> gym) {
+            final TextView txtComentador = itemView.findViewById(R.id.nome_gym);
+            final TextView txtComentario = itemView.findViewById(R.id.endereço_gym);
+            final LinearLayout gymLayout = itemView.findViewById(R.id.layout_gym);
 
-            txtComentador.setText((String) comentario.get("nomeComentador"));
-            txtComentario.setText((String)comentario.get("comentario"));
+            String nome = (String) gym.get("nome");
 
-            StorageReference storageReference = FirebaseStorage.getInstance().getReference("image/"+comentario.get("uidUsuario"));
+            txtComentador.setText(nome);
+            txtComentario.setText((String)gym.get("endereço"));
 
-            final long ONE_MEGABYTE = 1024 * 1024;
-            storageReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(bytes -> {
-                if(bytes.length!=0){
-                    try {
-                        Glide.with(context.getApplicationContext())
-                                .load(bytes)
-                                .into(imgPerfil);
-                    }catch (Exception ignored){
+            final Bundle bundle = new Bundle();
+            bundle.putString("nome",nome);
+            gymLayout.setOnClickListener(v ->  Navigation.findNavController(v).navigate(R.id.action_fragmentMapList_to_modalidadesFragment2,bundle));
 
-                    }
-                }
-            });
-            ratingBar.setRating(Float.parseFloat((String) comentario.get("ratingComentario")));
         }
     }
 }
