@@ -6,14 +6,6 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
-    <Button
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:id="@+id/btn_info_personal"
-        android:layout_width="40dp"
-        android:layout_height="wrap_content"
-        android:drawableStart="@drawable/ic_info_24"
-        android:visibility="visible"
-        android:layout_gravity="right" />
 
     <Button
         style="@style/Widget.AppCompat.Button.Borderless"

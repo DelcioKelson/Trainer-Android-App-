@@ -110,7 +110,7 @@ public class FragmentGerarMarcacao extends Fragment {
         btnMarcar = view.findViewById(R.id.btn_marcar);
         btnComentario = view.findViewById(R.id.btn_comentarios);
         ChipGroup chipGroup = view.findViewById(R.id.chip_group_horas_treino);
-        Button btnInfo = view.findViewById(R.id.btn_info_personal);
+
         tvPreco.setText("0.0");
 
         fm = requireActivity().getSupportFragmentManager();
@@ -161,14 +161,7 @@ public class FragmentGerarMarcacao extends Fragment {
 
         });
 
-        btnInfo.setOnClickListener(v -> {
 
-            FragmentTransaction ft = fm.beginTransaction();
-            DialogFragmentInfoPersonal newFragment;
-            newFragment = DialogFragmentInfoPersonal.newInstance(diasIndisponiveis, disponivel);
-            newFragment.show(ft, "dialog");
-
-        });
 
         btnMarcar.setOnClickListener(v -> gerarDetalhesMarcacao());
 
@@ -181,7 +174,6 @@ public class FragmentGerarMarcacao extends Fragment {
         etHora.setOnClickListener(v -> {
             DialogFragment newFragment = new TimePickerFragment(etHora);
             newFragment.show(fm, "timePicker");
-            newFragment.show(fm, "timePicker");
         });
 
 
@@ -189,8 +181,6 @@ public class FragmentGerarMarcacao extends Fragment {
             DialogFragment newFragment = new DatePickerFragment(etDia, diasIndisponiveis, nomePersonal);
             newFragment.show(fm, "datePicker");
         });
-
-        Log.i("PERSONAL", "imagebaytes");
 
         return view;
     }

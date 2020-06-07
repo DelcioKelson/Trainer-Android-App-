@@ -6,12 +6,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.bumptech.glide.Glide;
@@ -46,6 +48,9 @@ public class FragmentPersoanlPerfil extends Fragment {
     private int pos;
     private Map<String, Object> personal;
     private boolean isFavoritoList = false;
+    private String diasIndisponiveis;
+    private String disponivel;
+
 
 
     private int via;
@@ -84,6 +89,8 @@ public class FragmentPersoanlPerfil extends Fragment {
                 imageBytes = (byte[]) personal.get("imageBytes");
                 nomePersonal = (String) personal.get("nome");
                 ratingText = (String) personal.get("rating");
+                diasIndisponiveis = (String) personal.get("diasIndisponiveis");
+                disponivel = (String) personal.get("disponivel");
 
             }
 
@@ -169,6 +176,19 @@ public class FragmentPersoanlPerfil extends Fragment {
         bundle.putBoolean("favorito", isFavoritoList);
         bundle.putInt("posPersonal", pos);
         NavHostFragment.findNavController(fragment).setGraph(R.navigation.nav_graph_gerar_preco_comentarios, bundle);
+
+
+        Button btnInfo = view.findViewById(R.id.btn_info_personal);
+
+        btnInfo.setVisibility(View.VISIBLE);
+        btnInfo.setOnClickListener(v -> {
+
+            FragmentTransaction ft = requireActivity().getSupportFragmentManager().beginTransaction();
+            DialogFragmentInfoPersonal newFragment;
+            newFragment = DialogFragmentInfoPersonal.newInstance(diasIndisponiveis, disponivel);
+            newFragment.show(ft, "dialog");
+
+        });
         if (via == 2) {
 
             try {

@@ -41,8 +41,8 @@
     <fragment
         android:id="@+id/personalsFragment"
         android:name="pmd.di.ubi.pt.projectofinal.FragmentTreinadores"
-        tools:layout="@layout/recyclerview_layout"
-        android:label="Personal Trainers">
+        android:label="PTs"
+        tools:layout="@layout/recyclerview_layout">
         <action
             android:id="@+id/action_personalsFragment_to_imageHelp"
             app:destination="@id/imageHelp" />
