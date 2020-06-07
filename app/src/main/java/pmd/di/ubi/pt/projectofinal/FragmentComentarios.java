@@ -1,14 +1,6 @@
 package pmd.di.ubi.pt.projectofinal;
 
 import android.os.Bundle;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +8,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RatingBar;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -105,9 +103,9 @@ public class FragmentComentarios extends Fragment {
             uidPersonal = user.getUid();
             btnVoltar.setVisibility(View.GONE);
         }else {
-            marcacoesRef.whereEqualTo("uidUsuario",user.getUid())
-                    .whereEqualTo("estado","terminada").get().addOnCompleteListener(task -> {
-                if (task.isSuccessful() && task.getResult()!=null && task.getResult().size()>0){
+            marcacoesRef.whereEqualTo("uidUsuario", user.getUid())
+                    .whereEqualTo("estado", "terminada").get().addOnSuccessListener(task -> {
+                if (task.size() > 0) {
                     btnComentar.setVisibility(View.VISIBLE);
                     btnComentar.setOnClickListener(v -> {
                         criarDialogoComentario();
@@ -168,33 +166,31 @@ public class FragmentComentarios extends Fragment {
         }).setNegativeButton("Cancelar", (dialog, whichButton) -> { }).show();
     }
 
-    public void intComentarios(){
-        Log.i("FragmentoComentario",""+uidPersonal);
+    public void intComentarios() {
+        Log.i("FragmentoComentario", "" + uidPersonal);
 
 
-        comentariosRef.whereEqualTo("uidPersonal",uidPersonal).get().addOnCompleteListener(task12 -> {
-            if (task12.isSuccessful()&& task12.getResult()!=null){
-                soma=0.0f;
-                numeroComentarios = task12.getResult().size();
-                indice =0;
-                int indiceAux = 0;
-                for (DocumentSnapshot documentSnapshot : task12.getResult()){
-                    comentariosList.add(documentSnapshot.getData());
+        comentariosRef.whereEqualTo("uidPersonal", uidPersonal).get().addOnSuccessListener(task12 -> {
+            soma = 0.0f;
+            numeroComentarios = task12.size();
+            indice = 0;
+            int indiceAux = 0;
+            for (DocumentSnapshot documentSnapshot : task12) {
+                comentariosList.add(documentSnapshot.getData());
 
-                    soma = Float.parseFloat((String) documentSnapshot.get("ratingComentario")) + soma;
-                    if(documentSnapshot.get("uidUsuario").equals(user.getUid())){
-                        document=documentSnapshot;
-                        indice =indiceAux;
-                    }
-                    indiceAux =indiceAux+ 1;
+                soma = Float.parseFloat((String) documentSnapshot.get("ratingComentario")) + soma;
+                if (documentSnapshot.get("uidUsuario").equals(user.getUid())) {
+                    document = documentSnapshot;
+                    indice = indiceAux;
                 }
-
-                Log.i("FragmentoComentario",comentariosList.toString());
-
-
-                adapterComentario = new AdapterComentario(getActivity(), comentariosList);
-                recyclerView.setAdapter(adapterComentario);
+                indiceAux = indiceAux + 1;
             }
+
+            Log.i("FragmentoComentario", comentariosList.toString());
+
+
+            adapterComentario = new AdapterComentario(getActivity(), comentariosList);
+            recyclerView.setAdapter(adapterComentario);
         });
     }
 

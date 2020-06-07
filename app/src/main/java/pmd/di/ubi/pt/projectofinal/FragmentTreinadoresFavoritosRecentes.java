@@ -63,20 +63,16 @@ public class FragmentTreinadoresFavoritosRecentes extends Fragment {
     private void initPersonalListFavorito() {
 
         FirebaseFirestore.getInstance().collection("pessoas").
-                whereEqualTo("tipoConta", "personal").whereEqualTo("favorito." + user.getUid(), true).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful() && task.getResult() != null) {
-                for (DocumentSnapshot document : task.getResult()) {
-                    if (document != null) {
-                        personalListFavorito.add(document.getData());
-                        Log.d("personalAux", document.toString());
-                    }
+                whereEqualTo("tipoConta", "personal").whereEqualTo("favorito." + user.getUid(), true).get().addOnSuccessListener(task -> {
+            for (DocumentSnapshot document : task) {
+                if (document != null) {
+                    personalListFavorito.add(document.getData());
+                    Log.d("personalAux", document.toString());
                 }
-                Main.sharedDataModel.setPersonalListFavorito(personalListFavorito);
-                adapterPersonalFavoritosRecentes = new AdapterPersonalFavoritosRecentes(getActivity(), personalListFavorito,true);
-                recyclerView.setAdapter(adapterPersonalFavoritosRecentes);
-            } else {
-                Log.d("FirebaseFirestore", "Error getting documents: ", task.getException());
             }
+            Main.sharedDataModel.setPersonalListFavorito(personalListFavorito);
+            adapterPersonalFavoritosRecentes = new AdapterPersonalFavoritosRecentes(getActivity(), personalListFavorito, true);
+            recyclerView.setAdapter(adapterPersonalFavoritosRecentes);
         });
 
     }
@@ -85,46 +81,37 @@ public class FragmentTreinadoresFavoritosRecentes extends Fragment {
 
         FirebaseFirestore.getInstance().collection("marcacoes").
                 whereEqualTo("uidUsuario", user.getUid()).get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && task.getResult() != null) {
-                        String id ="";
-                        int i = 0;
-                        for(DocumentSnapshot documentSnapshot: task.getResult().getDocuments()){
-                            id = documentSnapshot.getString("uidPersonal");
-                            if (i==10){
-                                break;
-                            }
-                            if(!idsPersonais.contains(id)){
-                                idsPersonais.add(id);
-                                i++;
-                            }
-
-                         }
-
-                        Log.d("idsPersonais", task.getResult().size()+"");
-
+                .addOnSuccessListener(task -> {
+                    String id = "";
+                    int i = 0;
+                    for (DocumentSnapshot documentSnapshot : task.getDocuments()) {
+                        id = documentSnapshot.getString("uidPersonal");
+                        if (i == 10) {
+                            break;
+                        }
+                        if (!idsPersonais.contains(id)) {
+                            idsPersonais.add(id);
+                            i++;
+                        }
+                    }
 
                         try {
                             FirebaseFirestore.getInstance().collection("pessoas").
-                                        whereEqualTo("tipoConta", "personal").get().addOnCompleteListener(task1 -> {
-                                if (task.isSuccessful() && task1.getResult() != null) {
-                                    for (DocumentSnapshot document : task1.getResult()) {
-                                        if (document != null && idsPersonais.contains(document.getId())) {
-                                            personalListRecente.add(document.getData());
-                                            Log.d("personalAux1", document.toString());
-                                        }
+                                    whereEqualTo("tipoConta", "personal").get().addOnSuccessListener(task1 -> {
+                                for (DocumentSnapshot document : task1) {
+                                    if (document != null && idsPersonais.contains(document.getId())) {
+                                        personalListRecente.add(document.getData());
+                                        Log.d("personalAux1", document.toString());
                                     }
-                                    Main.sharedDataModel.addPersonalList(personalListRecente);
-                                    adapterPersonalFavoritosRecentes = new AdapterPersonalFavoritosRecentes(getActivity(), personalListRecente,false);
-                                    recyclerView.setAdapter(adapterPersonalFavoritosRecentes);
-                                } else {
-                                    Log.d("FirebaseFirestore", "Error getting documents: ", task.getException());
                                 }
+                                Main.sharedDataModel.addPersonalList(personalListRecente);
+                                adapterPersonalFavoritosRecentes = new AdapterPersonalFavoritosRecentes(getActivity(), personalListRecente, false);
+                                recyclerView.setAdapter(adapterPersonalFavoritosRecentes);
+
                             });
                         } catch (Exception e) {
-
                         }
-                    }
+
                 });
     }
 }

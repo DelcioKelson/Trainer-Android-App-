@@ -1,15 +1,14 @@
 package pmd.di.ubi.pt.projectofinal;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -44,23 +43,18 @@ public class FragmentListaGyms extends Fragment {
         gymList = new ArrayList<>();
 
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.my_recyclerview);
-        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(),1));
+        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1));
 
 
         adapterGym = new AdapterGym(getActivity(), gymList);
         recyclerView.setAdapter(adapterGym);
 
-        FirebaseFirestore.getInstance().collection("gyms").get().addOnCompleteListener(task -> {
-            if (task.isSuccessful() && task.getResult()!=null) {
-                for (QueryDocumentSnapshot document : task.getResult()) {
-                    gymList.add(document.getData());
-                    Log.d("FirebaseFirestore", document.getId() + " => " + gymList);
-                }
-                adapterGym.notifyDataSetChanged();
+        FirebaseFirestore.getInstance().collection("gyms").get().addOnSuccessListener(task -> {
+            for (QueryDocumentSnapshot document : task) {
+                gymList.add(document.getData());
+                Log.d("FirebaseFirestore", document.getId() + " => " + gymList);
             }
-            else {
-                Log.d("FirebaseFirestore", "Error getting documents: ", task.getException());
-            }
+            adapterGym.notifyDataSetChanged();
         });
         return view;
 

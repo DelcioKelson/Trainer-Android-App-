@@ -13,7 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,9 +25,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;
@@ -110,10 +109,10 @@ public class FragmentMarcacoes extends Fragment implements  AdapterMarcacao.OnRe
     public void initMarcacoes() {
         String auxTipoConta = isUser ? "uidUsuario" : "uidPersonal";
         FirebaseFirestore.getInstance().collection("marcacoes").whereEqualTo(auxTipoConta, user.getUid())
-                .get().addOnCompleteListener(task -> {
-            QuerySnapshot documentSnapshots = task.getResult();
-            if (documentSnapshots != null) {
-                for (DocumentSnapshot document : documentSnapshots) {
+                .get().addOnSuccessListener(queryDocumentSnapshots -> {
+
+            if (queryDocumentSnapshots != null) {
+                for (DocumentSnapshot document : queryDocumentSnapshots) {
                     if (document != null) {
                         String marcacaoEstado = (String) document.get("estado");
 
@@ -134,6 +133,8 @@ public class FragmentMarcacoes extends Fragment implements  AdapterMarcacao.OnRe
                 adapterMarcacao.notifyDataSetChanged();
             }
         });
+
+
     }
 
     private void scrollToPosition() {

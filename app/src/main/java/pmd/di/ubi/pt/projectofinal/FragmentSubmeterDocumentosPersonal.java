@@ -63,23 +63,17 @@ public class FragmentSubmeterDocumentosPersonal extends Fragment implements View
         personalRef =  FirebaseFirestore.getInstance().collection("pessoas").
                 document(user.getUid());
 
-
         verificarSubimssao();
-
-
         btnSub.setOnClickListener(v -> {
 
             try {
                 if(curriculoUri!=null && documentsUri !=null){
-
                     final StorageReference ref = FirebaseStorage.getInstance().getReference("documents/"+user.getUid());
                     ref.child("curriculo").putFile(curriculoUri);
                     ref.child("id").putFile(documentsUri);
                     personalRef.update("submeteu",true);
                     criarDialogSub();
-
                 }
-
             }catch (Exception e){
 
             }
@@ -155,29 +149,22 @@ public class FragmentSubmeterDocumentosPersonal extends Fragment implements View
 
         }
         startActivityForResult(intent, resquest_code_aux);
-
-
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data){
         super.onActivityResult(requestCode, resultCode, data);
-
-
             if (data != null) {
                 Uri file = data.getData();
                 Log.i("onActivityResult",""+file);
 
                 if (requestCode==PICK_ID_REQUEST_CODE) {
-
                     documentsUri = file;
                     btnID.setCompoundDrawablesWithIntrinsicBounds(null,null,requireActivity().getDrawable(R.drawable.ic_check_white),null);
                 }else {
                     curriculoUri = file;
-                     btnCurriculo.setCompoundDrawablesWithIntrinsicBounds(null,null,requireActivity().getDrawable(R.drawable.ic_check_white),null);
+                    btnCurriculo.setCompoundDrawablesWithIntrinsicBounds(null,null,requireActivity().getDrawable(R.drawable.ic_check_white),null);
                 }
-
-
         }
     }
 
@@ -188,9 +175,7 @@ public class FragmentSubmeterDocumentosPersonal extends Fragment implements View
         .setMessage("A sua submissao está a ser analizada")
         .setPositiveButton("Actualizar", (dialog, whichButton) -> {
             verificarSubimssao();
-
         }).show();
-
     }
 
     private void verificarSubimssao() {
@@ -214,7 +199,6 @@ public class FragmentSubmeterDocumentosPersonal extends Fragment implements View
                                     .setMessage("A sua submissao foi reprovada, pode submeter novamente")
                                     .setPositiveButton("OK", (dialog, whichButton) -> {
                                     }).show();
-
                         }else {
 
                             if((Boolean) personal.get("submeteu")){
@@ -222,12 +206,7 @@ public class FragmentSubmeterDocumentosPersonal extends Fragment implements View
                             }
                         }
                     }catch (Exception e){ }
-
-
             }
-
         });
-
     }
-
 }

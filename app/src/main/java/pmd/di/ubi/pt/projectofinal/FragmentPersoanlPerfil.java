@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
@@ -20,13 +19,10 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -136,16 +132,11 @@ public class FragmentPersoanlPerfil extends Fragment {
                 }
             });
 
-            FirebaseFirestore.getInstance().collection("pessoas").document(user.getUid()).collection("notificacoes").whereEqualTo("vista", false).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if (task.isSuccessful() && task.getResult() != null && task.getResult().size() > 0) {
+            FirebaseFirestore.getInstance().collection("pessoas").document(user.getUid()).collection("notificacoes").whereEqualTo("vista", false).get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
                         Main.badge.setVisible(true);
-                        Main.badge.setNumber(task.getResult().size());
-                        Log.i("notificacoes", task.getResult().size() + "");
-                    }
-                }
-            });
+                        Main.badge.setNumber(queryDocumentSnapshots.size());
+                    });
 
             Map<String, Object> personal = Main.sharedDataModel.getUsuarioAtual().getValue();
             String nometxt = (String) personal.get("nome");

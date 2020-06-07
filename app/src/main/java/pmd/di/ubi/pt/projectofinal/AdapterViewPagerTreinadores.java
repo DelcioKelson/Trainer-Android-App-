@@ -14,18 +14,11 @@ public class AdapterViewPagerTreinadores extends FragmentStatePagerAdapter {
 
     private ArrayList<Map<String,Object>> personalList;
     public AdapterViewPagerTreinadores(Fragment fragment) {
-
-        // Note: Initialize with the child fragment manager.
         super(fragment.getChildFragmentManager(), BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
-
         try {
-
             personalList = Main.sharedDataModel.getPersonalList().getValue();
         }catch (Exception e){
-
         }
-
-
     }
 
     @Override

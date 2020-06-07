@@ -436,13 +436,10 @@ public class FragmentRegistroCliente2 extends Fragment {
                 FirebaseFirestore.getInstance().collection("pessoas")
                         .document(uid)
                         .set(usuarioData)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Intent intent = new Intent(getActivity(), Main.class);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                startActivity(intent);
-                            }
+                        .addOnSuccessListener(aVoid -> {
+                            Intent intent = new Intent(getActivity(), Main.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
                         });
             });
         } catch (Exception e) {

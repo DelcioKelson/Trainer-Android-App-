@@ -36,9 +36,7 @@ public class FragmentSelecionarTipoConta extends Fragment {
         cliente = view.findViewById(R.id.op_cliente);
         personal = view.findViewById(R.id.op_personal);
 
-
         cliente.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.action_fragmentSelecionarTipoConta_to_fragmentRegistro1));
-
 
         personal.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.action_fragmentSelecionarTipoConta_to_fragmentRegistroPersonal1));
 

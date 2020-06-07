@@ -18,9 +18,6 @@ public class DialogFragmentSimples extends DialogFragment {
 
     private String marcacaoID,toastMessage,acao ,uidUsuario, uidPersonal;
 
-
-
-
     static DialogFragmentSimples newInstance(String acao, String marcacaoId, String uidUsuario, String uidPersonal) {
         DialogFragmentSimples f = new DialogFragmentSimples();
 

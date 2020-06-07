@@ -5,12 +5,6 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,9 +16,10 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
+
 import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipDrawable;
 import com.google.android.material.chip.ChipGroup;
@@ -33,7 +28,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -91,6 +85,8 @@ public class FragmentGymPerfil extends Fragment {
 
         etDia = view.findViewById(R.id.et_dia);
         etHora = view.findViewById(R.id.et_hora);
+        tvPreco.setText("0.0");
+
 
         horasList = Arrays.asList("00:30", "01:00", "01:30", "02:00", "02:30");
 
@@ -116,19 +112,17 @@ public class FragmentGymPerfil extends Fragment {
             }
         });
 
-        FirebaseFirestore.getInstance().collection("gyms").document(nomeGym).get().addOnCompleteListener(task -> {
+        FirebaseFirestore.getInstance().collection("gyms").document(nomeGym).get().addOnSuccessListener(task -> {
 
-            if(task.isSuccessful() && task.getResult()!=null){
-                preco = Float.parseFloat(Objects.requireNonNull((String) task.getResult().get("preco")));
-                endereço = task.getResult().getString("endereço");
+            preco = Float.parseFloat(Objects.requireNonNull((String) task.get("preco")));
+            endereço = task.getString("endereço");
 
-
-                tvEndereço.setText("endereço: "+endereço);
-                Log.i("endereço",endereço);
-                chipGroup.setOnCheckedChangeListener((group, checkedId) -> {
-                    Chip chip = view.findViewById(checkedId);
-                    if (chip != null) {
-                        tempoDemora = chip.getText().toString();
+            tvEndereço.setText("endereço: " + endereço);
+            Log.i("endereço", endereço);
+            chipGroup.setOnCheckedChangeListener((group, checkedId) -> {
+                Chip chip = view.findViewById(checkedId);
+                if (chip != null) {
+                    tempoDemora = chip.getText().toString();
                         switch (tempoDemora) {
                             case "00:30":
                                 tvPreco.setText("" + (preco * 0.5) + "€");
@@ -150,18 +144,10 @@ public class FragmentGymPerfil extends Fragment {
                         }
                     }
                     btnMarcar.setOnClickListener(v -> gerarDetalhesMarcacao());
-
-
                 });
 
-            }
 
         });
-
-
-
-        tvPreco.setText("0.0");
-
 
         etHora.setOnClickListener(v -> {
             DialogFragment newFragment = new TimePickerFragment(etHora);

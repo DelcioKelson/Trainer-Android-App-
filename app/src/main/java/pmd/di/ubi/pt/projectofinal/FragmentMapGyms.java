@@ -121,22 +121,18 @@ public class FragmentMapGyms extends Fragment  implements OnMapReadyCallback, Go
     public void onMapReady(GoogleMap map) {
         this.map = map;
 
-        FirebaseFirestore.getInstance().collection("gyms").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful() && task.getResult()!=null){
-                    for(DocumentSnapshot gym:task.getResult()){
+        FirebaseFirestore.getInstance().collection("gyms").get().addOnCompleteListener(task -> {
+            if(task.isSuccessful() && task.getResult()!=null){
+                for(DocumentSnapshot gym:task.getResult()){
 
-                        Marker gymMark = map.addMarker(new MarkerOptions().position(new LatLng((Double) gym.get("latitude"), (Double) gym.get("longitude"))).title(gym.getString("nome")));
-                        gymMark.showInfoWindow();
-                        gymMark.setTag(0);
-                    }
-
-                    map.setOnMarkerClickListener(FragmentMapGyms.this);
-
+                    Marker gymMark = map.addMarker(new MarkerOptions().position(new LatLng((Double) gym.get("latitude"), (Double) gym.get("longitude"))).title(gym.getString("nome")));
+                    gymMark.showInfoWindow();
+                    gymMark.setTag(0);
                 }
-            }
 
+                map.setOnMarkerClickListener(FragmentMapGyms.this);
+
+            }
         });
         // [END map_current_place_set_info_window_adapter]
 

@@ -35,20 +35,12 @@ public class FragmentViewPagerMarcacoes extends DialogFragment {
 
         Button btnClose = view.findViewById(R.id.btn_close);
 
-        btnClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dismiss();
-            }
-        });
-
+        btnClose.setOnClickListener(v -> dismiss());
 
         TabLayout tabLayout = (TabLayout) viewPager.findViewById(R.id.tab_layout);
         tabLayout.setupWithViewPager(viewPager, true);
 
-
         try {
-
             ArrayList<Map<String, Object>> maps = Main.sharedDataModel.getMarcacoesList().getValue();
                     viewPager.setAdapter(new AdapterViewPagerMarcacoes(FragmentViewPagerMarcacoes.this,maps));
                     viewPager.setPageTransformer(true, new ZoomOutPageTransformer());
@@ -70,13 +62,7 @@ public class FragmentViewPagerMarcacoes extends DialogFragment {
                 }
             });
 
-        }catch (Exception e){
-
-        }
-
-
-
-
+        }catch (Exception ignored){ }
         return view;
     }
 

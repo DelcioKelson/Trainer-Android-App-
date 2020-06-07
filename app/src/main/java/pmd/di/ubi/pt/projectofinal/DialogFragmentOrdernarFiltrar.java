@@ -50,7 +50,7 @@ public class DialogFragmentOrdernarFiltrar extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view =  inflater.inflate(R.layout.dialog_fragment_odernar_filtrar, container, false);
+        View view =  inflater.inflate(R.layout.dialogfragment_odernar_filtrar, container, false);
         RadioGroup opcoes = view.findViewById(R.id.radio_opcoes);
 
         Switch sw1 = view.findViewById(R.id.switch_disponives);
@@ -83,7 +83,7 @@ public class DialogFragmentOrdernarFiltrar extends DialogFragment {
 
         btnDiasDisponives.setOnClickListener(v -> {
             DialogFragment newFragment = new DatePickerFragment();
-            newFragment.show(getActivity().getSupportFragmentManager(), "datePicker");
+            newFragment.show(requireActivity().getSupportFragmentManager(), "datePicker");
         });
 
         sw2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -119,7 +119,7 @@ public class DialogFragmentOrdernarFiltrar extends DialogFragment {
             int month = c.get(Calendar.MONTH);
             int day = c.get(Calendar.DAY_OF_MONTH);
             // criar uma nova instancia do DatePickerDialog e retornar
-            return new DatePickerDialog(getActivity(), this, year, month, day);
+            return new DatePickerDialog(requireActivity(), this, year, month, day);
         }
 
         @SuppressLint("SetTextI18n")

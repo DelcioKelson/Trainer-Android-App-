@@ -17,6 +17,8 @@ import android.widget.Toast;
 
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.Navigation;
 
 import com.google.android.material.chip.Chip;
@@ -50,7 +52,9 @@ public class FragmentGerarMarcacao extends Fragment {
     private String rating;
     private TextInputEditText etDia, etHora;
     private String diasIndisponiveis;
+    private String disponivel;
 
+    FragmentManager fm;
     private int posPersonal;
     private Map<String, Object> personal;
     CollectionReference marcacoesRef = FirebaseFirestore.getInstance().collection("marcacoes");
@@ -77,10 +81,10 @@ public class FragmentGerarMarcacao extends Fragment {
         if (getArguments() != null) {
             posPersonal = getArguments().getInt("posPersonal");
 
-            if(getArguments().getBoolean("favorito")){
+            if (getArguments().getBoolean("favorito")) {
                 personal = Main.sharedDataModel.getPersonalListFavorito().getValue().get(posPersonal);
 
-            }else {
+            } else {
                 personal = Main.sharedDataModel.getPersonalList().getValue().get(posPersonal);
                 Log.i("PERSONAL", personal.toString());
             }
@@ -91,6 +95,7 @@ public class FragmentGerarMarcacao extends Fragment {
             rating = (String) personal.get("rating");
             diasIndisponiveis = (String) personal.get("diasIndisponiveis");
             nomePersonal = (String) personal.get("nome");
+            disponivel = (String) personal.get("disponivel");
 
 
         }
@@ -105,6 +110,11 @@ public class FragmentGerarMarcacao extends Fragment {
         btnMarcar = view.findViewById(R.id.btn_marcar);
         btnComentario = view.findViewById(R.id.btn_comentarios);
         ChipGroup chipGroup = view.findViewById(R.id.chip_group_horas_treino);
+        Button btnInfo = view.findViewById(R.id.btn_info_personal);
+        tvPreco.setText("0.0");
+
+        fm = requireActivity().getSupportFragmentManager();
+
 
         etDia = view.findViewById(R.id.et_dia);
         etHora = view.findViewById(R.id.et_hora);
@@ -117,8 +127,8 @@ public class FragmentGerarMarcacao extends Fragment {
 
 
         for (String h : horasList) {
-            Chip chip = new Chip(getContext());
-            ChipDrawable chipDrawable = ChipDrawable.createFromAttributes(getContext(), null, 0, R.style.Widget_MaterialComponents_Chip_Filter);
+            Chip chip = new Chip(requireContext());
+            ChipDrawable chipDrawable = ChipDrawable.createFromAttributes(requireContext(), null, 0, R.style.Widget_MaterialComponents_Chip_Filter);
             chip.setChipDrawable(chipDrawable);
             chip.setText(h);
             chipGroup.addView(chip);
@@ -151,13 +161,16 @@ public class FragmentGerarMarcacao extends Fragment {
 
         });
 
+        btnInfo.setOnClickListener(v -> {
 
-        tvPreco.setText("0.0");
+            FragmentTransaction ft = fm.beginTransaction();
+            DialogFragmentInfoPersonal newFragment;
+            newFragment = DialogFragmentInfoPersonal.newInstance(diasIndisponiveis, disponivel);
+            newFragment.show(ft, "dialog");
 
+        });
 
         btnMarcar.setOnClickListener(v -> gerarDetalhesMarcacao());
-
-
 
         btnComentario.setOnClickListener(v -> {
             Bundle bundle = new Bundle();
@@ -167,13 +180,14 @@ public class FragmentGerarMarcacao extends Fragment {
 
         etHora.setOnClickListener(v -> {
             DialogFragment newFragment = new TimePickerFragment(etHora);
-            newFragment.show(getActivity().getSupportFragmentManager(), "timePicker");
+            newFragment.show(fm, "timePicker");
+            newFragment.show(fm, "timePicker");
         });
 
 
         etDia.setOnClickListener(v -> {
             DialogFragment newFragment = new DatePickerFragment(etDia, diasIndisponiveis, nomePersonal);
-            newFragment.show(getActivity().getSupportFragmentManager(), "datePicker");
+            newFragment.show(fm, "datePicker");
         });
 
         Log.i("PERSONAL", "imagebaytes");
@@ -334,22 +348,22 @@ public class FragmentGerarMarcacao extends Fragment {
                 int atualdia = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
                 int atualMes = Calendar.getInstance().get(Calendar.MONTH);
 
-                if( atualAno > year ) {
+                if (atualAno > year) {
                     Toast.makeText(getActivity(), "Ano inválida", Toast.LENGTH_LONG).show();
                     dia = "";
                 }
 
-                if( atualAno == year && atualMes >month){
+                if (atualAno == year && atualMes > month) {
                     Toast.makeText(getActivity(), "mês inválido", Toast.LENGTH_LONG).show();
                     dia = "";
                 }
 
-                if( atualAno == year && atualMes ==month && atualdia>day){
+                if (atualAno == year && atualMes == month && atualdia > day) {
                     Toast.makeText(getActivity(), "dia inválido", Toast.LENGTH_LONG).show();
                     dia = "";
-                };
+                }
 
-                    etDia.setText(dia);
+                etDia.setText(dia);
 
 
             }

@@ -331,11 +331,18 @@ public class FragmentDetalhesMarcacao extends DialogFragment {
 
     void inicializarDados() {
 
-        pessoasRef.document(isUser ? (String) marcacao.get("uidPersonal") : (String) marcacao.get("uidUsuario"))
-                .get().addOnCompleteListener(task -> {
-            if (task.isSuccessful() && task.getResult() != null) {
 
-                Map<String, Object> pessoa = task.getResult().getData();
+        String path = isUser ? (String) marcacao.get("uidPersonal") : (String) marcacao.get("uidUsuario");
+
+        if(path==null){
+            path = (String) marcacao.get("nomeGym");
+        }
+
+        try {
+            pessoasRef.document(isUser ? (String) marcacao.get("uidPersonal") : (String) marcacao.get("uidUsuario"))
+                    .get().addOnSuccessListener(task -> {
+
+                Map<String, Object> pessoa = task.getData();
 
                 if (isUser) {
                     tvNome.setText("Personal Trainer: " + pessoa.get("nome"));
@@ -359,7 +366,10 @@ public class FragmentDetalhesMarcacao extends DialogFragment {
                         tvSituacoes.setText(s);
                     }
                 }
-            }
-        });
+
+            });
+        }catch (Exception ignored){
+
+        }
     }
 }

@@ -2,6 +2,12 @@ package pmd.di.ubi.pt.projectofinal;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -12,14 +18,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.google.android.material.transition.Hold;
 import com.google.firebase.auth.FirebaseUser;
@@ -129,24 +127,21 @@ public class FragmentTreinadores extends Fragment implements DialogFragmentOrder
 
     private void initPersonalList(){
 
-        personalList = new ArrayList<Map<String, Object>>();
+        personalList = new ArrayList<>();
         FirebaseFirestore.getInstance().collection("pessoas").
-                whereEqualTo("tipoConta","personal").
-                whereEqualTo("modalidades."+modalidade,true).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful() && task.getResult()!=null) {
-                for (DocumentSnapshot document : task.getResult()) {
-                    if(document!=null){
-                        personalList.add(document.getData());
-                    }
+                whereEqualTo("tipoConta", "personal").
+                whereEqualTo("modalidades." + modalidade, true).get().addOnSuccessListener(task -> {
+            for (DocumentSnapshot document : task) {
+                if (document != null) {
+                    personalList.add(document.getData());
                 }
-                Main.sharedDataModel.addPersonalList(personalList);
-                personalListOriginal = new ArrayList<> (personalList);
-                adapterPersonalTreiners = new AdapterPersonalTreiners(this, personalList);
-                recyclerView.setAdapter(adapterPersonalTreiners);
             }
-            else {
-                Log.d("FirebaseFirestore", "Error getting documents: ", task.getException());
-            }
+            Main.sharedDataModel.addPersonalList(personalList);
+            personalListOriginal = new ArrayList<>(personalList);
+            adapterPersonalTreiners = new AdapterPersonalTreiners(this, personalList);
+            recyclerView.setAdapter(adapterPersonalTreiners);
+
+
         });
     }
 

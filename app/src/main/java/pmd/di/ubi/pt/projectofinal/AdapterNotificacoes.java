@@ -126,22 +126,19 @@ public class AdapterNotificacoes extends RecyclerView.Adapter<AdapterNotificacoe
             }
 
 
-            linearLayout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    FragmentTransaction ft = fragment.getFragmentManager().beginTransaction();
-                    Fragment prev =fragment.getFragmentManager().findFragmentByTag("dialog");
-                    DialogFragment newFragment;
-                    if (prev != null) {
-                        ft.remove(prev);
-                    }
-                    ft.addToBackStack(null);
-                    Bundle b = new Bundle();
-                    b.putString("marcacaoId",marcacaoId);
-                    newFragment = FragmentDetalhesMarcacao.newInstance(b);
-                    newFragment.show(ft, "dialog");
-
+            linearLayout.setOnClickListener(v -> {
+                FragmentTransaction ft = fragment.getFragmentManager().beginTransaction();
+                Fragment prev =fragment.getFragmentManager().findFragmentByTag("dialog");
+                DialogFragment newFragment;
+                if (prev != null) {
+                    ft.remove(prev);
                 }
+                ft.addToBackStack(null);
+                Bundle b = new Bundle();
+                b.putString("marcacaoId",marcacaoId);
+                newFragment = FragmentDetalhesMarcacao.newInstance(b);
+                newFragment.show(ft, "dialog");
+
             });
 
             linearLayout.setOnLongClickListener(new View.OnLongClickListener() {

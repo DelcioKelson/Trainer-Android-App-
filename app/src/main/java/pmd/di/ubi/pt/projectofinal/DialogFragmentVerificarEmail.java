@@ -45,19 +45,17 @@ public class DialogFragmentVerificarEmail extends DialogFragment {
 
         final TextView tvInfo = view.findViewById(R.id.tv_confirmacao_info);
         user.sendEmailVerification()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
+                .addOnSuccessListener(task -> {
                      btnConfirmar.setVisibility(View.VISIBLE);
                      btnReenviar.setVisibility(View.VISIBLE);
-                    }
+
                 });
 
         btnReenviar.setOnClickListener(v ->
-                user.sendEmailVerification().addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
+                user.sendEmailVerification().addOnSuccessListener(task -> {
                         Snackbar.make(view,"Foi enviado um novo email de verificaçao",Snackbar.LENGTH_LONG).show();
 
-                    }
+
                 }));
 
         btnConfirmar.setOnClickListener(v ->
@@ -73,15 +71,12 @@ public class DialogFragmentVerificarEmail extends DialogFragment {
                 }));
 
 
-        btnSair.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FirebaseAuth.getInstance().signOut();
-                FirebaseMessaging.getInstance().unsubscribeFromTopic(user.getUid());
-                Intent intent = new Intent(getActivity(), Main.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-            }
+        btnSair.setOnClickListener(v -> {
+            FirebaseAuth.getInstance().signOut();
+            FirebaseMessaging.getInstance().unsubscribeFromTopic(user.getUid());
+            Intent intent = new Intent(getActivity(), Main.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
         });
         return view;
     }

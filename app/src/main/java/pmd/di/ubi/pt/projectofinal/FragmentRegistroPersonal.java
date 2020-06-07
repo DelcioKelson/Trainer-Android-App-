@@ -58,16 +58,12 @@ public class FragmentRegistroPersonal extends Fragment {
     private ProgressBar progressBar;
     private boolean isFotoValida = true;
 
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
         View view = inflater.inflate(R.layout.fragment_registro_personal1, container, false);
-
-
 
         nomeText =  view.findViewById(R.id.edit_usarname_personal);
         emailText =  view.findViewById(R.id.edit_email_personal);
@@ -78,9 +74,6 @@ public class FragmentRegistroPersonal extends Fragment {
         imgVfoto =  view.findViewById(R.id.img_foto_personal);
         numeroTelefone = view.findViewById(R.id.edit_telefone_personal);
         progressBar = (ProgressBar) view.findViewById(R.id.progressbar_registro_personal);
-
-
-
         emailLayout = view.findViewById(R.id.layout_email);
         nomeLayout = view.findViewById(R.id.layout_nome);
         passwordLayout = view.findViewById(R.id.layout_pass);
@@ -99,7 +92,6 @@ public class FragmentRegistroPersonal extends Fragment {
 
         return view;
     }
-
 
 
     @Override
@@ -268,10 +260,6 @@ public class FragmentRegistroPersonal extends Fragment {
                             }
                         });
             });
-        }catch (Exception e){
-
-        }
+        }catch (Exception e){ }
     }
-
-
 }

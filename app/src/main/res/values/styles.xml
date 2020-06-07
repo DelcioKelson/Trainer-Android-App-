@@ -89,5 +89,9 @@
         <item name="cornerSize">40dp</item>
     </style>
 
+    <style name="fullScreanDialogFragmentheme" parent="Theme.AppCompat.Light.DialogWhenLarge">
+        <item name="android:statusBarColor"> @color/black</item>
+        <item name="windowNoTitle">true</item>
+    </style>
 
 </resources>

@@ -20,6 +20,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
@@ -66,33 +67,27 @@ public class FragmentDiasIndisponiveis extends Fragment {
         chipGroup = view.findViewById(R.id.chip_group_dias);
         final Switch swdisponivel = view.findViewById(R.id.switch_disponivel);
 
-        userDocumentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful() && task.getResult()!=null) {
-                    diasFerias = task.getResult().getString("diasIndisponiveis");
-                    if (diasFerias==null){
-                        diasFerias="";
-                    }
-                    disponivel = task.getResult().getString("disponivel");
-                    if (disponivel.equals("sim")){
-                        swdisponivel.setChecked(true);
-                    }else {
-                        swdisponivel.setChecked(false);
-                    }
-                    atualizarChips(getContext());
-                }
+        userDocumentReference.get().addOnSuccessListener(documentSnapshot -> {
+            diasFerias = documentSnapshot.getString("diasIndisponiveis");
+            if (diasFerias==null){
+                diasFerias="";
             }
+            disponivel = documentSnapshot.getString("disponivel");
+            if (disponivel.equals("sim")){
+                swdisponivel.setChecked(true);
+            }else {
+                swdisponivel.setChecked(false);
+            }
+            atualizarChips(getContext());
         });
 
-        swdisponivel.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked){
-                userDocumentReference.update("disponivel","sim");
-            }
-            else {
-                userDocumentReference.update("disponivel","nao");
-            }
-        });
+                swdisponivel.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                    if (isChecked) {
+                        userDocumentReference.update("disponivel", "sim");
+                    } else {
+                        userDocumentReference.update("disponivel", "não");
+                    }
+                });
 
         btnAddDia.setOnClickListener(v -> {
             try {

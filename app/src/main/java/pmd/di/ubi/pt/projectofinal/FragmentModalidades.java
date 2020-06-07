@@ -63,17 +63,13 @@ public class FragmentModalidades extends Fragment {
 
         Log.i("FragmentModalidades",gymNome);
 
-        FirebaseFirestore.getInstance().collection("modalidades").whereEqualTo("gym",gymNome).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful() && task.getResult()!=null) {
-                for (QueryDocumentSnapshot document : task.getResult()) {
+        FirebaseFirestore.getInstance().collection("modalidades").whereEqualTo("gym",gymNome).get().addOnSuccessListener(task -> {
+                for (QueryDocumentSnapshot document : task) {
                     modalidadeList.add(document.getData());
                     Log.d("FirebaseFirestore", document.getId() + " => " + modalidadeList);
                 }
                 adapterModalidades.notifyDataSetChanged();
-            }
-            else {
-                Log.d("FirebaseFirestore", "Error getting documents: ", task.getException());
-            }
+
         });
         return view;
     }

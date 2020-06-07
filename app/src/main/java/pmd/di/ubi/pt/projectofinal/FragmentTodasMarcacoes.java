@@ -19,6 +19,7 @@ import androidx.navigation.Navigation;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.wallet.PaymentsClient;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -65,18 +66,11 @@ public class FragmentTodasMarcacoes extends Fragment implements View.OnClickList
         viewPager.setAdapter(pagerAdapter);
         TabLayout tabLayout = view.findViewById(R.id.tab_layout);
         tabLayout.setupWithViewPager(viewPager);
-        //tabLayout.getTabAt(0).setIcon(R.drawable.ic_time_24dp);
-        //tabLayout.getTabAt(1).setIcon(R.drawable.ic_favorite);
 
-        FirebaseFirestore.getInstance().collection("pessoas").document(user.getUid()).collection("notificacoes").whereEqualTo("vista",false).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful() && task.getResult()!=null && task.getResult().size()>0){
-                    Main.badge.setVisible(true);
-                    Main.badge.setNumber(task.getResult().size());
-                    Log.i("notificacoes",task.getResult().size()+"");
-                }
-            }
+        FirebaseFirestore.getInstance().collection("pessoas").document(user.getUid()).collection("notificacoes")
+                .whereEqualTo("vista",false).get().addOnSuccessListener(queryDocumentSnapshots -> {
+            Main.badge.setVisible(true);
+            Main.badge.setNumber(queryDocumentSnapshots.size());
         });
 
         if (isUser ) {
@@ -123,29 +117,27 @@ public class FragmentTodasMarcacoes extends Fragment implements View.OnClickList
 
         String auxTipoConta = isUser ? "uidUsuario" : "uidPersonal";
 
-        marcacoesRef.whereEqualTo(auxTipoConta, user.getUid()).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful() && task.getResult() != null) {
-                QuerySnapshot queryDocumentSnapshots = task.getResult();
-                int numeroMarcacaosPedentes = 0;
-                int numeroMarcacaosAceites = 0;
-                int numeroMarcacaosPagas = 0;
-                for (DocumentSnapshot document : queryDocumentSnapshots) {
-                    if (document != null) {
-                        if (document.get("estado").equals("pendente")&&!mudarEstado(document,"cancelada")) {
-                                numeroMarcacaosPedentes = numeroMarcacaosPedentes + 1;
-                        }
-                        if (document.get("estado").equals("aceite") && !mudarEstado(document,"cancelada")) {
-                            numeroMarcacaosAceites = 1 + numeroMarcacaosAceites;
-                        }
-                        if (document.get("estado").equals("paga") && ! mudarEstado(document,"terminada")) {
+        marcacoesRef.whereEqualTo(auxTipoConta, user.getUid()).get().addOnSuccessListener(queryDocumentSnapshots -> {
 
-                            numeroMarcacaosPagas = 1 + numeroMarcacaosPagas;
-                        }
+            int numeroMarcacaosPedentes = 0;
+            int numeroMarcacaosAceites = 0;
+            int numeroMarcacaosPagas = 0;
+            for (DocumentSnapshot document : queryDocumentSnapshots) {
+                if (document != null) {
+                    if (document.get("estado").equals("pendente")&&!mudarEstado(document,"cancelada")) {
+                        numeroMarcacaosPedentes = numeroMarcacaosPedentes + 1;
                     }
-                    tvPendentes.setText("pendentes " + "(" + numeroMarcacaosPedentes + ")");
-                    tvAceites.setText("aceites " + "(" + numeroMarcacaosAceites + ")");
-                    tvPagas.setText("pagas " + "(" + numeroMarcacaosPagas + ")");
+                    if (document.get("estado").equals("aceite") && !mudarEstado(document,"cancelada")) {
+                        numeroMarcacaosAceites = 1 + numeroMarcacaosAceites;
+                    }
+                    if (document.get("estado").equals("paga") && ! mudarEstado(document,"terminada")) {
+
+                        numeroMarcacaosPagas = 1 + numeroMarcacaosPagas;
+                    }
                 }
+                tvPendentes.setText("pendentes " + "(" + numeroMarcacaosPedentes + ")");
+                tvAceites.setText("aceites " + "(" + numeroMarcacaosAceites + ")");
+                tvPagas.setText("pagas " + "(" + numeroMarcacaosPagas + ")");
             }
         });
     }

@@ -2,17 +2,16 @@ package pmd.di.ubi.pt.projectofinal;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.google.android.gms.wallet.AutoResolveHelper;
 import com.google.android.gms.wallet.PaymentDataRequest;
@@ -86,19 +85,16 @@ public class FragmentNotificacoes extends Fragment implements AdapterNotificacoe
         notificacoesList = new ArrayList<>();
 
 
+        notificacoesRef.orderBy("data", Query.Direction.DESCENDING).get().addOnSuccessListener(task -> {
+            for (DocumentSnapshot document : task) {
+                notificacoesList.add(document.getData());
 
-        notificacoesRef.orderBy("data", Query.Direction.DESCENDING).get().addOnCompleteListener(task -> {
-                    if(task.isSuccessful() && task.getResult()!=null){
-                        for (DocumentSnapshot document:task.getResult()){
-                            notificacoesList.add(document.getData());
-
-                        }
-                        Main.badge.setVisible(false);
-                        adapterNotificacoes = new AdapterNotificacoes(this,notificacoesList, user.getUid());
-                        adapterNotificacoes.setOnRequestPaymentListener(this);
-                        recyclerView.setAdapter(adapterNotificacoes);
-                    }
-                });
+            }
+            Main.badge.setVisible(false);
+            adapterNotificacoes = new AdapterNotificacoes(this, notificacoesList, user.getUid());
+            adapterNotificacoes.setOnRequestPaymentListener(this);
+            recyclerView.setAdapter(adapterNotificacoes);
+        });
 
 
         return view;
