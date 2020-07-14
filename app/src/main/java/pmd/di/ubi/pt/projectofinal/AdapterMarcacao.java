@@ -2,7 +2,6 @@ package pmd.di.ubi.pt.projectofinal;
 
 import android.content.Context;
 import android.graphics.Paint;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +16,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.wallet.IsReadyToPayRequest;
 import com.google.android.gms.wallet.PaymentsClient;
@@ -30,14 +28,13 @@ import java.util.Optional;
 
 public class AdapterMarcacao extends RecyclerView.Adapter<AdapterMarcacao.MarcacaoHolder> {
 
+    private static final int LOAD_PAYMENT_DATA_REQUEST_CODE = 991;
+    static OnRequestPaymentListener requestPayment;
     private Context context;
     private ArrayList<Map<String, Object>> marcacaoArrayList;
     private boolean isUser;
     private Fragment fragment;
-    static OnRequestPaymentListener requestPayment;
-
     private PaymentsClient paymentsClient;
-    private static final int LOAD_PAYMENT_DATA_REQUEST_CODE = 991;
 
     AdapterMarcacao(Context context, ArrayList<Map<String, Object>> marcacaoArrayList, boolean isUser, Fragment fragment, PaymentsClient paymentsClient) {
         this.context = context;
@@ -50,11 +47,6 @@ public class AdapterMarcacao extends RecyclerView.Adapter<AdapterMarcacao.Marcac
     public void setOnRequestPaymentListener(OnRequestPaymentListener requestPayment) {
         AdapterMarcacao.requestPayment = requestPayment;
     }
-
-    public interface OnRequestPaymentListener {
-        void request(String price);
-    }
-
 
     @NonNull
     @Override
@@ -81,6 +73,10 @@ public class AdapterMarcacao extends RecyclerView.Adapter<AdapterMarcacao.Marcac
         return marcacaoArrayList.size();
     }
 
+    public interface OnRequestPaymentListener {
+        void request(String price);
+    }
+
     public class MarcacaoHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public MarcacaoHolder(@NonNull View itemView) {
             super(itemView);
@@ -103,9 +99,9 @@ public class AdapterMarcacao extends RecyclerView.Adapter<AdapterMarcacao.Marcac
             Task<Boolean> task = paymentsClient.isReadyToPay(request);
             task.addOnSuccessListener(fragment.requireActivity(),
                     task1 -> {
-                            if (task1) {
-                                mGooglePayButton.setVisibility(View.VISIBLE);
-                            }
+                        if (task1) {
+                            mGooglePayButton.setVisibility(View.VISIBLE);
+                        }
 
                     });
         }

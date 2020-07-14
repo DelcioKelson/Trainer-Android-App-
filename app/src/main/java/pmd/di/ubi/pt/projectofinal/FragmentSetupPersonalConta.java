@@ -5,11 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +12,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -47,21 +46,19 @@ import java.util.Map;
  */
 public class FragmentSetupPersonalConta extends Fragment {
 
-    public FragmentSetupPersonalConta() {
-        // Required empty public constructor
-    }
-
-     private ChipGroup chipGroup;
+    private ChipGroup chipGroup;
     private Button btnSetup;
-    private Map<String,Object> personal;
-    private  Map<String,Object> modalidades;
+    private Map<String, Object> personal;
+    private Map<String, Object> modalidades;
     private TextInputEditText textInputEditText;
     private DocumentReference personalRef;
     private float preco;
     private Uri fSelecteduri;
     private ImageView imgVfoto;
     private Button btnFoto;
-
+    public FragmentSetupPersonalConta() {
+        // Required empty public constructor
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -72,21 +69,20 @@ public class FragmentSetupPersonalConta extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view =  inflater.inflate(R.layout.fragment_setup_personal_conta, container, false);
+        View view = inflater.inflate(R.layout.fragment_setup_personal_conta, container, false);
 
-        FirebaseUser user= FirebaseAuth.getInstance().getCurrentUser();
-         personalRef = FirebaseFirestore.getInstance().collection("pessoas").document(user.getUid());
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        personalRef = FirebaseFirestore.getInstance().collection("pessoas").document(user.getUid());
 
         personal = new HashMap<>();
         modalidades = new HashMap<>();
-
 
 
         personalRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
-                if(task.isSuccessful() && task.getResult()!=null){
+                if (task.isSuccessful() && task.getResult() != null) {
                     personal = task.getResult().getData();
                 }
             }
@@ -95,65 +91,64 @@ public class FragmentSetupPersonalConta extends Fragment {
         imgVfoto = view.findViewById(R.id.img_foto_setup);
         chipGroup = view.findViewById(R.id.chip_group_modalidade);
         btnSetup = view.findViewById(R.id.btn_setup);
-        textInputEditText  = view.findViewById(R.id.edit_preco);
+        textInputEditText = view.findViewById(R.id.edit_preco);
         btnFoto = view.findViewById(R.id.btn_selected_foto_setup);
-
-
 
 
         btnFoto.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_PICK);
             intent.setType("image/*");
-            startActivityForResult(intent,0);
+            startActivityForResult(intent, 0);
         });
 
         btnSetup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                List<Integer> chipids =  chipGroup.getCheckedChipIds();
+                List<Integer> chipids = chipGroup.getCheckedChipIds();
 
-                if(chipids.size()!=0){
-                        for ( int chipsId :chipids ){
-                            Chip chip = view.findViewById(chipsId);
-                            if(chip!=null){
-                                modalidades.put(chip.getText().toString(),true);
+                if (chipids.size() != 0) {
+                    for (int chipsId : chipids) {
+                        Chip chip = view.findViewById(chipsId);
+                        if (chip != null) {
+                            modalidades.put(chip.getText().toString(), true);
+                        }
+                    }
+
+                    if (fSelecteduri != null) {
+
+                        if (textInputEditText.getText() != null) {
+                            try {
+                                Bitmap bmp = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), fSelecteduri);
+                                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                                bmp.compress(Bitmap.CompressFormat.JPEG, 15, baos);
+                                byte[] data = baos.toByteArray();
+                                FirebaseStorage.getInstance().getReference("image/" + user.getUid()).putBytes(data)
+                                        .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                                                personal.put("preco", "" + textInputEditText.getText().toString());
+                                                personal.put("modalidades", modalidades);
+                                                personal.put("rating", "" + 0);
+                                                personal.put("disponivel", "sim");
+                                                personal.put("tipoConta", "personal");
+                                                personal.put("favorito", new HashMap<>());
+                                                personalRef.set(personal);
+
+                                                Intent intent = new Intent(getActivity(), Main.class);
+                                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                startActivity(intent);
+                                            }
+                                        });
+                            } catch (Exception e) {
+
                             }
                         }
-
-                        if(fSelecteduri!=null){
-
-                            if (textInputEditText.getText()!=null){
-                                try {
-                                    Bitmap bmp = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), fSelecteduri);
-                                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                                    bmp.compress(Bitmap.CompressFormat.JPEG, 15, baos);
-                                    byte[] data = baos.toByteArray();
-                                    FirebaseStorage.getInstance().getReference("image/" + user.getUid()).putBytes(data)
-                                            .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) { personal.put("preco",""+textInputEditText.getText().toString());
-                                                    personal.put("modalidades",modalidades);
-                                                    personal.put("rating",""+0);
-                                                    personal.put("disponivel","sim");
-                                                    personal.put("tipoConta","personal");
-                                                    personal.put("favorito",new HashMap<>());
-                                                    personalRef.set(personal);
-
-                                                    Intent intent = new Intent(getActivity(), Main.class);
-                                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                                    startActivity(intent);
-                                                }
-                                            });
-                                }catch (Exception e){
-
-                                }
-                            }
-                     }else {
-                            Toast.makeText(getActivity(),"Selecione uma fotografia",Toast.LENGTH_LONG).show();
-                        }
-                }else {
-                    Toast.makeText(getActivity(),"Selecione uma modalidade",Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(getActivity(), "Selecione uma fotografia", Toast.LENGTH_LONG).show();
+                    }
+                } else {
+                    Toast.makeText(getActivity(), "Selecione uma modalidade", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -163,16 +158,16 @@ public class FragmentSetupPersonalConta extends Fragment {
     }
 
 
-    private  void inicilizarChips(){
+    private void inicilizarChips() {
         FirebaseFirestore.getInstance().collection("modalidades").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
-                if(task.isSuccessful() && task.getResult()!=null){
+                if (task.isSuccessful() && task.getResult() != null) {
 
                     for (DocumentSnapshot documentSnapshot : task.getResult()) {
                         String modalidade = (String) documentSnapshot.get("nome");
-                        if (!modalidade.isEmpty()){
+                        if (!modalidade.isEmpty()) {
                             Chip chip = new Chip(getContext());
                             ChipDrawable chipDrawable = ChipDrawable.createFromAttributes(getContext(), null, 0, R.style.Widget_MaterialComponents_Chip_Filter);
 
@@ -191,9 +186,9 @@ public class FragmentSetupPersonalConta extends Fragment {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data){
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode==0) {
+        if (requestCode == 0) {
             if (data != null) {
                 fSelecteduri = data.getData();
                 try {

@@ -2,7 +2,6 @@ package pmd.di.ubi.pt.projectofinal;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,7 +49,6 @@ public class FragmentPersoanlPerfil extends Fragment {
     private boolean isFavoritoList = false;
     private String diasIndisponiveis;
     private String disponivel;
-
 
 
     private int via;
@@ -185,7 +183,7 @@ public class FragmentPersoanlPerfil extends Fragment {
 
             FragmentTransaction ft = requireActivity().getSupportFragmentManager().beginTransaction();
             DialogFragmentInfoPersonal newFragment;
-            newFragment = DialogFragmentInfoPersonal.newInstance(diasIndisponiveis, disponivel);
+            newFragment = DialogFragmentInfoPersonal.newInstance(diasIndisponiveis, disponivel,uidPersonal);
             newFragment.show(ft, "dialog");
 
         });

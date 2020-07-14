@@ -3,9 +3,11 @@ package pmd.di.ubi.pt.projectofinal;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -13,14 +15,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
-
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -33,7 +27,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
@@ -43,46 +36,36 @@ import com.google.android.libraries.places.api.net.FindCurrentPlaceResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.Executor;
-
-import static android.content.Context.LOCATION_SERVICE;
 
 
-public class FragmentMapGyms extends Fragment  implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
+public class FragmentMapGyms extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
     private static final String TAG = FragmentMapGyms.class.getSimpleName();
-    private GoogleMap map;
-    private CameraPosition cameraPosition;
-
-    // The entry point to the Places API.
-    private PlacesClient placesClient;
-
-    // The entry point to the Fused Location Provider.
-    private FusedLocationProviderClient fusedLocationProviderClient;
-
-    // A default location (Sydney, Australia) and default zoom to use when location permission is
-    // not granted.
-    private final LatLng defaultLocation = new LatLng(-33.8523341, 151.2106085);
     private static final int DEFAULT_ZOOM = 15;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
-    private boolean locationPermissionGranted;
-
-    // The geographical location where the device is currently located. That is, the last-known
-    // location retrieved by the Fused Location Provider.
-    private Location lastKnownLocation;
-
     // Keys for storing activity state.
     // [START maps_current_place_state_keys]
     private static final String KEY_CAMERA_POSITION = "camera_position";
     private static final String KEY_LOCATION = "location";
-    // [END maps_current_place_state_keys]
-
     // Used for selecting the current place.
     private static final int M_MAX_ENTRIES = 5;
+    // A default location (Sydney, Australia) and default zoom to use when location permission is
+    // not granted.
+    private final LatLng defaultLocation = new LatLng(-33.8523341, 151.2106085);
+    private GoogleMap map;
+    private CameraPosition cameraPosition;
+    // The entry point to the Places API.
+    private PlacesClient placesClient;
+    // The entry point to the Fused Location Provider.
+    private FusedLocationProviderClient fusedLocationProviderClient;
+    private boolean locationPermissionGranted;
+    // [END maps_current_place_state_keys]
+    // The geographical location where the device is currently located. That is, the last-known
+    // location retrieved by the Fused Location Provider.
+    private Location lastKnownLocation;
     private String[] likelyPlaceNames;
     private String[] likelyPlaceAddresses;
     private List[] likelyPlaceAttributions;
@@ -93,14 +76,13 @@ public class FragmentMapGyms extends Fragment  implements OnMapReadyCallback, Go
     }
 
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_map_gyms, container, false);
         SupportMapFragment mapFragment = (SupportMapFragment) this.getChildFragmentManager()
                 .findFragmentById(R.id.map);
-        mapFragment.getMapAsync( this);
+        mapFragment.getMapAsync(this);
 
         if (savedInstanceState != null) {
             lastKnownLocation = savedInstanceState.getParcelable(KEY_LOCATION);
@@ -122,8 +104,8 @@ public class FragmentMapGyms extends Fragment  implements OnMapReadyCallback, Go
         this.map = map;
 
         FirebaseFirestore.getInstance().collection("gyms").get().addOnCompleteListener(task -> {
-            if(task.isSuccessful() && task.getResult()!=null){
-                for(DocumentSnapshot gym:task.getResult()){
+            if (task.isSuccessful() && task.getResult() != null) {
+                for (DocumentSnapshot gym : task.getResult()) {
 
                     Marker gymMark = map.addMarker(new MarkerOptions().position(new LatLng((Double) gym.get("latitude"), (Double) gym.get("longitude"))).title(gym.getString("nome")));
                     gymMark.showInfoWindow();
@@ -158,11 +140,11 @@ public class FragmentMapGyms extends Fragment  implements OnMapReadyCallback, Go
             marker.setTag(clickCount);
         }
 
-        if (clickCount>=2){
+        if (clickCount >= 2) {
             Bundle bundle = new Bundle();
-            bundle.putString("nome",marker.getTitle());
+            bundle.putString("nome", marker.getTitle());
 
-            Navigation.findNavController(requireView()).navigate(R.id.action_fragmentMapList_to_modalidadesFragment2,bundle);
+            Navigation.findNavController(requireView()).navigate(R.id.action_fragmentMapList_to_modalidadesFragment2, bundle);
         }
 
         return false;
@@ -197,7 +179,7 @@ public class FragmentMapGyms extends Fragment  implements OnMapReadyCallback, Go
                     }
                 });
             }
-        } catch (SecurityException e)  {
+        } catch (SecurityException e) {
             Log.e("Exception: %s", e.getMessage(), e);
         }
     }
@@ -218,6 +200,7 @@ public class FragmentMapGyms extends Fragment  implements OnMapReadyCallback, Go
                     PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
         }
     }
+
     private void showCurrentPlace() {
         if (map == null) {
             return;
@@ -234,10 +217,9 @@ public class FragmentMapGyms extends Fragment  implements OnMapReadyCallback, Go
 
             // Get the likely places - that is, the businesses and other points of interest that
             // are the best match for the device's current location.
-            @SuppressWarnings("MissingPermission") final
-            Task<FindCurrentPlaceResponse> placeResult =
+            @SuppressWarnings("MissingPermission") final Task<FindCurrentPlaceResponse> placeResult =
                     placesClient.findCurrentPlace(request);
-            placeResult.addOnCompleteListener (new OnCompleteListener<FindCurrentPlaceResponse>() {
+            placeResult.addOnCompleteListener(new OnCompleteListener<FindCurrentPlaceResponse>() {
                 @Override
                 public void onComplete(@NonNull Task<FindCurrentPlaceResponse> task) {
                     if (task.isSuccessful() && task.getResult() != null) {
@@ -274,8 +256,7 @@ public class FragmentMapGyms extends Fragment  implements OnMapReadyCallback, Go
                         // Show a dialog offering the user the list of likely places, and add a
                         // marker at the selected place.
                         FragmentMapGyms.this.openPlacesDialog();
-                    }
-                    else {
+                    } else {
                         Log.e(TAG, "Exception: %s", task.getException());
                     }
                 }
@@ -341,6 +322,7 @@ public class FragmentMapGyms extends Fragment  implements OnMapReadyCallback, Go
         }
         updateLocationUI();
     }
+
     private void updateLocationUI() {
         if (map == null) {
             return;
@@ -355,7 +337,7 @@ public class FragmentMapGyms extends Fragment  implements OnMapReadyCallback, Go
                 lastKnownLocation = null;
                 getLocationPermission();
             }
-        } catch (SecurityException e)  {
+        } catch (SecurityException e) {
             Log.e("Exception: %s", e.getMessage());
         }
     }

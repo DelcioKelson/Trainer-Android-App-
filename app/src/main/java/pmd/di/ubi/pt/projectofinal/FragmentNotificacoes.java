@@ -30,21 +30,21 @@ import java.util.Map;
 import java.util.Optional;
 
 public class FragmentNotificacoes extends Fragment implements AdapterNotificacoes.OnRequestPaymentListener {
-    private ArrayList<Map<String,Object>> notificacoesList;
-    AdapterNotificacoes adapterNotificacoes;
-        CollectionReference notificacoesRef;
     private static final int LOAD_PAYMENT_DATA_REQUEST_CODE = 991;
+    AdapterNotificacoes adapterNotificacoes;
+    CollectionReference notificacoesRef;
+    private ArrayList<Map<String, Object>> notificacoesList;
     private PaymentsClient paymentsClient;
 
 
-
     private RecyclerView recyclerView;
+
     public FragmentNotificacoes() {
         // Required empty public constructor
     }
 
     public static FragmentNotificacoes newInstance() {
-        return  new FragmentNotificacoes();
+        return new FragmentNotificacoes();
     }
 
     @Override
@@ -67,13 +67,13 @@ public class FragmentNotificacoes extends Fragment implements AdapterNotificacoe
         Main.sharedDataModel.getFecharViewPager().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
-                if(aBoolean){
+                if (aBoolean) {
                     Main.sharedDataModel.setFecharViewPager(false);
                     FragmentTransaction ft = getFragmentManager().beginTransaction();
                     if (Build.VERSION.SDK_INT >= 26) {
                         ft.setReorderingAllowed(false);
                     }
-                    ft.detach(FragmentNotificacoes.this).attach(FragmentNotificacoes.this).commit() ;
+                    ft.detach(FragmentNotificacoes.this).attach(FragmentNotificacoes.this).commit();
                     Main.sharedDataModel.setAtualizar(false);
                 }
             }

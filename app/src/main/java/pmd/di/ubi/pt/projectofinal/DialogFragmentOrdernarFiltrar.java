@@ -4,10 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.DialogFragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,39 +14,35 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Switch;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
+
 import java.util.Calendar;
 
 public class DialogFragmentOrdernarFiltrar extends DialogFragment {
+    private static Button btnDiasDisponives;
     private RadioButton button;
     private int idOp;
-    private static Button btnDiasDisponives;
 
-    public DialogFragmentOrdernarFiltrar(){
+    public DialogFragmentOrdernarFiltrar() {
 
     }
-    public static DialogFragmentOrdernarFiltrar newInstance(int id, boolean disponiveis, boolean diaDisponiveis,String diaDisponibilidade ) {
+
+    public static DialogFragmentOrdernarFiltrar newInstance(int id, boolean disponiveis, boolean diaDisponiveis, String diaDisponibilidade) {
         Bundle bundle = new Bundle();
-        bundle.putInt("id",id);
-        bundle.putBoolean("disponivel",disponiveis);
-        bundle.putBoolean("diaDisponiveis",diaDisponiveis);
-        bundle.putString("diaDisponibilidade",diaDisponibilidade);
+        bundle.putInt("id", id);
+        bundle.putBoolean("disponivel", disponiveis);
+        bundle.putBoolean("diaDisponiveis", diaDisponiveis);
+        bundle.putString("diaDisponibilidade", diaDisponibilidade);
         DialogFragmentOrdernarFiltrar dialog = new DialogFragmentOrdernarFiltrar();
         dialog.setArguments(bundle);
-     return dialog;
-    }
-
-    public interface DialogFragmentOrdernarMenuDialogListener {
-        void onFinishOrdernarMenuDialog(int selectedBtn);
-    }
-
-    public interface DialogFragmentFiltrarMenuDialogListener {
-        void onFinishFiltrarMenuDialog(boolean disponiveis, boolean disponiveisDia, String diaMesAno);
+        return dialog;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view =  inflater.inflate(R.layout.dialogfragment_odernar_filtrar, container, false);
+        View view = inflater.inflate(R.layout.dialogfragment_odernar_filtrar, container, false);
         RadioGroup opcoes = view.findViewById(R.id.radio_opcoes);
 
         Switch sw1 = view.findViewById(R.id.switch_disponives);
@@ -67,10 +59,10 @@ public class DialogFragmentOrdernarFiltrar extends DialogFragment {
         sw1.setChecked(disponiveis);
         sw2.setChecked(diaDisponiveis);
         btnDiasDisponives.setText(diaDisponibilidade);
-        if(idOp!=0){
+        if (idOp != 0) {
             button = (RadioButton) opcoes.findViewById(idOp);
             button.setChecked(true);
-        }else {
+        } else {
             opcoes.clearCheck();
         }
 
@@ -89,9 +81,9 @@ public class DialogFragmentOrdernarFiltrar extends DialogFragment {
         sw2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked){
+                if (isChecked) {
                     btnDiasDisponives.setVisibility(View.VISIBLE);
-                }else {
+                } else {
                     btnDiasDisponives.setVisibility(View.GONE);
                 }
             }
@@ -100,12 +92,20 @@ public class DialogFragmentOrdernarFiltrar extends DialogFragment {
         btnAplicar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DialogFragmentFiltrarMenuDialogListener listener = (DialogFragmentFiltrarMenuDialogListener)getTargetFragment();
-                listener.onFinishFiltrarMenuDialog(sw1.isChecked(),sw2.isChecked(),btnDiasDisponives.getText().toString());
+                DialogFragmentFiltrarMenuDialogListener listener = (DialogFragmentFiltrarMenuDialogListener) getTargetFragment();
+                listener.onFinishFiltrarMenuDialog(sw1.isChecked(), sw2.isChecked(), btnDiasDisponives.getText().toString());
                 dismiss();
             }
         });
         return view;
+    }
+
+    public interface DialogFragmentOrdernarMenuDialogListener {
+        void onFinishOrdernarMenuDialog(int selectedBtn);
+    }
+
+    public interface DialogFragmentFiltrarMenuDialogListener {
+        void onFinishFiltrarMenuDialog(boolean disponiveis, boolean disponiveisDia, String diaMesAno);
     }
 
     public static class DatePickerFragment extends DialogFragment
@@ -124,7 +124,7 @@ public class DialogFragmentOrdernarFiltrar extends DialogFragment {
 
         @SuppressLint("SetTextI18n")
         public void onDateSet(DatePicker view, int year, int month, int day) {
-            btnDiasDisponives.setText(""+day+"/"+(month+1)+"/"+year);
+            btnDiasDisponives.setText("" + day + "/" + (month + 1) + "/" + year);
         }
     }
 }

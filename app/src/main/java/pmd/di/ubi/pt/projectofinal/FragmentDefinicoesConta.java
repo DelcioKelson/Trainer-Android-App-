@@ -84,8 +84,6 @@ public class FragmentDefinicoesConta extends Fragment {
         Button btnAlterarPeso = view.findViewById(R.id.btn_alterar_peso);
 
 
-
-
         //Titulo e Botao para voltar
 
         btnFotoPerfil.setAlpha(0);
@@ -136,7 +134,7 @@ public class FragmentDefinicoesConta extends Fragment {
             btnDiasIndisponiveis.setVisibility(View.VISIBLE);
             btnAlterarPreco.setOnClickListener(v -> criarDialogMudarPreco());
             btnDiasIndisponiveis.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.action_fragmentDefinicoesConta_to_fragmentDiasIndisponiveis));
-        }else {
+        } else {
             btnAlterarAltura.setVisibility(View.VISIBLE);
             btnAlterarPeso.setVisibility(View.VISIBLE);
 
@@ -193,7 +191,7 @@ public class FragmentDefinicoesConta extends Fragment {
                     final UserProfileChangeRequest changeRequest = builder.build();
                     user.updateProfile(changeRequest);
 
-                    Main.sharedDataModel.getUsuarioAtual().getValue().put("nome",novoNome);
+                    Main.sharedDataModel.getUsuarioAtual().getValue().put("nome", novoNome);
 
 
                     FirebaseFirestore.getInstance().collection("pessoas").document(user.getUid()).update("nome", novoNome);
@@ -235,7 +233,7 @@ public class FragmentDefinicoesConta extends Fragment {
             if (!preco.isEmpty()) {
                 FirebaseFirestore.getInstance().collection("pessoas").document(user.getUid()).update("preco", preco);
                 Toast.makeText(requireContext(), "preço alterado", Toast.LENGTH_LONG).show();
-                Main.sharedDataModel.getUsuarioAtual().getValue().put("preco",preco);
+                Main.sharedDataModel.getUsuarioAtual().getValue().put("preco", preco);
             } else {
                 Toast.makeText(requireContext(), "preço invalidado", Toast.LENGTH_LONG).show();
             }
@@ -258,18 +256,16 @@ public class FragmentDefinicoesConta extends Fragment {
         alertDialog.setPositiveButton("alterar", (dialog, whichButton) -> {
             final String peso = input.getText().toString();
 
-            if (!peso.isEmpty() ) {
+            if (!peso.isEmpty()) {
                 int pesoAux = Integer.parseInt(peso);
                 if ((pesoAux < 20 || pesoAux > 120)) {
                     Toast.makeText(requireContext(), "peso invalidado", Toast.LENGTH_LONG).show();
 
-                }
-                else {
+                } else {
                     FirebaseFirestore.getInstance().collection("pessoas").document(user.getUid()).update("peso", peso);
                     Toast.makeText(requireContext(), "preço alterado", Toast.LENGTH_LONG).show();
-                    Main.sharedDataModel.getUsuarioAtual().getValue().put("peso",peso);
+                    Main.sharedDataModel.getUsuarioAtual().getValue().put("peso", peso);
                 }
-
 
 
             } else {
@@ -300,12 +296,11 @@ public class FragmentDefinicoesConta extends Fragment {
                 if (alturaAux < 1 || alturaAux > 2.5) {
                     Toast.makeText(requireContext(), "altura invalida", Toast.LENGTH_LONG).show();
 
-                }else {
+                } else {
                     FirebaseFirestore.getInstance().collection("pessoas").document(user.getUid()).update("altura", altura);
                     Toast.makeText(requireContext(), "altura alterada", Toast.LENGTH_LONG).show();
-                    Main.sharedDataModel.getUsuarioAtual().getValue().put("altura",altura);
+                    Main.sharedDataModel.getUsuarioAtual().getValue().put("altura", altura);
                 }
-
 
 
             } else {
@@ -314,7 +309,6 @@ public class FragmentDefinicoesConta extends Fragment {
         }).setNegativeButton("Cancelar", (dialog, which) -> {
         }).show();
     }
-
 
 
     @Override
@@ -337,7 +331,7 @@ public class FragmentDefinicoesConta extends Fragment {
                                         faces -> {
                                             if (faces.size() != 1) {
                                                 Toast.makeText(getContext(), "Fotografia inválida, precisa de ter uma face", Toast.LENGTH_LONG).show();
-                                            }else {
+                                            } else {
                                                 btnSalvarFoto.setVisibility(View.VISIBLE);
                                                 btnSalvarFoto.setClickable(true);
                                             }

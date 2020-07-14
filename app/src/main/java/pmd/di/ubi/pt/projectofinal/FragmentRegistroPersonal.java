@@ -5,10 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.util.Log;
@@ -20,6 +16,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
@@ -48,11 +47,11 @@ import java.util.Map;
 public class FragmentRegistroPersonal extends Fragment {
 
 
-    private TextInputEditText emailText,passwordText,numeroTelefone ;
-    private TextInputLayout emailLayout,passwordLayout,numeroLayout,nomeLayout;
+    private TextInputEditText emailText, passwordText, numeroTelefone;
+    private TextInputLayout emailLayout, passwordLayout, numeroLayout, nomeLayout;
 
     private TextInputEditText nomeText;
-    private Button btnFoto,btnRegistrar;
+    private Button btnFoto, btnRegistrar;
     private Uri fSelecteduri;
     private ImageView imgVfoto;
     private ProgressBar progressBar;
@@ -65,13 +64,13 @@ public class FragmentRegistroPersonal extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_registro_personal1, container, false);
 
-        nomeText =  view.findViewById(R.id.edit_usarname_personal);
-        emailText =  view.findViewById(R.id.edit_email_personal);
-        passwordText =  view.findViewById(R.id.edit_password_personal);
+        nomeText = view.findViewById(R.id.edit_usarname_personal);
+        emailText = view.findViewById(R.id.edit_email_personal);
+        passwordText = view.findViewById(R.id.edit_password_personal);
 
         btnRegistrar = view.findViewById(R.id.btn_register_personal);
-        btnFoto =  view.findViewById(R.id.btn_selected_foto_personal);
-        imgVfoto =  view.findViewById(R.id.img_foto_personal);
+        btnFoto = view.findViewById(R.id.btn_selected_foto_personal);
+        imgVfoto = view.findViewById(R.id.img_foto_personal);
         numeroTelefone = view.findViewById(R.id.edit_telefone_personal);
         progressBar = (ProgressBar) view.findViewById(R.id.progressbar_registro_personal);
         emailLayout = view.findViewById(R.id.layout_email);
@@ -87,7 +86,7 @@ public class FragmentRegistroPersonal extends Fragment {
         btnFoto.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_PICK);
             intent.setType("image/*");
-            startActivityForResult(intent,0);
+            startActivityForResult(intent, 0);
         });
 
         return view;
@@ -95,9 +94,9 @@ public class FragmentRegistroPersonal extends Fragment {
 
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data){
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode==0) {
+        if (requestCode == 0) {
             if (data != null) {
                 fSelecteduri = data.getData();
                 try {
@@ -130,7 +129,7 @@ public class FragmentRegistroPersonal extends Fragment {
     }
 
     //funçao chamada pelo botao registrar
-    private void registeruser(){
+    private void registeruser() {
         String nome = nomeText.getText().toString();
         String email = emailText.getText().toString();
         String senha = passwordText.getText().toString();
@@ -202,18 +201,17 @@ public class FragmentRegistroPersonal extends Fragment {
         progressBar.setVisibility(View.VISIBLE);
         btnRegistrar.setClickable(false);
 
-        FirebaseAuth.getInstance().createUserWithEmailAndPassword(email,senha)
+        FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, senha)
                 .addOnCompleteListener(task -> {
-                    if(task.isSuccessful()){
-                        Log.i("Tester",task.getResult().getUser().getUid());
+                    if (task.isSuccessful()) {
+                        Log.i("Tester", task.getResult().getUser().getUid());
                         //salva as informaçoes no firebase
                         UserProfileChangeRequest.Builder builder = new UserProfileChangeRequest.Builder();
                         builder.setDisplayName(nome);
                         final UserProfileChangeRequest changeRequest = builder.build();
                         task.getResult().getUser().updateProfile(changeRequest);
                         salvarUsuarioNoFireBase();
-                    }
-                    else {
+                    } else {
                         Toast.makeText(getContext(), "Ja existe uma conta com este E-mail", Toast.LENGTH_SHORT).show();
                         progressBar.setVisibility(View.GONE);
                     }
@@ -236,17 +234,17 @@ public class FragmentRegistroPersonal extends Fragment {
             bmp.compress(Bitmap.CompressFormat.JPEG, 15, baos);
             byte[] data = baos.toByteArray();
 
-            final StorageReference ref = FirebaseStorage.getInstance().getReference("image/"+uid);
+            final StorageReference ref = FirebaseStorage.getInstance().getReference("image/" + uid);
             ref.putBytes(data).addOnSuccessListener(taskSnapshot -> {
 
                 Map<String, Object> usuarioData;
                 usuarioData = new HashMap<>();
-                usuarioData.put("nome", nomeText.getText().toString());;
+                usuarioData.put("nome", nomeText.getText().toString());
                 usuarioData.put("numeroTelefone", numeroTelefone.getText().toString());
-                usuarioData.put("tipoConta","pendente");
-                usuarioData.put("submeteu",false);
-                usuarioData.put("aprovado","nao");
-                usuarioData.put("uid",uid);
+                usuarioData.put("tipoConta", "pendente");
+                usuarioData.put("submeteu", false);
+                usuarioData.put("aprovado", "nao");
+                usuarioData.put("uid", uid);
                 // adicionar dados do usario na base de dados
                 FirebaseFirestore.getInstance().collection("pessoas")
                         .document(uid)
@@ -260,6 +258,7 @@ public class FragmentRegistroPersonal extends Fragment {
                             }
                         });
             });
-        }catch (Exception e){ }
+        } catch (Exception e) {
+        }
     }
 }

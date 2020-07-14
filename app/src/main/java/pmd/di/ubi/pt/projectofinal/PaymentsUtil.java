@@ -1,21 +1,24 @@
 package pmd.di.ubi.pt.projectofinal;
 
 
-        import android.app.Activity;
-        import com.google.android.gms.wallet.PaymentsClient;
-        import com.google.android.gms.wallet.Wallet;
-        import java.math.BigDecimal;
-        import java.math.RoundingMode;
-        import java.util.HashMap;
-        import java.util.Optional;
-        import org.json.JSONArray;
-        import org.json.JSONException;
-        import org.json.JSONObject;
+import android.app.Activity;
+
+import com.google.android.gms.wallet.PaymentsClient;
+import com.google.android.gms.wallet.Wallet;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Optional;
 
 public class PaymentsUtil {
     private static final BigDecimal MICROS = new BigDecimal(1000000d);
 
-    private PaymentsUtil() {}
+    private PaymentsUtil() {
+    }
 
     private static JSONObject getBaseRequest() throws JSONException {
         return new JSONObject().put("apiVersion", 2).put("apiVersionMinor", 0);
@@ -44,15 +47,16 @@ public class PaymentsUtil {
      * @return Payment data tokenization for the CARD payment method.
      * @throws JSONException
      * @see <a href=
-     *     "https://developers.google.com/pay/api/android/reference/object#PaymentMethodTokenizationSpecification">PaymentMethodTokenizationSpecification</a>
+     * "https://developers.google.com/pay/api/android/reference/object#PaymentMethodTokenizationSpecification">PaymentMethodTokenizationSpecification</a>
      */
     private static JSONObject getGatewayTokenizationSpecification() throws JSONException {
-        return new JSONObject(){{
+        return new JSONObject() {{
             put("type", "PAYMENT_GATEWAY");
-            put("parameters", new JSONObject(){{
-                put("gateway", "example");
-                put("gatewayMerchantId", "exampleGatewayMerchantId");
-            }
+            put("parameters", new JSONObject() {
+                {
+                    put("gateway", "example");
+                    put("gatewayMerchantId", "exampleGatewayMerchantId");
+                }
             });
         }};
     }
@@ -67,7 +71,7 @@ public class PaymentsUtil {
      * @return Payment data tokenization for the CARD payment method.
      * @throws JSONException
      * @see <a
-     *     href="https://developers.google.com/pay/api/android/reference/object#PaymentMethodTokenizationSpecification">PaymentMethodTokenizationSpecification</a>
+     * href="https://developers.google.com/pay/api/android/reference/object#PaymentMethodTokenizationSpecification">PaymentMethodTokenizationSpecification</a>
      */
     private static JSONObject getDirectTokenizationSpecification()
             throws JSONException, RuntimeException {
@@ -94,7 +98,7 @@ public class PaymentsUtil {
      *
      * @return Allowed card networks
      * @see <a
-     *     href="https://developers.google.com/pay/api/android/reference/object#CardParameters">CardParameters</a>
+     * href="https://developers.google.com/pay/api/android/reference/object#CardParameters">CardParameters</a>
      */
     private static JSONArray getAllowedCardNetworks() {
         return new JSONArray(Constants.SUPPORTED_NETWORKS);
@@ -108,7 +112,7 @@ public class PaymentsUtil {
      *
      * @return Allowed card authentication methods.
      * @see <a
-     *     href="https://developers.google.com/pay/api/android/reference/object#CardParameters">CardParameters</a>
+     * href="https://developers.google.com/pay/api/android/reference/object#CardParameters">CardParameters</a>
      */
     private static JSONArray getAllowedCardAuthMethods() {
         return new JSONArray(Constants.SUPPORTED_METHODS);
@@ -123,7 +127,7 @@ public class PaymentsUtil {
      * @return A CARD PaymentMethod object describing accepted cards.
      * @throws JSONException
      * @see <a
-     *     href="https://developers.google.com/pay/api/android/reference/object#PaymentMethod">PaymentMethod</a>
+     * href="https://developers.google.com/pay/api/android/reference/object#PaymentMethod">PaymentMethod</a>
      */
     private static JSONObject getBaseCardPaymentMethod() throws JSONException {
         JSONObject cardPaymentMethod = new JSONObject();
@@ -151,7 +155,7 @@ public class PaymentsUtil {
      * @return A CARD PaymentMethod describing accepted cards and optional fields.
      * @throws JSONException
      * @see <a
-     *     href="https://developers.google.com/pay/api/android/reference/object#PaymentMethod">PaymentMethod</a>
+     * href="https://developers.google.com/pay/api/android/reference/object#PaymentMethod">PaymentMethod</a>
      */
     private static JSONObject getCardPaymentMethod() throws JSONException {
         JSONObject cardPaymentMethod = getBaseCardPaymentMethod();
@@ -166,7 +170,7 @@ public class PaymentsUtil {
      *
      * @return API version and payment methods supported by the app.
      * @see <a
-     *     href="https://developers.google.com/pay/api/android/reference/object#IsReadyToPayRequest">IsReadyToPayRequest</a>
+     * href="https://developers.google.com/pay/api/android/reference/object#IsReadyToPayRequest">IsReadyToPayRequest</a>
      */
     public static Optional<JSONObject> getIsReadyToPayRequest() {
         try {
@@ -186,7 +190,7 @@ public class PaymentsUtil {
      * @return information about the requested payment.
      * @throws JSONException
      * @see <a
-     *     href="https://developers.google.com/pay/api/android/reference/object#TransactionInfo">TransactionInfo</a>
+     * href="https://developers.google.com/pay/api/android/reference/object#TransactionInfo">TransactionInfo</a>
      */
     private static JSONObject getTransactionInfo(String price) throws JSONException {
         JSONObject transactionInfo = new JSONObject();
@@ -204,7 +208,7 @@ public class PaymentsUtil {
      * @return Information about the merchant.
      * @throws JSONException
      * @see <a
-     *     href="https://developers.google.com/pay/api/android/reference/object#MerchantInfo">MerchantInfo</a>
+     * href="https://developers.google.com/pay/api/android/reference/object#MerchantInfo">MerchantInfo</a>
      */
     private static JSONObject getMerchantInfo() throws JSONException {
         return new JSONObject().put("merchantName", "Example Merchant");
@@ -215,7 +219,7 @@ public class PaymentsUtil {
      *
      * @return Payment data expected by your app.
      * @see <a
-     *     href="https://developers.google.com/pay/api/android/reference/object#PaymentDataRequest">PaymentDataRequest</a>
+     * href="https://developers.google.com/pay/api/android/reference/object#PaymentDataRequest">PaymentDataRequest</a>
      */
     public static Optional<JSONObject> getPaymentDataRequest(String price) {
         try {

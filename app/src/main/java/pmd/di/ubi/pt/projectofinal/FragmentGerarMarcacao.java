@@ -18,7 +18,6 @@ import android.widget.Toast;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.Navigation;
 
 import com.google.android.material.chip.Chip;
@@ -42,6 +41,9 @@ public class FragmentGerarMarcacao extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 
+    FragmentManager fm;
+    CollectionReference marcacoesRef = FirebaseFirestore.getInstance().collection("marcacoes");
+    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     private TextView tvPreco;
     private String uidPersonal;
     private Button btnMarcar, btnComentario;
@@ -53,13 +55,8 @@ public class FragmentGerarMarcacao extends Fragment {
     private TextInputEditText etDia, etHora;
     private String diasIndisponiveis;
     private String disponivel;
-
-    FragmentManager fm;
     private int posPersonal;
     private Map<String, Object> personal;
-    CollectionReference marcacoesRef = FirebaseFirestore.getInstance().collection("marcacoes");
-
-    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
 
     public FragmentGerarMarcacao() {
@@ -160,7 +157,6 @@ public class FragmentGerarMarcacao extends Fragment {
             }
 
         });
-
 
 
         btnMarcar.setOnClickListener(v -> gerarDetalhesMarcacao());

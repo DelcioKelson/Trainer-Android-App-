@@ -11,13 +11,13 @@ import java.util.Map;
 
 public class AdapterViewPagerTreinadores extends FragmentStatePagerAdapter {
 
+    private ArrayList<Map<String, Object>> personalList;
 
-    private ArrayList<Map<String,Object>> personalList;
     public AdapterViewPagerTreinadores(Fragment fragment) {
         super(fragment.getChildFragmentManager(), BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         try {
             personalList = Main.sharedDataModel.getPersonalList().getValue();
-        }catch (Exception e){
+        } catch (Exception e) {
         }
     }
 
@@ -31,12 +31,11 @@ public class AdapterViewPagerTreinadores extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
 
         Bundle bundle = new Bundle();
-        bundle.putInt("via",2);
-        bundle.putInt("posPersonal",position);
+        bundle.putInt("via", 2);
+        bundle.putInt("posPersonal", position);
 
         return FragmentPersoanlPerfil.newInstance(bundle);
     }
-
 
 
 }

@@ -25,19 +25,17 @@ import java.util.Map;
 public class FragmentListaGyms extends Fragment {
 
 
+    private ArrayList<Map<String, Object>> gymList;
+    private AdapterGym adapterGym;
     public FragmentListaGyms() {
         // Required empty public constructor
     }
-
-    private ArrayList<Map<String,Object>> gymList;
-    private AdapterGym adapterGym;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view  = inflater.inflate(R.layout.recyclerview_layout, container, false);
+        View view = inflater.inflate(R.layout.recyclerview_layout, container, false);
         //Objects.requireNonNull(getContext().getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         //getSupportActionBar().setTitle("Modalidades");
         gymList = new ArrayList<>();

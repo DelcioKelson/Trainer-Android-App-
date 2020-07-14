@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:background="@color/colorPrimaryDark"
         android:layout_gravity="center"
-        android:text="Foi enviado um email de verificacao a sua conta"
+        android:text="Foi enviado um email de verificação a sua conta"
         />
 
     <com.google.android.material.button.MaterialButton

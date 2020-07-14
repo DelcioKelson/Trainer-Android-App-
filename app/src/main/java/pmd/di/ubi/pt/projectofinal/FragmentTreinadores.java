@@ -39,8 +39,8 @@ public class FragmentTreinadores extends Fragment implements DialogFragmentOrder
     private RecyclerView recyclerView;
 
     private AdapterPersonalTreiners adapterPersonalTreiners;
-    private ArrayList<Map<String, Object>> personalList,personalListOriginal;
-    private int idOpOrdem =0;
+    private ArrayList<Map<String, Object>> personalList, personalListOriginal;
+    private int idOpOrdem = 0;
 
     private boolean disponivel = false;
     private boolean diaDisponivel = false;
@@ -125,7 +125,7 @@ public class FragmentTreinadores extends Fragment implements DialogFragmentOrder
         return view;
     }
 
-    private void initPersonalList(){
+    private void initPersonalList() {
 
         personalList = new ArrayList<>();
         FirebaseFirestore.getInstance().collection("pessoas").
@@ -145,11 +145,11 @@ public class FragmentTreinadores extends Fragment implements DialogFragmentOrder
         });
     }
 
-   @Override
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-       menu.clear();
-       inflater.inflate(R.menu.menu_personais, menu);
-       super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
+        inflater.inflate(R.menu.menu_personais, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
@@ -163,7 +163,7 @@ public class FragmentTreinadores extends Fragment implements DialogFragmentOrder
         ft.addToBackStack(null);
         switch (item.getItemId()) {
             case R.id.ordenar_menu:
-                newFragment = DialogFragmentOrdernarFiltrar.newInstance(idOpOrdem, disponivel, diaDisponivel,diaDisponibilidade);
+                newFragment = DialogFragmentOrdernarFiltrar.newInstance(idOpOrdem, disponivel, diaDisponivel, diaDisponibilidade);
                 newFragment.setTargetFragment(this, 300);
                 newFragment.show(ft, "dialog");
             default:
@@ -175,7 +175,7 @@ public class FragmentTreinadores extends Fragment implements DialogFragmentOrder
     @Override
     public void onFinishOrdernarMenuDialog(int selectedItem) {
 
-        switch (selectedItem){
+        switch (selectedItem) {
             case R.id.radioButton_p_mema:
                 personalList.sort(Comparator.comparing(m -> Float.parseFloat((String) m.get("preco"))));
                 break;
@@ -197,33 +197,34 @@ public class FragmentTreinadores extends Fragment implements DialogFragmentOrder
 
     @Override
     public void onFinishFiltrarMenuDialog(boolean disponiveis, boolean disponiveisDia, String diaMesAno) {
-        if(disponiveis!=disponivel || disponiveisDia!=diaDisponivel || !diaDisponibilidade.equals(diaMesAno)){
-            for(Map<String, Object> personal: personalListOriginal ) {
+        if (disponiveis != disponivel || disponiveisDia != diaDisponivel || !diaDisponibilidade.equals(diaMesAno)) {
+            for (Map<String, Object> personal : personalListOriginal) {
                 if (!personalList.contains(personal)) {
                     personalList.add(personal);
                 }
             }
-            idOpOrdem=0;
+            idOpOrdem = 0;
         }
 
         diaDisponivel = disponiveisDia;
         diaDisponibilidade = diaMesAno;
         disponivel = disponiveis;
 
-        if(disponiveis){
-            for(Map<String, Object> personal: personalList ){
-               try {
-                   if(personal.get("disponivel").equals("nao")){
-                       personalList.remove(personal);
-                   }
-               }catch (Exception e){ }
+        if (disponiveis) {
+            for (Map<String, Object> personal : personalList) {
+                try {
+                    if (personal.get("disponivel").equals("nao")) {
+                        personalList.remove(personal);
+                    }
+                } catch (Exception e) {
+                }
             }
         }
 
-        if(disponiveisDia){
-            for(Map<String, Object> personal: personalList ){
+        if (disponiveisDia) {
+            for (Map<String, Object> personal : personalList) {
                 String dias = (String) personal.get("diasIndisponiveis");
-                if(dias!=null && dias.contains(diaMesAno)){
+                if (dias != null && dias.contains(diaMesAno)) {
                     personalList.remove(personal);
                 }
             }

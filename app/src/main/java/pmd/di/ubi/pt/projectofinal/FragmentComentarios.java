@@ -34,6 +34,7 @@ import java.util.Map;
  */
 public class FragmentComentarios extends Fragment {
 
+    int indice;
     private RatingBar comentarioRating;
     private EditText inputComentario;
     private FirebaseUser user;
@@ -44,11 +45,10 @@ public class FragmentComentarios extends Fragment {
     private DocumentSnapshot document;
     private int numeroComentarios;
     private float soma;
-    int indice;
     private boolean isUser;
     private CollectionReference comentariosRef = FirebaseFirestore.getInstance().collection("comentarios");
     private CollectionReference marcacoesRef = FirebaseFirestore.getInstance().collection("marcacoes");
-    private CollectionReference pessoaRef =  FirebaseFirestore.getInstance().collection("pessoas");
+    private CollectionReference pessoaRef = FirebaseFirestore.getInstance().collection("pessoas");
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -86,23 +86,22 @@ public class FragmentComentarios extends Fragment {
         Button btnComentar = view.findViewById(R.id.btn_comentar);
         Button btnVoltar = view.findViewById(R.id.btn_voltar);
         comentariosList = new ArrayList<Map<String, Object>>();
-        numeroComentarios=0;
+        numeroComentarios = 0;
         document = null;
 
-        Log.i("FragmentoComentario","passei");
+        Log.i("FragmentoComentario", "passei");
 
         user = FirebaseAuth.getInstance().getCurrentUser();
         isUser = Main.sharedDataModel.isUser().getValue();
         btnComentar.setVisibility(View.GONE);
         //sonal ==null quer dizer que eh a conta do tipo personal
 
-
         intComentarios();
 
-        if(!isUser){
+        if (!isUser) {
             uidPersonal = user.getUid();
             btnVoltar.setVisibility(View.GONE);
-        }else {
+        } else {
             marcacoesRef.whereEqualTo("uidUsuario", user.getUid())
                     .whereEqualTo("estado", "terminada").get().addOnSuccessListener(task -> {
                 if (task.size() > 0) {
@@ -124,16 +123,16 @@ public class FragmentComentarios extends Fragment {
         return view;
     }
 
-    public void criarDialogoComentario(){
-        alertDialog.setTitle("adicione uma avaliaçao");
+    public void criarDialogoComentario() {
         alertDialog = new AlertDialog.Builder(getActivity());
+        alertDialog.setTitle("adicione uma avaliaçao");
         LayoutInflater inflater = getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.avaliacao_layout_dialog,null);
+        View dialogView = inflater.inflate(R.layout.avaliacao_layout_dialog, null);
         alertDialog.setView(dialogView);
         inputComentario = dialogView.findViewById(R.id.comentario_dialog_txtv);
-        comentarioRating =dialogView.findViewById(R.id.comentario_rating);
+        comentarioRating = dialogView.findViewById(R.id.comentario_rating);
 
-        if(document!=null){
+        if (document != null) {
             inputComentario.setText(document.getString("comentario"));
             comentarioRating.setRating(Float.parseFloat(document.getString("ratingComentario")));
         }
@@ -144,26 +143,27 @@ public class FragmentComentarios extends Fragment {
             int year = c.get(Calendar.YEAR);
             int month = c.get(Calendar.MONTH);
             int day = c.get(Calendar.DAY_OF_MONTH);
-            comentarioData.put("diaComentario", day + "/" + month + "/" + year );
+            comentarioData.put("diaComentario", day + "/" + month + "/" + year);
             comentarioData.put("nomeComentador", user.getDisplayName());
             comentarioData.put("uidUsuario", user.getUid());
             comentarioData.put("comentario", inputComentario.getText().toString());
             comentarioData.put("uidPersonal", uidPersonal);
-            comentarioData.put("ratingComentario",""+comentarioRating.getRating());
-            if(document!=null){
+            comentarioData.put("ratingComentario", "" + comentarioRating.getRating());
+            if (document != null) {
                 soma = soma - Float.parseFloat((String) document.get("ratingComentario"));
-                numeroComentarios = numeroComentarios-1;
-                comentariosList.set(indice,comentarioData);
+                numeroComentarios = numeroComentarios - 1;
+                comentariosList.set(indice, comentarioData);
                 document.getReference().set(comentarioData);
-            }else {
+            } else {
                 comentariosRef.document().set(comentarioData);
                 comentariosList.add(comentarioData);
             }
             soma = comentarioRating.getRating() + soma;
-            pessoaRef.document(uidPersonal).update("rating",""+soma/numeroComentarios+1);
+            pessoaRef.document(uidPersonal).update("rating", "" + soma / numeroComentarios + 1);
 
             recyclerView.setAdapter(new AdapterComentario(getActivity(), comentariosList));
-        }).setNegativeButton("Cancelar", (dialog, whichButton) -> { }).show();
+        }).setNegativeButton("Cancelar", (dialog, whichButton) -> {
+        }).show();
     }
 
     public void intComentarios() {

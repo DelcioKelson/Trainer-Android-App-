@@ -1,6 +1,9 @@
 package pmd.di.ubi.pt.projectofinal;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -8,10 +11,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.google.android.material.tabs.TabLayout;
 
@@ -26,8 +25,6 @@ public class FragmentMapList extends Fragment {
     public FragmentMapList() {
         // Required empty public constructor
     }
-
-
 
 
     @Override
@@ -48,17 +45,17 @@ public class FragmentMapList extends Fragment {
 
     public static class PagerAdapter extends FragmentStatePagerAdapter {
 
-        public PagerAdapter(FragmentManager fragmentManager){
+        public PagerAdapter(FragmentManager fragmentManager) {
             super(fragmentManager);
         }
 
         @NonNull
         @Override
         public Fragment getItem(int position) {
-            Fragment fragment ;
-            if(position==0){
+            Fragment fragment;
+            if (position == 0) {
                 fragment = new FragmentMapGyms();
-            }else {
+            } else {
                 fragment = new FragmentListaGyms();
             }
             return fragment;
@@ -72,9 +69,9 @@ public class FragmentMapList extends Fragment {
         @Nullable
         @Override
         public CharSequence getPageTitle(int position) {
-            if (position==0){
+            if (position == 0) {
                 return "Mapa";
-            }else {
+            } else {
                 return "Lista";
             }
         }

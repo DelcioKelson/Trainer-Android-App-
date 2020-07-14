@@ -8,7 +8,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -47,10 +46,7 @@ public class Main extends AppCompatActivity {
     static BadgeDrawable badge;
     static SharedDataModel sharedDataModel;
     private static final int LOAD_PAYMENT_DATA_REQUEST_CODE = 991;
-
-
     private static final String KEY_CURRENT_POSITION = "com.google.samples.gridtopager.key.currentPosition";
-
     static int currentPosition;
 
     @Override
@@ -68,10 +64,7 @@ public class Main extends AppCompatActivity {
         iniciarSessao();
     }
 
-
     public void iniciarSessao() {
-
-
         Log.i("userValue", "" + user);
         if (user != null) {
             FirebaseFirestore.getInstance().collection("pessoas").document(user.getUid()).get().addOnCompleteListener(task -> {
@@ -93,7 +86,6 @@ public class Main extends AppCompatActivity {
                         FirebaseMessaging.getInstance().subscribeToTopic(user.getUid());
                         sharedDataModel.setUsuarioAtual(document.getData());
 
-
                         if (tipoConta.equals("personal") || tipoConta.equals("usuario")) {
                             if (tipoConta.equals("personal")) {
                                 sharedDataModel.personal();
@@ -104,7 +96,6 @@ public class Main extends AppCompatActivity {
                             }
                             badge = bottomNavigationView.getOrCreateBadge(R.id.fragmentNotificacoes);
                             badge.setVisible(false);
-
 
                         } else if (tipoConta.equals("pendente")) {
                             navController.setGraph(R.navigation.nav_graph_personal_pendente);
@@ -123,28 +114,22 @@ public class Main extends AppCompatActivity {
                     setContentView(R.layout.activity_main);
                     navController = Navigation.findNavController(this, R.id.container);
                     navController.setGraph(R.navigation.nav_graph_login);
-
                 }
             });
-
         } else {
             {
-
                 setContentView(R.layout.activity_main);
                 navController = Navigation.findNavController(this, R.id.container);
-
                 navController.setGraph(R.navigation.nav_graph_login);
             }
         }
     }
-
 
     @Override
     public boolean onSupportNavigateUp() {
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
     }
-
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -204,8 +189,6 @@ public class Main extends AppCompatActivity {
             }
         }
 
-
-
     private void handlePaymentSuccess(PaymentData paymentData) {
         String paymentInformation = paymentData.toJson();
 
@@ -251,11 +234,8 @@ public class Main extends AppCompatActivity {
                 DocumentReference notificacaoRef = pessoasRef
                         .document(idPersonal).collection("notificacoes").document();
 
-
                 sharedDataModel.setFecharViewPager(true);
                 sharedDataModel.setAtualizar(true);
-
-
 
                 notificacaoData.put("id", notificacaoRef.getId());
                 notificacaoRef.set(notificacaoData);
@@ -268,10 +248,7 @@ public class Main extends AppCompatActivity {
 
                 sharedDataModel.setFecharViewPager(false);
                 sharedDataModel.setAtualizar(false);
-
-
             }
-
             String billingName =
                     paymentMethodData.getJSONObject("info").getJSONObject("billingAddress").getString("name");
             Log.d("BillingName", billingName);
@@ -287,5 +264,3 @@ public class Main extends AppCompatActivity {
         Log.w("loadPaymentDatafailed", String.format("Error code: %d", statusCode));
     }
 }
-
-

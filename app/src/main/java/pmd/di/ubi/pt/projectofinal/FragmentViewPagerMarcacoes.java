@@ -20,7 +20,7 @@ public class FragmentViewPagerMarcacoes extends DialogFragment {
 
     private ViewPager viewPager;
 
-    public FragmentViewPagerMarcacoes(){
+    public FragmentViewPagerMarcacoes() {
 
     }
 
@@ -29,7 +29,7 @@ public class FragmentViewPagerMarcacoes extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view =  inflater.inflate(R.layout.viewpager_layout_marcacao, container, false);
+        View view = inflater.inflate(R.layout.viewpager_layout_marcacao, container, false);
         viewPager = (ViewPager) view.findViewById(R.id.pager);
 
 
@@ -42,28 +42,48 @@ public class FragmentViewPagerMarcacoes extends DialogFragment {
 
         try {
             ArrayList<Map<String, Object>> maps = Main.sharedDataModel.getMarcacoesList().getValue();
-                    viewPager.setAdapter(new AdapterViewPagerMarcacoes(FragmentViewPagerMarcacoes.this,maps));
-                    viewPager.setPageTransformer(true, new ZoomOutPageTransformer());
-                    viewPager.setCurrentItem(Main.currentPosition);
-                    viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-                        @Override
-                        public void onPageSelected(int position) {
-                            Main.currentPosition = position;
+            viewPager.setAdapter(new AdapterViewPagerMarcacoes(FragmentViewPagerMarcacoes.this, maps));
+            viewPager.setPageTransformer(true, new ZoomOutPageTransformer());
+            viewPager.setCurrentItem(Main.currentPosition);
+            viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+                @Override
+                public void onPageSelected(int position) {
+                    Main.currentPosition = position;
                 }
             });
 
             Main.sharedDataModel.getFecharViewPager().observe(this, new Observer<Boolean>() {
                 @Override
                 public void onChanged(Boolean aBoolean) {
-                    if(aBoolean){
+                    if (aBoolean) {
                         Main.sharedDataModel.setFecharViewPager(false);
                         dismiss();
                     }
                 }
             });
 
-        }catch (Exception ignored){ }
+        } catch (Exception ignored) {
+        }
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // safety check
+        if (getDialog() == null) {
+            return;
+        }
+
+        // set the animations to use on showing and hiding the dialog
+        getDialog().getWindow().setWindowAnimations(
+                R.style.MyAnimation);
+        // alternative way of doing it
+        //getDialog().getWindow().getAttributes().
+        //    windowAnimations = R.style.dialog_animation_fade;
+
+        // ... other stuff you want to do in your onStart() method
     }
 
     public class ZoomOutPageTransformer implements ViewPager.PageTransformer {
@@ -103,24 +123,5 @@ public class FragmentViewPagerMarcacoes extends DialogFragment {
                 view.setAlpha(0f);
             }
         }
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        // safety check
-        if (getDialog() == null) {
-            return;
-        }
-
-        // set the animations to use on showing and hiding the dialog
-        getDialog().getWindow().setWindowAnimations(
-                R.style.MyAnimation);
-        // alternative way of doing it
-        //getDialog().getWindow().getAttributes().
-        //    windowAnimations = R.style.dialog_animation_fade;
-
-        // ... other stuff you want to do in your onStart() method
     }
 }

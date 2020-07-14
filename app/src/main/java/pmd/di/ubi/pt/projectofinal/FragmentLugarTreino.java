@@ -1,13 +1,12 @@
 package pmd.di.ubi.pt.projectofinal;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import com.google.android.material.card.MaterialCardView;
 
@@ -22,7 +21,6 @@ public class FragmentLugarTreino extends Fragment {
     public FragmentLugarTreino() {
         // Required empty public constructor
     }
-
 
 
     @Override

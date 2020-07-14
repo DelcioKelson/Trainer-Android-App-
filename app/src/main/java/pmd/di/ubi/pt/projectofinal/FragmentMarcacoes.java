@@ -32,18 +32,17 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;
 
-public class FragmentMarcacoes extends Fragment implements  AdapterMarcacao.OnRequestPaymentListener{
+public class FragmentMarcacoes extends Fragment implements AdapterMarcacao.OnRequestPaymentListener {
 
     private static final String ARG_PARAM2 = "estado";
-
+    private static final int LOAD_PAYMENT_DATA_REQUEST_CODE = 991;
+    TextView tvInfo;
     private ArrayList<Map<String, Object>> marcacaoList;
     private AdapterMarcacao adapterMarcacao;
     private FirebaseUser user;
     private String estadoMarcacao;
     private boolean isUser;
     private RecyclerView recyclerView;
-    TextView tvInfo;
-    private static final int LOAD_PAYMENT_DATA_REQUEST_CODE = 991;
     private PaymentsClient paymentsClient;
 
     public FragmentMarcacoes() {
@@ -79,12 +78,12 @@ public class FragmentMarcacoes extends Fragment implements  AdapterMarcacao.OnRe
 
 
         Main.sharedDataModel.getAtualizar().observe(this, aBoolean -> {
-            if (aBoolean){
+            if (aBoolean) {
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 if (Build.VERSION.SDK_INT >= 26) {
                     ft.setReorderingAllowed(false);
                 }
-                ft.detach(FragmentMarcacoes.this).attach(FragmentMarcacoes.this).commit() ;
+                ft.detach(FragmentMarcacoes.this).attach(FragmentMarcacoes.this).commit();
                 Main.sharedDataModel.setAtualizar(false);
             }
         });
@@ -99,7 +98,7 @@ public class FragmentMarcacoes extends Fragment implements  AdapterMarcacao.OnRe
         tvInfo = view.findViewById(R.id.tv_page_info);
 
         marcacaoList = new ArrayList<>();
-        adapterMarcacao = new AdapterMarcacao(getActivity(), marcacaoList, isUser,this,paymentsClient);
+        adapterMarcacao = new AdapterMarcacao(getActivity(), marcacaoList, isUser, this, paymentsClient);
         adapterMarcacao.setOnRequestPaymentListener(this);
         recyclerView.setAdapter(adapterMarcacao);
         initMarcacoes();
@@ -126,7 +125,7 @@ public class FragmentMarcacoes extends Fragment implements  AdapterMarcacao.OnRe
                         }
                     }
                 }
-                if (marcacaoList.isEmpty()){
+                if (marcacaoList.isEmpty()) {
                     tvInfo.setVisibility(View.VISIBLE);
                 }
                 Main.sharedDataModel.addMarcacoesList(marcacaoList);

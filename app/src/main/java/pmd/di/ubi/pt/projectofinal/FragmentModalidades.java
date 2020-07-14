@@ -1,21 +1,15 @@
 package pmd.di.ubi.pt.projectofinal;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridView;
 
-import com.google.android.material.transition.MaterialContainerTransform;
-import com.google.android.material.transition.MaterialFade;
-import com.google.android.material.transition.MaterialFadeThrough;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -25,16 +19,16 @@ import java.util.Map;
 
 public class FragmentModalidades extends Fragment {
 
-    private ArrayList<Map<String,Object>> modalidadeList;
+    private ArrayList<Map<String, Object>> modalidadeList;
     private AdapterModalidades adapterModalidades;
     private RecyclerView recyclerView;
-
 
 
     public static FragmentModalidades newInstance() {
         FragmentModalidades fragment = new FragmentModalidades();
         return fragment;
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -46,7 +40,7 @@ public class FragmentModalidades extends Fragment {
         modalidadeList = new ArrayList<>();
 
         recyclerView = (RecyclerView) view.findViewById(R.id.my_recyclerview);
-        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(),1));
+        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1));
 
 
         adapterModalidades = new AdapterModalidades(getActivity(), modalidadeList);
@@ -54,21 +48,21 @@ public class FragmentModalidades extends Fragment {
 
 
         String gymNome;
-        if(getArguments()==null){
-             gymNome = "nao";
+        if (getArguments() == null) {
+            gymNome = "nao";
 
-        }else {
-             gymNome = getArguments().getString("nome");
+        } else {
+            gymNome = getArguments().getString("nome");
         }
 
-        Log.i("FragmentModalidades",gymNome);
+        Log.i("FragmentModalidades", gymNome);
 
-        FirebaseFirestore.getInstance().collection("modalidades").whereEqualTo("gym",gymNome).get().addOnSuccessListener(task -> {
-                for (QueryDocumentSnapshot document : task) {
-                    modalidadeList.add(document.getData());
-                    Log.d("FirebaseFirestore", document.getId() + " => " + modalidadeList);
-                }
-                adapterModalidades.notifyDataSetChanged();
+        FirebaseFirestore.getInstance().collection("modalidades").whereEqualTo("gym", gymNome).get().addOnSuccessListener(task -> {
+            for (QueryDocumentSnapshot document : task) {
+                modalidadeList.add(document.getData());
+                Log.d("FirebaseFirestore", document.getId() + " => " + modalidadeList);
+            }
+            adapterModalidades.notifyDataSetChanged();
 
         });
         return view;

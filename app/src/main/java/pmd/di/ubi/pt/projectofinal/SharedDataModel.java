@@ -15,21 +15,18 @@ public class SharedDataModel extends ViewModel {
 
     private MutableLiveData<Boolean> user;
     private MutableLiveData<Boolean> atualizar;
-    private MutableLiveData<Boolean> fecharViewPager= new MutableLiveData<>();
-    private MutableLiveData<Map<String,Object>> usuarioAtual = new MutableLiveData<>();
+    private MutableLiveData<Boolean> fecharViewPager = new MutableLiveData<>();
+    private MutableLiveData<Map<String, Object>> usuarioAtual = new MutableLiveData<>();
 
-    private MutableLiveData<Map<String,String>> personalIdMarcacao = new MutableLiveData<>();
+    private MutableLiveData<Map<String, String>> personalIdMarcacao = new MutableLiveData<>();
 
+    private MutableLiveData<ArrayList<Map<String, Object>>> personalList = new MutableLiveData<>();
+    private MutableLiveData<ArrayList<Map<String, Object>>> personalListFavorito = new MutableLiveData<>();
 
-    private  MutableLiveData<ArrayList<Map<String,Object>>> personalList = new MutableLiveData<>();
-    private  MutableLiveData<ArrayList<Map<String,Object>>> personalListFavorito = new MutableLiveData<>();
-
-
-    private  MutableLiveData<ArrayList<Map<String,Object>>> marcacoesList = new MutableLiveData<>();
+    private MutableLiveData<ArrayList<Map<String, Object>>> marcacoesList = new MutableLiveData<>();
     private MutableLiveData<PaymentsClient> paymentsClient = new MutableLiveData<>();
 
-
-    public void init(){
+    public void init() {
         user = new MutableLiveData<>();
         atualizar = new MutableLiveData<>();
         atualizar.setValue(false);
@@ -42,8 +39,8 @@ public class SharedDataModel extends ViewModel {
 
     public void setPersonalIdMarcacao(String idPersonal, String idMarcacao) {
         Map<String, String> aux = new HashMap<>();
-        aux.put("idpersonal",idPersonal);
-        aux.put("idmarcacao",idMarcacao);
+        aux.put("idpersonal", idPersonal);
+        aux.put("idmarcacao", idMarcacao);
         this.personalIdMarcacao.setValue(aux);
     }
 
@@ -63,7 +60,7 @@ public class SharedDataModel extends ViewModel {
         this.paymentsClient.setValue(paymentsClient);
     }
 
-    public void addPersonalList(ArrayList<Map<String,Object>> personalList){
+    public void addPersonalList(ArrayList<Map<String, Object>> personalList) {
         this.personalList.setValue(personalList);
     }
 
@@ -71,9 +68,8 @@ public class SharedDataModel extends ViewModel {
         return personalList;
     }
 
-    public void addMarcacoesList(ArrayList<Map<String,Object>> marcacoesList){
+    public void addMarcacoesList(ArrayList<Map<String, Object>> marcacoesList) {
         this.marcacoesList.setValue(marcacoesList);
-
     }
 
     public LiveData<ArrayList<Map<String, Object>>> getMarcacoesList() {
@@ -89,7 +85,7 @@ public class SharedDataModel extends ViewModel {
         user.setValue(true);
     }
 
-    public void personal(){
+    public void personal() {
         user.setValue(false);
     }
 
@@ -105,7 +101,7 @@ public class SharedDataModel extends ViewModel {
         return personalListFavorito;
     }
 
-    public void setPersonalListFavorito(ArrayList<Map<String, Object>>  personalListFavorito) {
+    public void setPersonalListFavorito(ArrayList<Map<String, Object>> personalListFavorito) {
         this.personalListFavorito.setValue(personalListFavorito);
     }
 
@@ -116,6 +112,5 @@ public class SharedDataModel extends ViewModel {
     public void setUsuarioAtual(Map<String, Object> usuarioAtual) {
         this.usuarioAtual.setValue(usuarioAtual);
     }
-
 
 }

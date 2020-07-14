@@ -1,12 +1,10 @@
 package pmd.di.ubi.pt.projectofinal;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,9 +16,6 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.Navigation;
 import androidx.viewpager.widget.ViewPager;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.gms.wallet.PaymentsClient;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
@@ -30,21 +25,19 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-public class FragmentTodasMarcacoes extends Fragment implements View.OnClickListener{
+public class FragmentTodasMarcacoes extends Fragment implements View.OnClickListener {
+    private final CollectionReference marcacoesRef = FirebaseFirestore.getInstance().collection("marcacoes");
     // TODO: Rename parameter arguments, choose names that match
     private TextView tvAceites;
     private TextView tvPendentes;
     private TextView tvPagas;
     private FirebaseUser user;
     private boolean isUser;
-    private final CollectionReference marcacoesRef = FirebaseFirestore.getInstance().collection("marcacoes");
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -58,7 +51,7 @@ public class FragmentTodasMarcacoes extends Fragment implements View.OnClickList
 
         try {
             isUser = Main.sharedDataModel.isUser().getValue();
-        }catch (Exception e){
+        } catch (Exception e) {
         }
 
         PagerAdapter pagerAdapter = new PagerAdapter(getChildFragmentManager());
@@ -68,18 +61,18 @@ public class FragmentTodasMarcacoes extends Fragment implements View.OnClickList
         tabLayout.setupWithViewPager(viewPager);
 
         FirebaseFirestore.getInstance().collection("pessoas").document(user.getUid()).collection("notificacoes")
-                .whereEqualTo("vista",false).get().addOnSuccessListener(queryDocumentSnapshots -> {
+                .whereEqualTo("vista", false).get().addOnSuccessListener(queryDocumentSnapshots -> {
             Main.badge.setVisible(true);
             Main.badge.setNumber(queryDocumentSnapshots.size());
         });
 
-        if (isUser ) {
+        if (isUser) {
 
             PaymentsClient paymentsClient = PaymentsUtil.createPaymentsClient(getActivity());
             Main.sharedDataModel.setPaymentsClient(paymentsClient);
 
             viewPager.setVisibility(View.VISIBLE);
-            if( !user.isEmailVerified()){
+            if (!user.isEmailVerified()) {
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 Fragment prev = getFragmentManager().findFragmentByTag("dialog");
                 if (prev != null) {
@@ -124,13 +117,13 @@ public class FragmentTodasMarcacoes extends Fragment implements View.OnClickList
             int numeroMarcacaosPagas = 0;
             for (DocumentSnapshot document : queryDocumentSnapshots) {
                 if (document != null) {
-                    if (document.get("estado").equals("pendente")&&!mudarEstado(document,"cancelada")) {
+                    if (document.get("estado").equals("pendente") && !mudarEstado(document, "cancelada")) {
                         numeroMarcacaosPedentes = numeroMarcacaosPedentes + 1;
                     }
-                    if (document.get("estado").equals("aceite") && !mudarEstado(document,"cancelada")) {
+                    if (document.get("estado").equals("aceite") && !mudarEstado(document, "cancelada")) {
                         numeroMarcacaosAceites = 1 + numeroMarcacaosAceites;
                     }
-                    if (document.get("estado").equals("paga") && ! mudarEstado(document,"terminada")) {
+                    if (document.get("estado").equals("paga") && !mudarEstado(document, "terminada")) {
 
                         numeroMarcacaosPagas = 1 + numeroMarcacaosPagas;
                     }
@@ -142,24 +135,24 @@ public class FragmentTodasMarcacoes extends Fragment implements View.OnClickList
         });
     }
 
-    private boolean mudarEstado(DocumentSnapshot marcacao , String novoEstado){
+    private boolean mudarEstado(DocumentSnapshot marcacao, String novoEstado) {
 
 
         String dia = (String) marcacao.get("diaTreino");
-        String hora =(String) marcacao.get("horaTreino");
+        String hora = (String) marcacao.get("horaTreino");
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
         try {
-            dia = dia +" "+ hora;
+            dia = dia + " " + hora;
             Date date = sdf.parse(dia);
             long millis = date.getTime();
 
-            if(Calendar.getInstance().getTimeInMillis() > millis){
-                marcacoesRef.document(marcacao.getId()).update("estado",novoEstado);
+            if (Calendar.getInstance().getTimeInMillis() > millis) {
+                marcacoesRef.document(marcacao.getId()).update("estado", novoEstado);
                 return true;
             }
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
         return false;
@@ -191,7 +184,7 @@ public class FragmentTodasMarcacoes extends Fragment implements View.OnClickList
 
     public static class PagerAdapter extends FragmentStatePagerAdapter {
 
-        public PagerAdapter(FragmentManager fragmentManager){
+        public PagerAdapter(FragmentManager fragmentManager) {
             super(fragmentManager);
         }
 
@@ -200,10 +193,10 @@ public class FragmentTodasMarcacoes extends Fragment implements View.OnClickList
         public Fragment getItem(int position) {
             Fragment fragment = new FragmentTreinadoresFavoritosRecentes();
             Bundle args = new Bundle();
-            if(position==0){
-                args.putString("tab","recente");
-            }else {
-                args.putString("tab","favorito");
+            if (position == 0) {
+                args.putString("tab", "recente");
+            } else {
+                args.putString("tab", "favorito");
             }
 
             fragment.setArguments(args);
@@ -218,9 +211,9 @@ public class FragmentTodasMarcacoes extends Fragment implements View.OnClickList
         @Nullable
         @Override
         public CharSequence getPageTitle(int position) {
-            if (position==0){
+            if (position == 0) {
                 return "Recentes";
-            }else {
+            } else {
                 return "Favoritos";
             }
         }

@@ -21,10 +21,9 @@ import java.util.Map;
 public class FragmentTreinadoresFavoritosRecentes extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
 
-    private ArrayList<Map<String, Object>> personalListRecente,personalListFavorito;
-    private ArrayList<String> idsPersonais;
     FirebaseUser user;
-
+    private ArrayList<Map<String, Object>> personalListRecente, personalListFavorito;
+    private ArrayList<String> idsPersonais;
     private RecyclerView recyclerView;
 
     private AdapterPersonalFavoritosRecentes adapterPersonalFavoritosRecentes;
@@ -95,22 +94,22 @@ public class FragmentTreinadoresFavoritosRecentes extends Fragment {
                         }
                     }
 
-                        try {
-                            FirebaseFirestore.getInstance().collection("pessoas").
-                                    whereEqualTo("tipoConta", "personal").get().addOnSuccessListener(task1 -> {
-                                for (DocumentSnapshot document : task1) {
-                                    if (document != null && idsPersonais.contains(document.getId())) {
-                                        personalListRecente.add(document.getData());
-                                        Log.d("personalAux1", document.toString());
-                                    }
+                    try {
+                        FirebaseFirestore.getInstance().collection("pessoas").
+                                whereEqualTo("tipoConta", "personal").get().addOnSuccessListener(task1 -> {
+                            for (DocumentSnapshot document : task1) {
+                                if (document != null && idsPersonais.contains(document.getId())) {
+                                    personalListRecente.add(document.getData());
+                                    Log.d("personalAux1", document.toString());
                                 }
-                                Main.sharedDataModel.addPersonalList(personalListRecente);
-                                adapterPersonalFavoritosRecentes = new AdapterPersonalFavoritosRecentes(getActivity(), personalListRecente, false);
-                                recyclerView.setAdapter(adapterPersonalFavoritosRecentes);
+                            }
+                            Main.sharedDataModel.addPersonalList(personalListRecente);
+                            adapterPersonalFavoritosRecentes = new AdapterPersonalFavoritosRecentes(getActivity(), personalListRecente, false);
+                            recyclerView.setAdapter(adapterPersonalFavoritosRecentes);
 
-                            });
-                        } catch (Exception e) {
-                        }
+                        });
+                    } catch (Exception e) {
+                    }
 
                 });
     }

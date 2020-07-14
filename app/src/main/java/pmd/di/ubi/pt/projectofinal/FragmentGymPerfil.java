@@ -42,18 +42,16 @@ import java.util.Objects;
 
 public class FragmentGymPerfil extends Fragment {
 
-    private TextView tvPreco, tvNome,tvEndereço;
+    CollectionReference marcacoesRef = FirebaseFirestore.getInstance().collection("marcacoes");
+    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    private TextView tvPreco, tvNome, tvEndereço;
     private Button btnMarcar;
     private ImageView image;
-    private String tempoDemora,endereço;
+    private String tempoDemora, endereço;
     private float preco;
     private List<String> horasList;
     private TextInputEditText etDia, etHora;
     private String nomeGym;
-
-    CollectionReference marcacoesRef = FirebaseFirestore.getInstance().collection("marcacoes");
-
-    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
 
     public FragmentGymPerfil() {
@@ -63,8 +61,6 @@ public class FragmentGymPerfil extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
 
 
     }
@@ -123,28 +119,28 @@ public class FragmentGymPerfil extends Fragment {
                 Chip chip = view.findViewById(checkedId);
                 if (chip != null) {
                     tempoDemora = chip.getText().toString();
-                        switch (tempoDemora) {
-                            case "00:30":
-                                tvPreco.setText("" + (preco * 0.5) + "€");
-                                break;
-                            case "01:00":
-                                tvPreco.setText("" + preco + "€");
-                                break;
-                            case "01:30":
-                                tvPreco.setText("" + preco * 1.5 + "€");
-                                break;
-                            case "02:00":
-                                tvPreco.setText("" + preco * 2 + "€");
-                                break;
-                            case "02:30":
-                                tvPreco.setText("" + preco * 2.5 + "€");
-                                break;
-                            default:
-                                tvPreco.setText("" + (preco * 0.5 + "€"));
-                        }
+                    switch (tempoDemora) {
+                        case "00:30":
+                            tvPreco.setText("" + (preco * 0.5) + "€");
+                            break;
+                        case "01:00":
+                            tvPreco.setText("" + preco + "€");
+                            break;
+                        case "01:30":
+                            tvPreco.setText("" + preco * 1.5 + "€");
+                            break;
+                        case "02:00":
+                            tvPreco.setText("" + preco * 2 + "€");
+                            break;
+                        case "02:30":
+                            tvPreco.setText("" + preco * 2.5 + "€");
+                            break;
+                        default:
+                            tvPreco.setText("" + (preco * 0.5 + "€"));
                     }
-                    btnMarcar.setOnClickListener(v -> gerarDetalhesMarcacao());
-                });
+                }
+                btnMarcar.setOnClickListener(v -> gerarDetalhesMarcacao());
+            });
 
 
         });
@@ -243,7 +239,6 @@ public class FragmentGymPerfil extends Fragment {
     }
 
 
-
     public static class TimePickerFragment extends DialogFragment
             implements TimePickerDialog.OnTimeSetListener {
 
@@ -302,26 +297,26 @@ public class FragmentGymPerfil extends Fragment {
 
             String dia = "" + day + "/" + (month + 1) + "/" + year;
 
-                int atualAno = Calendar.getInstance().get(Calendar.YEAR);
-                int atualdia = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
-                int atualMes = Calendar.getInstance().get(Calendar.MONTH);
+            int atualAno = Calendar.getInstance().get(Calendar.YEAR);
+            int atualdia = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+            int atualMes = Calendar.getInstance().get(Calendar.MONTH);
 
-                if( atualAno > year ) {
-                    Toast.makeText(getActivity(), "Ano inválida", Toast.LENGTH_LONG).show();
-                    dia = "";
-                }
+            if (atualAno > year) {
+                Toast.makeText(getActivity(), "Ano inválida", Toast.LENGTH_LONG).show();
+                dia = "";
+            }
 
-                if( atualAno == year && atualMes >month){
-                    Toast.makeText(getActivity(), "mês inválido", Toast.LENGTH_LONG).show();
-                    dia = "";
-                }
+            if (atualAno == year && atualMes > month) {
+                Toast.makeText(getActivity(), "mês inválido", Toast.LENGTH_LONG).show();
+                dia = "";
+            }
 
-                if( atualAno == year && atualMes ==month && atualdia>day){
-                    Toast.makeText(getActivity(), "dia inválido", Toast.LENGTH_LONG).show();
-                    dia = "";
-                };
+            if (atualAno == year && atualMes == month && atualdia > day) {
+                Toast.makeText(getActivity(), "dia inválido", Toast.LENGTH_LONG).show();
+                dia = "";
+            }
 
-                etDia.setText(dia);
+            etDia.setText(dia);
 
 
         }

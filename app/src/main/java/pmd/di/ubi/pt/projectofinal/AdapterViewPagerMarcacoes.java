@@ -4,10 +4,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -15,8 +12,9 @@ import java.util.Map;
 public class AdapterViewPagerMarcacoes extends FragmentStatePagerAdapter {
 
 
-    ArrayList<Map<String,Object>> marcacoes;
-    public AdapterViewPagerMarcacoes(Fragment fragment,ArrayList<Map<String,Object>> marcacoes) {
+    ArrayList<Map<String, Object>> marcacoes;
+
+    public AdapterViewPagerMarcacoes(Fragment fragment, ArrayList<Map<String, Object>> marcacoes) {
 
         super(fragment.getChildFragmentManager(), BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
 
@@ -26,14 +24,14 @@ public class AdapterViewPagerMarcacoes extends FragmentStatePagerAdapter {
 
     @Override
     public int getCount() {
-        return marcacoes==null?0: marcacoes.size();
+        return marcacoes == null ? 0 : marcacoes.size();
     }
 
     @NonNull
     @Override
     public Fragment getItem(int position) {
         Bundle bundle = new Bundle();
-        bundle.putInt("pos",position);
+        bundle.putInt("pos", position);
 
         return FragmentDetalhesMarcacao.newInstance(bundle);
     }

@@ -24,7 +24,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
@@ -66,6 +65,15 @@ public class FragmentRegistroCliente2 extends Fragment {
 
     public FragmentRegistroCliente2() {
         // Required empty public constructor
+    }
+
+    public static boolean isNumericInt(String str) {
+        try {
+            Integer.parseInt(str);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
     @Override
@@ -199,7 +207,6 @@ public class FragmentRegistroCliente2 extends Fragment {
 
         return view;
     }
-
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -393,15 +400,6 @@ public class FragmentRegistroCliente2 extends Fragment {
 
                     }
                 });
-    }
-
-    public static boolean isNumericInt(String str) {
-        try {
-            Integer.parseInt(str);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
     }
 
     //funçao para salvar dados no firebase

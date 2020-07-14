@@ -42,23 +42,18 @@ import java.util.Optional;
 
 public class FragmentDetalhesMarcacao extends DialogFragment {
 
+    private final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     boolean isUser = false;
     private PaymentsClient paymentsClient;
-
     private TextView tvDiaTreino, tvHoraTreino, tvEstado, tvPreco, tvTempoDemora, tvPrecoPromocao;
-
     private Button btnEsquero, btnDireito;
     private View mGooglePayButton;
     private TextView tvNome, tvNomeCliente, tvMorada, tvSituacoes, tvTelefone, tvDataCriacao, tvPeso, tvAltura, tvGenero, tvIdade;
-
     private Animation animationUp;
     private Animation animationDown;
-
     private CardView cardView;
     private LinearLayout informacoes;
     private ToggleButton tbExpand;
-    private final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
     private String marcacaoId, idPersonal, idUsuario;
 
     private CollectionReference pessoasRef = FirebaseFirestore.getInstance().collection("pessoas");
@@ -119,7 +114,7 @@ public class FragmentDetalhesMarcacao extends DialogFragment {
             Main.sharedDataModel.getFecharViewPager().observe(this, new Observer<Boolean>() {
                 @Override
                 public void onChanged(Boolean aBoolean) {
-                    if(aBoolean){
+                    if (aBoolean) {
                         dismiss();
                         Main.sharedDataModel.setFecharViewPager(false);
                     }
@@ -334,7 +329,7 @@ public class FragmentDetalhesMarcacao extends DialogFragment {
 
         String path = isUser ? (String) marcacao.get("uidPersonal") : (String) marcacao.get("uidUsuario");
 
-        if(path==null){
+        if (path == null) {
             path = (String) marcacao.get("nomeGym");
         }
 
@@ -368,7 +363,7 @@ public class FragmentDetalhesMarcacao extends DialogFragment {
                 }
 
             });
-        }catch (Exception ignored){
+        } catch (Exception ignored) {
 
         }
     }

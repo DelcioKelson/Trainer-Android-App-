@@ -2,11 +2,6 @@ package pmd.di.ubi.pt.projectofinal;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
-
 import android.text.Editable;
 import android.util.Patterns;
 import android.view.KeyEvent;
@@ -18,13 +13,17 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
+
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class FragmentLogin extends Fragment {
 
     private FirebaseAuth mAuth;
-    private String email,password;
+    private String email, password;
     private TextInputEditText etEmail, etPassword;
     private ProgressBar progressBar;
 
@@ -42,7 +41,7 @@ public class FragmentLogin extends Fragment {
         View view = inflater.inflate(R.layout.fragment_login, container, false);
         etEmail = view.findViewById(R.id.et_email);
         etPassword = view.findViewById(R.id.et_pass);
-        Button btnLogin  = view.findViewById(R.id.btn_login);
+        Button btnLogin = view.findViewById(R.id.btn_login);
         TextView tvRegistrar = view.findViewById(R.id.tv_registrar);
         mAuth = FirebaseAuth.getInstance();
         progressBar = view.findViewById(R.id.progressbar_login);
@@ -60,12 +59,12 @@ public class FragmentLogin extends Fragment {
 
         btnLogin.setOnClickListener(v -> {
 
-            if(isEmailValid(etEmail.getText())){
+            if (isEmailValid(etEmail.getText())) {
 
-                if(isPasswordValid(etPassword.getText())){
+                if (isPasswordValid(etPassword.getText())) {
                     progressBar.setVisibility(View.VISIBLE);
                     btnLogin.setClickable(false);
-                etPassword.setError(null); // Clear the error
+                    etPassword.setError(null); // Clear the error
 
                     email = etEmail.getText().toString();
                     password = etPassword.getText().toString();
@@ -81,16 +80,17 @@ public class FragmentLogin extends Fragment {
                                     btnLogin.setClickable(true);
                                 }
                             });
-             }else {
-                etPassword.setError("Palavra passe invalida");
-            } }else {
-            etEmail.setError("Email invalido");
+                } else {
+                    etPassword.setError("Palavra passe invalida");
+                }
+            } else {
+                etEmail.setError("Email invalido");
 
-        }
+            }
 
         });
         tvRegistrar.setOnClickListener(v ->
-        Navigation.findNavController(v).navigate(R.id.fragmentSelecionarTipoConta));
+                Navigation.findNavController(v).navigate(R.id.fragmentSelecionarTipoConta));
         return view;
     }
 
@@ -98,8 +98,8 @@ public class FragmentLogin extends Fragment {
         return text != null && text.length() >= 6;
     }
 
-    private boolean isEmailValid( Editable text){
-        return text!=null && Patterns.EMAIL_ADDRESS.matcher(text.toString()).matches();
+    private boolean isEmailValid(Editable text) {
+        return text != null && Patterns.EMAIL_ADDRESS.matcher(text.toString()).matches();
 
     }
 }

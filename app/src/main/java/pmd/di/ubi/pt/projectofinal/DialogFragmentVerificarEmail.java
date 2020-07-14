@@ -24,7 +24,6 @@ public class DialogFragmentVerificarEmail extends DialogFragment {
     private Button btnConfirmar,btnReenviar,btnSair;
 
     public DialogFragmentVerificarEmail() {
-
     }
 
     public static DialogFragmentVerificarEmail newInstance() {
@@ -52,11 +51,7 @@ public class DialogFragmentVerificarEmail extends DialogFragment {
                 });
 
         btnReenviar.setOnClickListener(v ->
-                user.sendEmailVerification().addOnSuccessListener(task -> {
-                        Snackbar.make(view,"Foi enviado um novo email de verificaçao",Snackbar.LENGTH_LONG).show();
-
-
-                }));
+                user.sendEmailVerification().addOnSuccessListener(task -> Snackbar.make(view,"Foi enviado um novo email de verificação",Snackbar.LENGTH_LONG).show()));
 
         btnConfirmar.setOnClickListener(v ->
                 user.reload().addOnCompleteListener(task -> {

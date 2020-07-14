@@ -16,11 +16,11 @@ import com.google.android.material.transition.MaterialContainerTransform;
 import java.util.List;
 import java.util.Map;
 
-public class FragmentViewPagerTreinadores extends Fragment{
+public class FragmentViewPagerTreinadores extends Fragment {
 
     private ViewPager viewPager;
 
-    public FragmentViewPagerTreinadores(){
+    public FragmentViewPagerTreinadores() {
 
     }
 

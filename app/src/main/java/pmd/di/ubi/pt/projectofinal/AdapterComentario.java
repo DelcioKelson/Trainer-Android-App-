@@ -1,11 +1,9 @@
 package pmd.di.ubi.pt.projectofinal;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -33,7 +31,7 @@ public class AdapterComentario extends RecyclerView.Adapter<AdapterComentario.Co
     @NonNull
     @Override
     public ComentarioHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.card_comentario,parent,false);
+        View view = LayoutInflater.from(context).inflate(R.layout.card_comentario, parent, false);
         return new ComentarioHolder(view);
     }
 
@@ -46,7 +44,7 @@ public class AdapterComentario extends RecyclerView.Adapter<AdapterComentario.Co
 
     @Override
     public int getItemCount() {
-        return comentariosList!=null?comentariosList.size():0;
+        return comentariosList != null ? comentariosList.size() : 0;
     }
 
 
@@ -62,18 +60,18 @@ public class AdapterComentario extends RecyclerView.Adapter<AdapterComentario.Co
             final ImageView imgPerfil = itemView.findViewById(R.id.img_comentador);
 
             txtComentador.setText((String) comentario.get("nomeComentador"));
-            txtComentario.setText((String)comentario.get("comentario"));
+            txtComentario.setText((String) comentario.get("comentario"));
 
-            StorageReference storageReference = FirebaseStorage.getInstance().getReference("image/"+comentario.get("uidUsuario"));
+            StorageReference storageReference = FirebaseStorage.getInstance().getReference("image/" + comentario.get("uidUsuario"));
 
             final long ONE_MEGABYTE = 1024 * 1024;
             storageReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(bytes -> {
-                if(bytes.length!=0){
+                if (bytes.length != 0) {
                     try {
                         Glide.with(context.getApplicationContext())
                                 .load(bytes)
                                 .into(imgPerfil);
-                    }catch (Exception ignored){
+                    } catch (Exception ignored) {
 
                     }
                 }

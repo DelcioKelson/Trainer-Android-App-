@@ -2,6 +2,7 @@ package pmd.di.ubi.pt.projectofinal;
 
 
 import com.google.android.gms.wallet.WalletConstants;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -126,5 +127,6 @@ public class Constants {
                 }
             };
 
-    private Constants() {}
+    private Constants() {
+    }
 }

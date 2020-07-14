@@ -32,6 +32,8 @@
                 android:padding="8dp"
                 android:src="@drawable/ic_close_white" />
 
+
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -63,14 +65,21 @@
                 android:id="@+id/tv_disponivel" />
 
 
-            <TextView
+            <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:text="ver curriculo"
+                android:id="@+id/btn_curriculo"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                android:text="Dias indisponiveis:"/>
+                android:text="Dias indisponiveis"/>
 
             <com.google.android.material.chip.ChipGroup
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center"
                 android:layout_height="wrap_content"
                 android:id="@+id/chip_group_dias_info"/>
 
