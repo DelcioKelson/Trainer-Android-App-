@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:elevation="10dp"
+    android:background="@drawable/background1"
     android:orientation="vertical"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".FragmentTodasMarcacoes">
@@ -18,7 +19,7 @@
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="110dp"
                     android:layout_margin="10dp"
-                    android:backgroundTint="@color/colorAccent"
+                    android:backgroundTint="@color/colorPrimary"
                     android:elevation="100dp"
                     android:id="@+id/cv_1"
                     android:layout_height="110dp">
@@ -36,7 +37,7 @@
                     android:layout_width="110dp"
                     android:layout_margin="10dp"
                     android:elevation="100dp"
-                    android:backgroundTint="@color/colorAccent"
+                    android:backgroundTint="@color/colorPrimary"
                     android:layout_height="110dp">
                     <TextView
                         android:gravity="center"
@@ -49,13 +50,6 @@
                 </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
 
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/btn_nova_marcacao"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:backgroundTint="@color/colorPrimary"
-                app:srcCompat="@drawable/ic_add" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -65,7 +59,7 @@
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="110dp"
                     android:elevation="100dp"
-                    android:backgroundTint="@color/colorAccent"
+                    android:backgroundTint="@color/colorPrimary"
                     android:layout_height="110dp"
                     android:layout_margin="10dp">
 
@@ -82,7 +76,7 @@
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="110dp"
                     android:elevation="100dp"
-                    android:backgroundTint="@color/colorAccent"
+                    android:backgroundTint="@color/colorPrimary"
                     android:layout_height="110dp"
                     android:layout_margin="10dp">
 
@@ -96,6 +90,14 @@
                         android:text="@string/historico" />
                 </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btn_nova_marcacao"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:backgroundTint="@color/colorPrimary"
+        app:srcCompat="@drawable/ic_add" />
+
 
 
     <androidx.viewpager.widget.ViewPager

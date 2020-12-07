@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/background2"
     android:orientation="vertical"
     tools:context=".FragmentLugarTreino">
 
@@ -23,8 +24,9 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
             android:textColor="@color/white"
             android:layout_gravity="center"
+            android:textSize="40dp"
 
-            android:text="Em casa" />
+            android:text="Casa" />
 
     </com.google.android.material.card.MaterialCardView>
 
@@ -43,7 +45,8 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
             android:layout_gravity="center"
             android:gravity="center"
-            android:text="No Gym" />
+            android:textSize="40dp"
+            android:text="Gym" />
 
     </com.google.android.material.card.MaterialCardView>
 
